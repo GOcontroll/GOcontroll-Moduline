@@ -1,0 +1,51 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Settings',{
+        category: 'GOcontroll',
+        color: '#f76d11',
+        defaults: {
+            name: {value:"Settings"},
+			ssid: {value:"GOcontroll-AP"},
+			pass: {value:"Moduline3"},
+        },
+        inputs:0,
+        outputs:0,
+        icon: "settings.png",
+        label: function() {
+            return this.name||"Settings";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Settings">
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+<fieldset>
+<legend>WLAN settings</legend> 
+
+    <div class="form-row">
+        <label for="node-input-ssid"><i class="fa fa-wifi"></i> SSID</label>
+        <input type="text" id="node-input-ssid" placeholder="SSID">
+    </div>	
+	
+	    <div class="form-row">
+        <label for="node-input-pass"><i class="fa fa-key"></i> Password</label>
+        <input type="text" id="node-input-pass" placeholder="Password">
+    </div>	
+
+	
+</script>
+
+
+<script type="text/x-red" data-help-name="Settings">
+  <p>The settings block configures the basic settings of the GOcontroll Moduline 3 controller.</p>
+<p>&nbsp;</p>
+<p><strong>Wireless LAN Acces Point name:</strong></p>
+<p><em>SSID:</em></p>
+<p>The name of the wireless LAN acces point network.</p>
+<p><em>Password:</em></p>
+<p>The credentials of the wireless LAN acces point network.</p>
+</script>

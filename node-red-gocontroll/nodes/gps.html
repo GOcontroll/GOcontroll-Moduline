@@ -1,0 +1,42 @@
+<script type="text/javascript">
+    RED.nodes.registerType('GPS',{
+        category: 'GOcontroll',
+        color: '#f76d11',
+        defaults: {
+            name: {value:"GPS"},
+			timeCorrection: {value:"0"},
+        },
+        inputs:0,
+        outputs:1,
+        icon: "data_in.png",
+		paletteLabel: "GPS",
+        label: function() {
+		return this.name||"GPS";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="GPS">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	
+	    <div class="form-row">
+        <label for="node-input-timeCorrection"><i class="fa fa-clock-o"></i> Time Correction</label>
+        <select id="node-input-timeCorrection" style="width:300px">
+            <option value=-2>-2 houres</option>
+            <option value=-1>-1 houre</option>
+            <option value=0>0</option>
+            <option value=1>+1 houre</option>
+            <option value=2>+2 houres</option>
+        </select>
+    </div>
+	
+</script>
+
+<script type="text/x-red" data-help-name="GPS">
+<p>The onboard GPS receiver can be read out with this node. If the GPS receiver has a fix, the output will be none zero. The output is in JSON format.</p>
+
+</script>
+

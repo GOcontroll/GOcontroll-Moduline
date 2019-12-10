@@ -1,0 +1,434 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Input-Module',{
+        category: 'GOcontroll',
+        color: '#f76d11',
+        defaults: {
+            name: {value:""},
+			moduleLocation: {value:"0"},
+			sampleTime:{value:1},
+			input1:{value:1},
+			v1:{value:0},
+			pu1: {value:0},
+			pd1: {value:0},
+			input2:{value:1},
+			v2:{value:0},
+			pu2: {value:0},
+			pd2: {value:0},
+			input3:{value:1},
+			v3:{value:0},
+			pu3: {value:0},
+			pd3: {value:0},
+			input4:{value:1},
+			v4:{value:0},
+			pu4: {value:0},
+			pd4: {value:0},
+			input5:{value:1},
+			v5:{value:0},
+			pu5: {value:0},
+			pd5: {value:0},
+			input6:{value:1},
+			v6:{value:0},
+			pu6: {value:0},
+			pd6: {value:0},
+        },
+        inputs:1,
+        outputs:1,
+        icon: "data_in.png",
+		paletteLabel: "Input mod",
+        label: function() {
+			if(this.name != "")
+			{
+            return this.name;
+			}
+			if(this.moduleLocation == "0")
+			{
+            return "Choose input module location";
+			}
+		return "Input module on slot " + this.moduleLocation;
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Input-Module">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-moduleLocation"><i class="fa fa-microchip"></i> Module</label>
+        <select id="node-input-moduleLocation" style="width:300px">
+            <option value=1>Module on slot 1</option>
+            <option value=2>Module on slot 2</option>
+            <option value=3>Module on slot 3</option>
+            <option value=4>Module on slot 4</option>
+            <option value=5>Module on slot 5</option>
+            <option value=6>Module on slot 6</option>
+            <option value=7>Module on slot 7</option>
+            <option value=8>Module on slot 8</option>
+        </select>
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time</label>
+        <select id="node-input-sampleTime" style="width:300px">
+		    <option value="0">Trigger by inject</option>
+            <option value="10">10 ms</option>
+            <option value="100">100 ms</option>
+            <option value="1000">1 s</option>
+        </select>
+    </div>
+	
+<fieldset>
+<legend>Input channel 1</legend> 
+    <div class="form-row">
+        <label for="node-input-input1"><i class="fa fa-sign-in"></i> Signal type</label>
+        <select id="node-input-input1" style="width:300px">
+            <option value=1>Analog input - decimal (12 bit resolution)</option>
+            <option value=2>Analog input - mV (1mV resolution) </option>
+            <option value=3>Digital input - status (high or low)</option>
+            <option value=4>Digital input - frequency(1Hz to 10 kHz)</option>
+            <option value=5>Digital input - Duty cycle low time (0.1% resolution)</option>
+            <option value=6>Digital input - Duty cycle high time (0.1% resolution)</option>
+            <option value=7>Digital input - Rotation speed (rps)</option>
+            <option value=8>Digital input - Pulse counter in combination with channel 2</option>
+        </select>
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-v1"><i class="fa fa-bolt"></i> Signal voltage</label>
+        <select id="node-input-v1" style="width:300px">
+		    <option value=0>0 - 5 volt</option>
+            <option value=1>0 - 12 volt</option>
+            <option value=2>0 - 24 volt</option>
+        </select>
+    </div>
+ 
+    <div class="form-row">
+        <label for="node-input-pu1"><i class="fa fa-ellipsis-h"></i> Pull up</label>
+        <select id="node-input-pu1" style="width:300px">
+		    <option value=0>No pull up</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pd1"><i class="fa fa-ellipsis-h"></i> Pull down</label>
+        <select id="node-input-pd1" style="width:300px">
+		    <option value=0>No pull down</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>  
+</fieldset>
+
+<fieldset>
+<legend>Input channel 2</legend> 
+    <div class="form-row">
+        <label for="node-input-input2"><i class="fa fa-sign-in"></i> Signal type</label>
+        <select id="node-input-input2" style="width:300px">
+            <option value=1>Analog input - decimal (12 bit resolution)</option>
+            <option value=2>Analog input - mV (1mV resolution) </option>
+            <option value=3>Digital input - status (high or low)</option>
+            <option value=4>Digital input - frequency(1Hz to 10 kHz)</option>
+            <option value=5>Digital input - Duty cycle low time (0.1% resolution)</option>
+            <option value=6>Digital input - Duty cycle high time (0.1% resolution)</option>
+            <option value=7>Digital input - Rotation speed (rps)</option>
+            <option value=8>Digital input - Pulse counter in combination with channel 1</option>
+        </select>
+    </div>
+    
+		<div class="form-row">
+        <label for="node-input-v2"><i class="fa fa-bolt"></i> Signal voltage</label>
+        <select id="node-input-v2" style="width:300px">
+		    <option value=0>0 - 5 volt</option>
+            <option value=1>0 - 12 volt</option>
+            <option value=2>0 - 24 volt</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pu2"><i class="fa fa-ellipsis-h"></i> Pull up</label>
+        <select id="node-input-pu2" style="width:300px">
+		    <option value=0>No pull up</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pd2"><i class="fa fa-ellipsis-h"></i> Pull down</label>
+        <select id="node-input-pd2" style="width:300px">
+		    <option value=0>No pull down</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>  
+</fieldset>
+
+<fieldset>
+<legend>Input channel 3</legend> 
+    <div class="form-row">
+        <label for="node-input-input3"><i class="fa fa-sign-in"></i> Signal type</label>
+        <select id="node-input-input3" style="width:300px">
+            <option value=1>Analog input - decimal (12 bit resolution)</option>
+            <option value=2>Analog input - mV (1mV resolution) </option>
+            <option value=3>Digital input - status (high or low)</option>
+            <option value=4>Digital input - frequency(1Hz to 10 kHz)</option>
+            <option value=5>Digital input - Duty cycle low time (0.1% resolution)</option>
+            <option value=6>Digital input - Duty cycle high time (0.1% resolution)</option>
+            <option value=7>Digital input - Rotation speed (rps)</option>
+            <option value=8>Digital input - Pulse counter in combination with channel 4</option>
+        </select>
+    </div>
+	
+    	<div class="form-row">
+        <label for="node-input-v3"><i class="fa fa-bolt"></i> Signal voltage</label>
+        <select id="node-input-v3" style="width:300px">
+		    <option value=0>0 - 5 volt</option>
+            <option value=1>0 - 12 volt</option>
+            <option value=2>0 - 24 volt</option>
+        </select>
+    </div>
+    
+	<div class="form-row">
+        <label for="node-input-pu3"><i class="fa fa-ellipsis-h"></i> Pull up</label>
+        <select id="node-input-pu3" style="width:300px">
+		    <option value=0>No pull up</option>
+             <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pd3"><i class="fa fa-ellipsis-h"></i> Pull down</label>
+        <select id="node-input-pd3" style="width:300px">
+		    <option value=0>No pull down</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div> 
+</fieldset>
+
+<fieldset>
+<legend>Input channel 4</legend> 
+    <div class="form-row">
+        <label for="node-input-input4"><i class="fa fa-sign-in"></i> Signal type</label>
+        <select id="node-input-input4" style="width:300px">
+            <option value=1>Analog input - decimal (12 bit resolution)</option>
+            <option value=2>Analog input - mV (1mV resolution) </option>
+            <option value=3>Digital input - status (high or low)</option>
+            <option value=4>Digital input - frequency(1Hz to 10 kHz)</option>
+            <option value=5>Digital input - Duty cycle low time (0.1% resolution)</option>
+            <option value=6>Digital input - Duty cycle high time (0.1% resolution)</option>
+            <option value=7>Digital input - Rotation speed (rps)</option>
+            <option value=8>Digital input - Pulse counter in combination with channel 3</option>
+        </select>
+    </div>
+    
+		<div class="form-row">
+        <label for="node-input-v4"><i class="fa fa-bolt"></i> Signal voltage</label>
+        <select id="node-input-v4" style="width:300px">
+		    <option value=0>0 - 5 volt</option>
+            <option value=1>0 - 12 volt</option>
+            <option value=2>0 - 24 volt</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pu4"><i class="fa fa-ellipsis-h"></i> Pull up</label>
+        <select id="node-input-pu4" style="width:300px">
+		    <option value=0>No pull up</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pd4"><i class="fa fa-ellipsis-h"></i> Pull down</label>
+        <select id="node-input-pd4" style="width:300px">
+		    <option value=0>No pull down</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div> 
+</fieldset>
+
+<fieldset>
+<legend>Input channel 5</legend> 
+    <div class="form-row">
+        <label for="node-input-input5"><i class="fa fa-sign-in"></i> Signal type</label>
+        <select id="node-input-input5" style="width:300px">
+            <option value=1>Analog input - decimal (12 bit resolution)</option>
+            <option value=2>Analog input - mV (1mV resolution) </option>
+            <option value=3>Digital input - status (high or low)</option>
+            <option value=4>Digital input - frequency(1Hz to 10 kHz)</option>
+            <option value=5>Digital input - Duty cycle low time (0.1% resolution)</option>
+            <option value=6>Digital input - Duty cycle high time (0.1% resolution)</option>
+            <option value=7>Digital input - Rotation speed (rps)</option>
+            <option value=8>Digital input - Pulse counter in combination with channel 6</option>
+        </select>
+    </div>
+    
+		<div class="form-row">
+        <label for="node-input-v5"><i class="fa fa-bolt"></i> Signal voltage</label>
+        <select id="node-input-v5" style="width:300px">
+		    <option value=0>0 - 5 volt</option>
+            <option value=1>0 - 12 volt</option>
+            <option value=2>0 - 24 volt</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pu5"><i class="fa fa-ellipsis-h"></i> Pull up</label>
+        <select id="node-input-pu5" style="width:300px">
+		    <option value=0>No pull up</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pd5"><i class="fa fa-ellipsis-h"></i> Pull down</label>
+        <select id="node-input-pd5" style="width:300px">
+		    <option value=0>No pull down</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div> 
+</fieldset>
+
+<fieldset>
+<legend>Input channel 6</legend> 
+    <div class="form-row">
+        <label for="node-input-input6"><i class="fa fa-sign-in"></i> Signal type</label>
+        <select id="node-input-input6" style="width:300px">
+            <option value=1>Analog input - decimal (12 bit resolution)</option>
+            <option value=2>Analog input - mV (1mV resolution) </option>
+            <option value=3>Digital input - status (high or low)</option>
+            <option value=4>Digital input - frequency(1Hz to 10 kHz)</option>
+            <option value=5>Digital input - Duty cycle low time (0.1% resolution)</option>
+            <option value=6>Digital input - Duty cycle high time (0.1% resolution)</option>
+            <option value=7>Digital input - Rotation speed (rps)</option>
+            <option value=8>Digital input - Pulse counter in combination with channel 5</option>
+        </select>
+    </div>
+    
+		<div class="form-row">
+        <label for="node-input-v6"><i class="fa fa-bolt"></i> Signal voltage</label>
+        <select id="node-input-v6" style="width:300px">
+		    <option value=0>0 - 5 volt</option>
+            <option value=1>0 - 12 volt</option>
+            <option value=2>0 - 24 volt</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pu6"><i class="fa fa-ellipsis-h"></i> Pull up</label>
+        <select id="node-input-pu6" style="width:300px">
+		    <option value=0>No pull up</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pd6"><i class="fa fa-ellipsis-h"></i> Pull down</label>
+        <select id="node-input-pd6" style="width:300px">
+		    <option value=0>No pull down</option>
+            <option value=3>3,2 kilo-ohm</option>
+            <option value=1>4,7 kilo-ohm </option>
+            <option value=2>10 kilo-ohm</option>
+        </select>
+    </div> 
+</fieldset>
+
+</script>
+
+<script type="text/x-red" data-help-name="Input-Module">
+<p>The input module is used to read in a wide range of input signals. During initialization, the settings for each input channel are send to the module. The signal will be converted inside the module according the given settings.</p>
+<h2><strong>Configuration</strong></h2>
+<p><strong><em>Module:</em></strong></p>
+<p>Select the module slot on which the input module is installed to.</p>
+<p><strong><em>Sample time:</em></strong></p>
+<p>Specify the way the signals are retrieved from the input module. If the user selects Trigger by inject, the data from each signal is only retrieved when random data is injected in the node by for example the injection node. This can be meaningful during the design of the system. If the sample time is set to a time base, the node will output all signals with the specified sample time.</p>
+<h3><strong>Input channel n</strong></h3>
+<p>Each channel (1 to 6) can be configured according user demands. Each input channel has the same options.</p>
+<p><strong><em>Signal type:</em></strong></p>
+<p>Here, the user can select the type of input depending on the senor that is connected.</p>
+<ul>
+<li>Analog input &ndash; decimal (12 bit resolution)</li>
+</ul>
+<p>This setting convert the analog voltage applied to the corresponding connector pin to a decimal value from 0 to 4095. The voltage range you select is the range on which this resolution applies.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Analog input &ndash; mV (1 mV resolution)</li>
+</ul>
+<p>The analog input is converted to a readable value with a resolution of 1 mV. If the voltage range is set to&nbsp; 0 &ndash; 12V, a measured voltage of 8,54V is returned as 8540.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Digital input &ndash; status (high or low)</li>
+</ul>
+<p>The specified input channel checks if the status on the pin is high or low.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Digital input &ndash; frequency (1Hz to 10 kHz)</li>
+</ul>
+<p>A frequency between 1 and 1000 Hz applied on the specific input channel is converted to a value between 1 and 10000 with a resolution of 1Hz.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Digital Input &ndash; duty cycle low time (0.1% resolution)</li>
+</ul>
+<p>If a duty cycle signal is applied on the corresponding input pin, the low time percentage is calculated. For example, if the duty cycle signal is 65% (active high) the returned value is 450 (45%). The frequency of the applied signal needs to be between 1Hz and 10kHz.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Digital Input &ndash; duty cycle high time (0.1% resolution)</li>
+</ul>
+<p>If a duty cycle signal is applied on the corresponding input pin, the high time percentage is calculated. For example, if the duty cycle signal is 65% (active high) the returned value is 650 (65%).The frequency of the applied signal needs to be between 1Hz and 10kHz.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Digital Input &ndash; rotation speed (rps) (not yet available)</li>
+</ul>
+<p>The module can calculate a rotation speed from for example an axle. Selecting this feature requires the pulses per rotation to be set. Simply fill in the number of pulses for each rotation and the module returns the calculated rotation speed.</p>
+<p>&nbsp;</p>
+<ul>
+<li>Digital Input &ndash; pulse counter</li>
+</ul>
+<p>For positioning purposes, the module can count the number of pulses. The counter is reset to 0 during start up/ controller reset. If the counter needs to be reset for calibration purposes, the input module reset node can be used. Check the help information from this node for more information.</p>
+<p>The ability&nbsp; to retain the number of counts during reset or reboot will be released in a future update of the module.</p>
+<p>&nbsp;</p>
+<p><em><strong>Signal voltage selection</strong></em></p>
+<p>The module is able to downscale the input voltage to get the highest conversion resolution. Select the range the signal is in between. For example: If the sensor voltage is between 0 and 10V, select the 0 - 12V range for best performance.</p>
+<p>&nbsp;</p>
+<p><em><strong>Pull &ndash; up / pull &ndash; down selection</strong></em></p>
+<p>If required, pull-up and pull down resistors can be enabled on the input signals. 3 values can be selected. 3.2, 4.7 and 10 kilo Ohm.</p>
+<p>&nbsp;</p>
+<h2><strong>Data format</strong></h2>
+<p>The data coming from the module is pushed out of the node in a JSON string format holding 6 key&rsquo;s and 6 values.</p>
+<p><em>{"inputSignaln" : y , &hellip;</em></p>
+<p>The key is: <em>inputSignaln</em></p>
+<p><em>&nbsp;</em><em>(n stands for signal 1 to 6)</em></p>
+<p>The value: <em>y</em></p>
+<p>(y depends on the chosen input type and the actual value of the sensor)</p>
+<p>&nbsp;</p>
+<h2><strong>Example</strong></h2>
+<p>This example shows the data from an input node during operation.</p>
+<p>{"inputSignal1" : 542 ,</p>
+<p>"inputSignal2" : 0 ,</p>
+<p>"inputSignal3" : 2 ,</p>
+<p>"inputSignal4" : 62 ,</p>
+<p>"inputSignal5" : 48900 ,</p>
+<p>"inputSignal6" : 1002 }</p>
+</script>

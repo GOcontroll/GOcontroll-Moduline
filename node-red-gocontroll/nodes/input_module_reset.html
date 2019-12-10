@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Input-Module-Reset',{
+        category: 'GOcontroll',
+        color: '#f76d11',
+        defaults: {
+            name: {value:""},
+			moduleLocation: {value:"0"},
+			channel: {value:""},
+        },
+        inputs:1,
+        outputs:0,
+        icon: "data_in.png",
+		paletteLabel: "Input mod res",
+        label: function() {
+			if(this.name != "")
+			{
+            return this.name;
+			}
+			if(this.moduleLocation == "0" || this.channel == "")
+			{
+            return "Choose module location and channel";
+			}
+		return "Reset module " + this.moduleLocation + " channel " + this.channel;
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Input-Module-Reset">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-moduleLocation"><i class="fa fa-microchip"></i> Module</label>
+        <select id="node-input-moduleLocation" style="width:300px">
+            <option value=1>Module on slot 1</option>
+            <option value=2>Module on slot 2</option>
+            <option value=3>Module on slot 3</option>
+            <option value=4>Module on slot 4</option>
+            <option value=5>Module on slot 5</option>
+            <option value=6>Module on slot 6</option>
+            <option value=7>Module on slot 7</option>
+            <option value=8>Module on slot 8</option>
+        </select>
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-channel"><i class="fa fa-bolt"></i> Reset channel</label>
+        <select id="node-input-channel" style="width:300px">
+		    <option value=1>Pulsecounter on channel 1 in combination with channel 2</option>
+            <option value=3>Pulsecounter on channel 3 in combination with channel 4</option>
+            <option value=5>Pulsecounter on channel 5 in combination with channel 6</option>
+        </select>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="Input-Module-Reset">
+  <p>The input module reset can be used to reset a pulscounter in the input module. If an input channel from the input module is configured as a pulscounter (to read in an encoder signal e.g.), the counter value can be re-assigned. In some cases during encoder callibration it is necessary to 'zero' this counter value.</p>
+<p><strong>Configuration</strong></p>
+<p><em>Module:</em></p>
+<p>Select the module slot on which the input module is installed to.</p>
+<p><em>Reset channel:</em></p>
+<p>Select the specific channel of the input module on which the puls signal is applied.</p>
+<p>&nbsp;</p>
+<p><strong>Control</strong></p>
+<p>By injecting a JSON string into the node, the pulsecounter of the module will take over the injected value.</p>
+<p>&nbsp;</p>
+<p><strong>Data format</strong></p>
+<p><em>{"pulscounterValue" : n }</em></p>
+<p>The key is: <em>pulscounterValue</em></p>
+<p>The value <em>n</em> can be: - 2147483640 to&nbsp;2147483640</p>
+<p>&nbsp;</p>
+<p><strong>Example</strong></p>
+<p>This example will reset the pulscounter value from the specified input channel to -243</p>
+<p><em>{"pulscounterValue" : -243 }</em></p>
+</script>

@@ -1,0 +1,40 @@
+{
+    "name"          : "node-red-gocontroll",
+    "version"       : "0.1.0",
+    "description"   : "Node-RED nodes for GOcontroll controller.",
+    "dependencies"  : {
+	"cron": "1.7.1",
+	"led": "~1.0.0"
+	},
+	
+    "repository" : {
+        "type":"",
+        "url":""
+    },
+	
+	
+    "license": "MIT",
+    "keywords": [ "node-red", "GOcontroll"],
+    
+	
+	"node-red"      : {
+        "nodes"     : {
+            "status_led": "nodes/status_led.js",
+			"contact_relais": "nodes/contact_relais.js",
+			"controller_supply": "nodes/controller_supply.js",
+			"input_module": "nodes/input_module.js",
+			"input_module_reset": "nodes/input_module_reset.js",
+			"output_module": "nodes/output_module.js",
+			"settings": "nodes/settings.js",
+			"gps": "nodes/gps.js"
+        }
+    },
+	
+	
+	
+    "author": {
+        "name": "",
+        "email": "",
+        "url": ""
+    }
+}

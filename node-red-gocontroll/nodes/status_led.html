@@ -1,0 +1,59 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Status-Led',{
+        category: 'GOcontroll',
+        color: '#f76d11',
+        defaults: {
+        name: {value:""},
+	    led: {value:""},
+	    color: {value:""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "light.png",
+        label: function() {
+			if(this.led != "" && this.color != "")
+			{
+			return (this.led + ' ' + this.color);
+			}
+          return "Choose Led";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Status-Led">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-led"><i class="fa fa-lightbulb-o"></i> Led</label>
+        <select id="node-input-led" style="width:204px">
+            <option value="LED 1">Led 1</option>
+            <option value="LED 2">Led 2</option>
+            <option value="LED 3">Led 3</option>
+            <option value="LED 4">Led 4</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-color"><i class="fa fa-pencil"></i> Color</label>
+        <select id="node-input-color" style="width:204px">
+            <option value="Red">Red</option>
+            <option value="Green">Green</option>
+	    <option value="Blue">Blue</option>
+        </select>
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="Status-Led">
+   <p>The status led can be used to give feedback to the end user by controlling the four LED's on top of the GOcontroll Moduline Enclosure.</p>
+<p>The LED's can be switched on and off in three differenet colors, red, green and blue. Select the LED you want to control and choos a color. If a LED is controlled by two nodes which are configured with a different color, both colours will be switched on.</p>
+<p><em>LED:</em></p>
+<p>Choose which LED nneds to be controlled.</p>
+<p><em>Color:</em></p>
+<p>Select the color from de pecified LED.</p>
+<p>&nbsp;</p>
+<p><strong>How to control:</strong></p>
+<p>By simply injecting data into this node, the LED can be switched on and of. A string <strong>on&nbsp;</strong>will turn the LED on while <strong>off</strong> will turn the LED off.</p>
+<p>&nbsp;</p>
+</script>

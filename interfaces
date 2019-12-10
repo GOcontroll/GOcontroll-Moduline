@@ -1,0 +1,35 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+#source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto wlan0
+iface wlan0 inet static
+#hostapd /ap/hostapd.conf
+address 192.168.19.85
+netmask 255.255.255.0
+
+auto can0
+iface can0 inet manual
+	pre-up /sbin/ip link set $IFACE type can bitrate 250000 triple-sampling on loopback off
+#	up /sbin/ifconfig $IFACE up
+#    down /sbin/ifconfig $IFACE down
+	
+auto can1
+iface can1 inet manual
+	pre-up /sbin/ip link set $IFACE type can bitrate 250000 triple-sampling on loopback off
+#	up /sbin/ifconfig $IFACE up
+#    down /sbin/ifconfig $IFACE down
+
+auto wwan0
+iface wwan0 inet manual
+	 pre-up qmi-network-raw /dev/cdc-wdm0 start
+     post-down /usr/local/bin/qmi-network-raw /dev/cdc-wdm0 stop
