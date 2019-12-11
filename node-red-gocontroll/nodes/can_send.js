@@ -5,39 +5,42 @@ module.exports = function(RED) {
 
 	function GOcontrollCanSend(sendNode) { 	 
 	   RED.nodes.createNode(this,sendNode);
-	     
-	/* Parse string from the interface to use */
-	this.canConfig = RED.nodes.getNode(sendNode.canConfig);
 	
-	if(this.canConfig == "CAN 1")
+	var node = this; 
+	
+	/* Parse configuration as string from can config */
+	node.canConfig = RED.nodes.getNode(sendNode.canConfig);
+	
+	/* Parse the CAN ID to send */
+	node.canid = parseInt(sendNode.canid,16);
+	
+	/* Parse the CAN DLC for the number of bytes */
+	node.dlc = parseInt(sendNode.candlc,10)
+	
+	node.canidtype = sendNode.canidtype
+	
+	if(node.canConfig.channel == "CAN 1")
 	{
-	this.channel = "can0";
+	node.channel = "can0";
 	}
-	else if(this.canConfig == "CAN 2")
+	else if(node.canConfig.channel == "CAN 2")
 	{	
-	this.channel = "can1";
+	node.channel = "can1";
 	}
 	else
 	{	
-	this.channel = "can0";
+	node.channel = "can0";
 	}
 	
-	if(sendNode.canidtype == "standard")
+	if(node.canidtype == "standard")
 	{
-		this.extended = false;
+	node.extendedid = false;
 	}
 	else
 	{
-		this.extended = true;
+	node.extendedid = true;
 	}
 	
-	this.canid = parseInt(sendNode.canid,16)
-
-	this.dlc = parseInt(sendNode.candlc,10)
-	
-	var node = this;
-	   
-	   
 	node.warn("CAN send on: "+this.channel);
 	
 	var channel;
@@ -55,11 +58,11 @@ module.exports = function(RED) {
 	   var frame={};
 	   
 	   this.on('input', function (msg) {
-		frame.canid= this.canid;
-		frame.dlc =	this.dlc;  
+		frame.canid= node.canid;
+		frame.dlc =	node.dlc;  
 		   
 		 node.warn("CANID: "+frame.canid);
-		  node.warn("CANDLC: "+frame.dlc);
+		 node.warn("CANDLC: "+frame.dlc);
 		   
 	
 		//frame.canid=parseInt(msg.payload.split("#")[0]);
@@ -70,7 +73,7 @@ module.exports = function(RED) {
 		
 		
 		channel.send({ id: frame.canid,
-		ext: this.extended,
+		ext: node.extendedid,
 		data:frame.data });
 		   
 	   });

@@ -47,8 +47,6 @@ module.exports = function(RED) {
 		var canmsg={};
 		
 		channel.addListener("onMessage",function(frame) {
-			node.warn("CAN receive ID: "+frame.id);
-			node.warn("CAN filter ID: "+node.canid);
 			
 			if(frame.id != node.canid){return;}
 			//canmsg.channel=frame.channel;

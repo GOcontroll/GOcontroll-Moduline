@@ -17,7 +17,23 @@
 			return "Send CAN on: 0x"+this.canid;
 		else
           return "CAN Send";
-        }
+        },
+		/* function executed while done is clicked */
+		oneditprepare: function() {
+		$(this.candlc).trigger("change");
+		
+		$("#node-input-candlc").on("change", function() {
+			var id = $("#node-input-candlc").val();
+			if(id > 0){$("#can-signal-1").show();}else{$("#can-signal-1").hide();}
+			if(id > 1){$("#can-signal-2").show();}else{$("#can-signal-2").hide();}
+			if(id > 2){$("#can-signal-3").show();}else{$("#can-signal-3").hide();}
+			if(id > 3){$("#can-signal-4").show();}else{$("#can-signal-4").hide();}
+			if(id > 4){$("#can-signal-5").show();}else{$("#can-signal-5").hide();}
+			if(id > 5){$("#can-signal-6").show();}else{$("#can-signal-6").hide();}
+			if(id > 6){$("#can-signal-7").show();}else{$("#can-signal-7").hide();}
+			if(id > 7){$("#can-signal-8").show();}else{$("#can-signal-8").hide();}
+          });
+		}
     });
 </script>
 
@@ -25,12 +41,12 @@
 <script type="text/x-red" data-template-name="CAN-Send">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" placeholder="Name" style="width:204px">
     </div>
     
 	<div class="form-row">
         <label for="node-input-canConfig"><i class="fa fa-random"></i> Config</label>
-        <input type="text" id="node-input-canConfig" placeholder="Config">
+        <input type="text" id="node-input-canConfig" placeholder="Config" style="width:204px">
     </div>
  	
 		<div class="form-row">
@@ -43,23 +59,79 @@
 	
 	<div class="form-row">
         <label for="node-input-canid"><i class="icon-tag"></i> CAN ID (0x)</label>
-        <input type="text" id="node-input-canid" placeholder="Can ID">
+        <input type="text" id="node-input-canid" placeholder="Can ID" style="width:204px">
     </div>
 	
 	<div class="form-row">
         <label for="node-input-candlc"><i class="fa fa-lightbulb-o"></i> DLC</label>
         <select id="node-input-candlc" style="width:204px">
-            <option value="1">1 Byte</option>
-            <option value="2">2 Bytes</option>
-			<option value="3">3 Bytes</option>
-		    <option value="4">4 Bytes</option>
-            <option value="5">5 Bytes</option>					
-            <option value="6">6 Bytes</option>
-            <option value="7">7 Bytes</option>
-            <option value="8">8 Bytes</option>
+			<option value=0>0 Signals (RTR)</option>
+            <option value=1>1 Signal</option>
+            <option value=2>2 Signals</option>
+			<option value=3>3 Signals</option>
+		    <option value=4>4 Signals</option>
+            <option value=5>5 Signals</option>					
+            <option value=6>6 Signals</option>
+            <option value=7>7 Signals</option>
+            <option value=8>8 Signals</option>
         </select>
     </div>
+	
 <fieldset>
+<legend>Can data allignment</legend> 
+
+<div class="form-row" id="can-signal-1">
+	Signal 1 key:  <input type="text" class="form-control  " id="node-input-key1" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb1"style="width:25px" placeholder="1" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb1" style="width:25px" placeholder="1" />
+  </div>
+  
+  <div class="form-row" id="can-signal-2">
+	Signal 2 key:  <input type="text" class="form-control" id="node-input-key2" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb2" style="width:25px" placeholder="2" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb2" style="width:25px" placeholder="2" />
+  </div>
+  
+  <div class="form-row" id="can-signal-3">
+	Signal 3 key:  <input type="text" class="form-control" id="node-input-key3" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb3" style="width:25px" placeholder="3" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb3" style="width:25px" placeholder="3" />
+  </div>
+
+  <div class="form-row" id="can-signal-4">
+	Signal 4 key:  <input type="text" class="form-control" id="node-input-key4" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb4" style="width:25px" placeholder="4" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb4" style="width:25px" placeholder="4" />
+  </div>
+
+  <div class="form-row" id="can-signal-5">
+	Signal 5 key:  <input type="text" class="form-control" id="node-input-key5" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb5" style="width:25px" placeholder="5" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb5" style="width:25px" placeholder="5" />
+  </div>
+
+  <div class="form-row" id="can-signal-6">
+	Signal 6 key:  <input type="text" class="form-control" id="node-input-key6" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb6" style="width:25px" placeholder="6" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb6" style="width:25px" placeholder="6" />
+  </div>
+
+  <div class="form-row" id="can-signal-7">
+	Signal 7 key:  <input type="text" class="form-control" id="node-input-key7" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb7" style="width:25px" placeholder="7" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb7" style="width:25px" placeholder="7" />
+  </div>
+
+  <div class="form-row" id="can-signal-8">
+	Signal 8 key:  <input type="text" class="form-control" id="node-input-key8" style="width:100px" placeholder="engineSpeed" />
+    Start byte:  <input type="text" class="form-control " id="node-input-sb8" style="width:25px" placeholder="8" />
+    End byte:  <input type="text" class="form-control  " id="node-input-eb8" style="width:25px" placeholder="8" />
+  </div>  
+  
+</fieldset>
+
+     <img src="/home/dashboardPictures/mtt120.jpg" alt="Simply Easy Learning" width="200"
+         height="80">
 
 <!-- 
     <div class="form-row">
