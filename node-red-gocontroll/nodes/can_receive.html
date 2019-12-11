@@ -1,0 +1,47 @@
+<script type="text/javascript">
+    RED.nodes.registerType('CAN-Receive',{
+	category: 'GOcontroll',     
+    color: '#f76d11',
+        defaults: {    
+					name: {value:"CAN Receive"}, 
+					canConfig: {type:"CAN-Interface",required:true},
+					canid: {value: ""}
+				},
+				inputs:0,  
+				outputs:1,           
+
+        icon: "myicon.png",    
+        label: function() { 
+				if(this.canid != "")
+			return "Receive CAN on: 0x"+this.canid;
+		else
+          return "CAN Receive";
+        }
+	});
+</script>
+
+<script type="text/x-red" data-template-name="CAN-Receive">
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+   <br/>
+    <div class="form-row">
+        <label for="node-input-canConfig"><i class="fa fa-random"></i> Config</label>
+        <input type="text" id="node-input-canConfig" placeholder="Config">
+    </div>
+
+	<div class="form-row">
+        <label for="node-input-canid"><i class="icon-tag"></i> CAN ID (0x)</label>
+        <input type="text" id="node-input-canid" placeholder="Can ID">
+    </div>
+	
+
+</script>
+
+<script type="text/x-red" data-help-name="candump">
+   <p>Simple node to listen for can frames on specified channels.</p>
+   <p>Outputs an object called <b>msg</b> containing <b>msg.channel</b>,<b>msg.data</b> and
+   <b>msg.payload</b> in the form of canid#data.</p>
+</script>
