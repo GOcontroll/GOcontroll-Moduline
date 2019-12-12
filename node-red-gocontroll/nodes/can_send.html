@@ -7,7 +7,33 @@
 		canConfig: {type:"CAN-Interface",required:true},
 		canidtype: {value:"standard"},
 		canid: {value:""},
-		candlc: {value:"8"}
+		send: {value: 0},
+		signals: {value: 8},
+		key1 : {value : ""},
+		key2 : {value : ""},
+		key3 : {value : ""},
+		key4 : {value : ""},
+		key5 : {value : ""},
+		key6 : {value : ""},
+		key7 : {value : ""},
+		key8 : {value : ""},
+		sb1 : {value : ""},
+		eb1: {value : ""},
+		sb2 : {value : ""},
+		eb2: {value : ""},
+		sb3 : {value : ""},
+		eb3: {value : ""},
+		sb4 : {value : ""},
+		eb4: {value : ""},
+		sb5 : {value : ""},
+		eb5: {value : ""},
+		sb6 : {value : ""},
+		eb6: {value : ""},
+		sb7 : {value : ""},
+		eb7: {value : ""},
+		sb8 : {value : ""},
+		eb8: {value : ""},
+		dlc: {value : ""}
         },
         inputs:1,
         outputs:0,
@@ -20,11 +46,12 @@
         },
 		/* function executed while done is clicked */
 		oneditprepare: function() {
-		$(this.candlc).trigger("change");
+		$(this.signals).trigger("change");
 		
-		$("#node-input-candlc").on("change", function() {
-			var id = $("#node-input-candlc").val();
+		$("#node-input-signals").on("change", function() {
+			var id = $("#node-input-signals").val();
 			if(id > 0){$("#can-signal-1").show();}else{$("#can-signal-1").hide();}
+			if(id > 0){$("#data-alignment").show();}else{$("#data-alignment").hide();}
 			if(id > 1){$("#can-signal-2").show();}else{$("#can-signal-2").hide();}
 			if(id > 2){$("#can-signal-3").show();}else{$("#can-signal-3").hide();}
 			if(id > 3){$("#can-signal-4").show();}else{$("#can-signal-4").hide();}
@@ -32,6 +59,7 @@
 			if(id > 5){$("#can-signal-6").show();}else{$("#can-signal-6").hide();}
 			if(id > 6){$("#can-signal-7").show();}else{$("#can-signal-7").hide();}
 			if(id > 7){$("#can-signal-8").show();}else{$("#can-signal-8").hide();}
+		//	$("#node-input-dlc").value("2");}
           });
 		}
     });
@@ -50,7 +78,7 @@
     </div>
  	
 		<div class="form-row">
-        <label for="node-input-canidtype"><i class="fa fa-lightbulb-o"></i> ID Type</label>
+        <label for="node-input-canidtype"><i class="fa fa-id-card"></i> ID Type</label>
         <select id="node-input-canidtype" style="width:204px">
             <option value="standard">Standard Identifier (11 bits)</option>
             <option value="extended">Extended identifier (29 bits)</option>
@@ -58,13 +86,22 @@
     </div>
 	
 	<div class="form-row">
-        <label for="node-input-canid"><i class="icon-tag"></i> CAN ID (0x)</label>
+        <label for="node-input-canid"><i class="fa fa-code"></i> CAN ID (0x)</label>
         <input type="text" id="node-input-canid" placeholder="Can ID" style="width:204px">
     </div>
 	
 	<div class="form-row">
-        <label for="node-input-candlc"><i class="fa fa-lightbulb-o"></i> DLC</label>
-        <select id="node-input-candlc" style="width:204px">
+        <label for="node-input-send"><i class="fa fa-bolt"></i> Send Trigger</label>
+        <select id="node-input-send" style="width:204px">
+			<option value=0>Send on "send" command</option>
+            <option value=1>Send on changing signal</option>
+            <option value=2>Send on changing signal or "send" command</option>
+        </select>
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-signals"><i class="fa fa-list-ol"></i> Signals</label>
+        <select id="node-input-signals" style="width:204px">
 			<option value=0>0 Signals (RTR)</option>
             <option value=1>1 Signal</option>
             <option value=2>2 Signals</option>
@@ -78,8 +115,10 @@
     </div>
 	
 <fieldset>
-<legend>Can data allignment</legend> 
-
+<div class="form-row" id="data-alignment">
+<legend>CAN data alignment</legend> 
+</div>
+ 
 <div class="form-row" id="can-signal-1">
 	Signal 1 key:  <input type="text" class="form-control  " id="node-input-key1" style="width:100px" placeholder="engineSpeed" />
     Start byte:  <input type="text" class="form-control " id="node-input-sb1"style="width:25px" placeholder="1" />
@@ -129,23 +168,13 @@
   </div>  
   
 </fieldset>
-
-     <img src="/home/dashboardPictures/mtt120.jpg" alt="Simply Easy Learning" width="200"
-         height="80">
-
-<!-- 
-    <div class="form-row">
-        <label for="node-input-speed"><i class="fa fa-pencil"></i> Speed</label>
-        <select id="node-input-speed" style="width:204px">
-            <option value="Red">Red</option>
-            <option value="Green">Green</option>
-	    <option value="Blue">Blue</option>
-        </select>
-    </div>
-
+<!--
+  <div class="form-row">
+	Calculated Data Length Code (DLC):  <input type="text" class="form-control" id="node-input-dlc" style="width:100px" value="0"/> Bytes
+  </div>  	
 -->
-	
 
+	
 </script>
 
 
