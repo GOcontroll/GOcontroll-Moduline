@@ -136,7 +136,7 @@ module.exports = function(RED) {
 						{
 							if((eb[s]-sb[s]) == 1)
 							{
-							value[s] = frame.data.readUint16BE(sb[s]-1);
+							value[s] = frame.data.readUInt16BE(sb[s]-1);
 							}
 							if((eb[s]-sb[s]) == 3)
 							{
