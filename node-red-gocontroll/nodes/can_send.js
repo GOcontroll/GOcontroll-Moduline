@@ -9,7 +9,7 @@ module.exports = function(RED) {
 	var node = this; 
 	
 	/* Parse configuration as string from can config */
-	node.canConfig = RED.nodes.getNode(sendNode.canConfig);
+	const canConfig = RED.nodes.getNode(sendNode.canConfig);
 	
 	/* Parse the CAN ID to send */
 	const canid = parseInt(sendNode.canid,16);
@@ -95,138 +95,118 @@ module.exports = function(RED) {
 		}
 		if(key[i] == "")
 		{
-		node.error("Key for signal"+i+"not given");		
+		node.error("Key for signal "+i+" not given");		
 		}
 	}
 	
+	/* Extract the right CAN interface */
+	var canInterface;
+	if(canConfig.channel == "CAN 1"){
+	canInterface = "can0";}
+	else if(canConfig.channel == "CAN 2"){	
+	canInterface = "can1";}
+	else{	
+	canInterface = "can0";}
 	
+	/* extract type of CAN identifier */
+	var extendedid;
+	if(canidtype == "standard"){
+	extendedid = false;}
+	else{
+	extendedid = true;}
 	
-
-	node.warn("NR of bytes: "+ dlc);
-	
-
-	
-	if(node.canConfig.channel == "CAN 1")
-	{
-	node.channel = "can0";
-	}
-	else if(node.canConfig.channel == "CAN 2")
-	{	
-	node.channel = "can1";
-	}
-	else
-	{	
-	node.channel = "can0";
-	}
-	
-	if(node.canidtype == "standard")
-	{
-	node.extendedid = false;
-	}
-	else
-	{
-	node.extendedid = true;
-	}
-	
-	node.warn("CAN send on: "+this.channel);
+	node.warn("CAN send on: "+canInterface);
 	
 	/* Create channel to communicate on */
 	var channel;
-	
-	/* Create sendbuffer to contruct the CAN data Message */
-	
-
-	
 	try {
-		channel = can.createRawChannel(""+this.channel, true);
+		channel = can.createRawChannel(""+canInterface, true);
 	}catch(ex) { 
-		node.error("CAN not found:"+this.channel);		
+		node.error("CAN not found:"+canInterface);		
 	} 
 	
-	
+	/* Create sendbuffer to contruct the CAN data Message */
 	var frame={};
 	frame.canid = canid;
 	frame.data = Buffer.alloc(dlc); 
 
+	/* Create new data flag */
 	var newData = 0;
 
-	
 	if(channel)
 	{	
 	channel.start();
-	
-	   
-	   
+		   
 	   this.on('input', function (msg) {
 		   
 		if(dlc > 8){
 			node.error("Calculated DLC to high check data alignment!");		
 			return;}
 
-	for(var s=0; s<signals; s++)
-	{
-		/* check if property is available in JSON string */
-		if(msg.payload[key[s]])
-		{
-			/* Exit if signal value is not changed */
-			if(value[s] == msg.payload[key[s]]){return;}
-			
-			value[s] = msg.payload[key[s]];
-			
-			/* Check if message uses single byte */
-			if((sb[s]-eb[s]) == 0)
+			for(var s=0; s<signals; s++)
 			{
-			if(msg.payload[key[s]] >  255){msg.payload[key[s]] = 255;}
-			if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-			frame.data.writeUInt8(msg.payload[key[s]],sb[s]-1);	
-			}
-			else
-			{
-				/* Check endianess */
-				/* In case big endian */
-				if(sb[s]<eb[s])
+				/* check if property is available in JSON string */
+				if(msg.payload[key[s]])
 				{
-					if((eb[s]-sb[s]) == 1)
+					/* Exit if signal value is not changed */
+					if(value[s] == msg.payload[key[s]]){return;}
+					
+					value[s] = msg.payload[key[s]];
+					
+					/* Check if message uses single byte */
+					if((sb[s]-eb[s]) == 0)
 					{
-					if(msg.payload[key[s]] >  65535){msg.payload[key[s]] = 65535;}
+					if(msg.payload[key[s]] >  255){msg.payload[key[s]] = 255;}
 					if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-					frame.data.writeUInt16BE(msg.payload[key[s]],sb[s]-1);
+					frame.data.writeUInt8(msg.payload[key[s]],sb[s]-1);	
 					}
-					if((eb[s]-sb[s]) == 3)
+					else
 					{
-					if(msg.payload[key[s]] >  4294967295){msg.payload[key[s]] = 4294967295;}
-					if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-					frame.data.writeUInt32BE(msg.payload[key[s]],sb[s]-1);	
+						/* Check endianess */
+						/* In case big endian */
+						if(sb[s]<eb[s])
+						{
+							if((eb[s]-sb[s]) == 1)
+							{
+							if(msg.payload[key[s]] >  65535){msg.payload[key[s]] = 65535;}
+							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
+							frame.data.writeUInt16BE(msg.payload[key[s]],sb[s]-1);
+							}
+							if((eb[s]-sb[s]) == 3)
+							{
+							if(msg.payload[key[s]] >  4294967295){msg.payload[key[s]] = 4294967295;}
+							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
+							frame.data.writeUInt32BE(msg.payload[key[s]],sb[s]-1);	
+							}
+						}
+						/* In case little endian */
+						else
+						{
+							if((sb[s]-eb[s]) == 1)
+							{
+							if(msg.payload[key[s]] >  65535){msg.payload[key[s]] = 65535;}
+							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
+							frame.data.writeUInt16LE(msg.payload[key[s]],eb[s]-1);
+							}
+							if((sb[s]-eb[s]) == 3)
+							{
+							if(msg.payload[key[s]] >  4294967295){msg.payload[key[s]] = 4294967295;}
+							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
+							frame.data.writeUInt32LE(msg.payload[key[s]],eb[s]-1);	
+							}	
+						}
 					}
+				/* At least one signal contains ne data */
+				newData = 1;
 				}
-				/* In case little endian */
-				else
-				{
-					if((sb[s]-eb[s]) == 1)
-					{
-					if(msg.payload[key[s]] >  65535){msg.payload[key[s]] = 65535;}
-					if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-					frame.data.writeUInt16LE(msg.payload[key[s]],eb[s]-1);
-					}
-					if((sb[s]-eb[s]) == 3)
-					{
-					if(msg.payload[key[s]] >  4294967295){msg.payload[key[s]] = 4294967295;}
-					if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-					frame.data.writeUInt32LE(msg.payload[key[s]],eb[s]-1);	
-					}	
-				}
-			}
-		/* At least one signal contains ne data */
-		newData = 1;
-		}
-	}	
+			}	
 		
 		
 		if((msg.payload == "send" && (sendTrigger == 0 || sendTrigger == 2))||((sendTrigger == 1 || sendTrigger == 2) && newData == 1))
 		{
 		newData = 0;
 		channel.send({ id: frame.canid,
-		ext: false,
+		ext: extendedid,
 		data: frame.data });
 		return;
 		}
