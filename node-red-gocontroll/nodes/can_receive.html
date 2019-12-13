@@ -35,7 +35,7 @@
 				inputs:0,  
 				outputs:1,           
 
-        icon: "myicon.png",    
+        icon: "inject.png",    
         label: function() { 
 				if(this.canid != "")
 			return "Receive CAN on: 0x"+this.canid;
@@ -77,7 +77,7 @@
     </div>
 
 	<div class="form-row">
-        <label for="node-input-canid"><i class="icon-tag"></i> CAN ID (0x)</label>
+        <label for="node-input-canid"><i class="fa fa-code"></i>CAN ID (0x)</label>
         <input type="text" id="node-input-canid" placeholder="Can ID">
     </div>
 	
@@ -157,7 +157,22 @@
 
 
 <script type="text/x-red" data-help-name="CAN-Receive">
-   <p>Simple node to listen for can frames on specified channels.</p>
-   <p>Outputs an object called <b>msg</b> containing <b>msg.channel</b>,<b>msg.data</b> and
-   <b>msg.payload</b> in the form of canid#data.</p>
+<p>The CAN receive node receives a CAN message from on of the two onboard CAN busses. The node will convert the messages to a JSON string with corresponding key's for the value.</p>
+<h2><strong>How to configure:</strong></h2>
+<p><strong>Config:</strong></p>
+<p>Here you select the onboard CAN bus from the controller. If used the first time, also the speed of the CAN bus needs to be set.</p>
+<p>The two CAN busses are connected to the C connecter (middle).</p>
+<p>CAN 1 Low: pin 14&nbsp;</p>
+<p>CAN 1 High: pin 15&nbsp;</p>
+<p>CAN 2 Low: pin 20&nbsp;</p>
+<p>CAN 2 High: pin 21&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong>CAN ID:&nbsp;</strong></p>
+<p>The CAN ID needs to be given in hexadecimal format and can be either a 11 bit (standard) or 29 bit (extended) identifier. The node will only listen for incoming message with this specific identifier.</p>
+<p>&nbsp;</p>
+<p><strong>Signals:&nbsp;</strong></p>
+<p>Here can be specified which signals are received by CAN. This improves the readability and the traceability from messages in a flow.</p>
+<p>Example:</p>
+<p>A CAN message contains the vehicle engine speed (uint16) on data byte 5 and 6. For readability, a key can be provided in the form of <em>engineSpeed</em>. The start byte of the value is <em>5</em> and the end byte will be <em>6</em>. The node will retrieve data byte 5 and 6, convert them to a (uint16) and push the value out of the node in form of a JSON object <em>{"engineSpeed": 2560}</em>&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
 </script>
