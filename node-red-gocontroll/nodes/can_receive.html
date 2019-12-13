@@ -4,7 +4,7 @@
     color: '#f76d11',
         defaults: {    
 					name: {value:"CAN Receive"}, 
-					canConfig: {type:"CAN-Interface",required:true},
+					caninterface: {value: "CAN 1"},
 					canid: {value: ""},
 					signals: {value: 8},
 					key1 : {value : ""},
@@ -37,10 +37,10 @@
 
         icon: "inject.png",    
         label: function() { 
-				if(this.canid != "")
-			return "Receive CAN on: 0x"+this.canid;
+				if(this.canid != "" && this.caninterface != null)
+			return "Receive 0x"+this.canid+ " on " + this.caninterface;
 		else
-          return "CAN Receive";
+          return "Configure CAN Receive!";
         },
 		/* function executed while done is clicked */
 		oneditprepare: function() {
@@ -70,11 +70,14 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
-   <br/>
-    <div class="form-row">
-        <label for="node-input-canConfig"><i class="fa fa-random"></i> Config</label>
-        <input type="text" id="node-input-canConfig" placeholder="Config">
-    </div>
+  
+		<div class="form-row">
+        <label for="node-input-caninterface"><i class="fa fa-plug"></i> Interface</label>
+        <select id="node-input-caninterface" style="width:204px">
+            <option value="CAN 1">CAN 1</option>
+            <option value="CAN 2">CAN 2</option>
+        </select>
+ 	</div>
 
 	<div class="form-row">
         <label for="node-input-canid"><i class="fa fa-code"></i>CAN ID (0x)</label>

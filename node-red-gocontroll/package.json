@@ -1,14 +1,15 @@
 {
     "name": "node-red-gocontroll",
-    "version": "0.1.0",
+    "version": "0.0.1",
     "description": "Node-RED nodes for GOcontroll Moduline III",
     "dependencies": {
         "cron": "1.7.1",
         "i2c-bus": "^5.1.0",
         "led": "~1.0.0",
         "serialport": "^8.0.5",
-        "spi-device": "^3.0.0",
-		"socketcan": "^2.6.0"
+        "shelljs": "^0.8.3",
+        "socketcan": "^2.6.0",
+        "spi-device": "^3.0.0"
     },
     "repository": {
         "type": "",
@@ -29,9 +30,8 @@
             "output_module": "nodes/output_module.js",
             "settings": "nodes/settings.js",
             "gps": "nodes/gps.js",
-			"can_receive": "nodes/can_receive.js",
-			"can_send": "nodes/can_send.js",
-			"can_interface": "nodes/can_interface.js"
+            "can_receive": "nodes/can_receive.js",
+            "can_send": "nodes/can_send.js"
         }
     },
     "author": {

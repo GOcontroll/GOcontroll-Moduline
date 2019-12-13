@@ -4,11 +4,11 @@
         color: '#f76d11',
         defaults: {
         name: {value:"CAN Send"},
-		canConfig: {type:"CAN-Interface",required:true},
 		canidtype: {value:"standard"},
 		canid: {value:""},
 		send: {value: 0},
 		signals: {value: 8},
+		caninterface: {value: "CAN 1"},
 		key1 : {value : ""},
 		key2 : {value : ""},
 		key3 : {value : ""},
@@ -39,10 +39,10 @@
         outputs:0,
         icon: "inject.png",
         label: function() {
-		if(this.canid != "")
-			return "Send CAN on: 0x"+this.canid;
+		if(this.canid != "" && this.caninterface != null)
+			return "Send 0x"+this.canid + " on " + this.caninterface;
 		else
-          return "CAN Send";
+          return "Configure CAN Send!";
         },
 		/* function executed while done is clicked */
 		oneditprepare: function() {
@@ -72,11 +72,14 @@
         <input type="text" id="node-input-name" placeholder="Name" style="width:204px">
     </div>
     
-	<div class="form-row">
-        <label for="node-input-canConfig"><i class="fa fa-random"></i> Config</label>
-        <input type="text" id="node-input-canConfig" placeholder="Config" style="width:204px">
-    </div>
- 	
+		<div class="form-row">
+        <label for="node-input-caninterface"><i class="fa fa-plug"></i> Interface</label>
+        <select id="node-input-caninterface" style="width:204px">
+            <option value="CAN 1">CAN 1</option>
+            <option value="CAN 1">CAN 2</option>
+        </select>
+ 	</div>
+	
 		<div class="form-row">
         <label for="node-input-canidtype"><i class="fa fa-id-card"></i> ID Type</label>
         <select id="node-input-canidtype" style="width:204px">

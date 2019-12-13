@@ -9,7 +9,7 @@ module.exports = function(RED) {
 	var node = this; 
 	
 	/* Parse configuration as string from can config */
-	const canConfig = RED.nodes.getNode(sendNode.canConfig);
+	const canChannel = sendNode.caninterface;  
 	
 	/* Parse the CAN ID to send */
 	const canid = parseInt(sendNode.canid,16);
@@ -99,14 +99,9 @@ module.exports = function(RED) {
 		}
 	}
 	
-	/* Extract the right CAN interface */
-	var canInterface;
-	if(canConfig.channel == "CAN 1"){
-	canInterface = "can0";}
-	else if(canConfig.channel == "CAN 2"){	
-	canInterface = "can1";}
-	else{	
-	canInterface = "can0";}
+	var canInterface = "can0";
+	if(canChannel == "CAN 1"){canInterface = "can0";}
+	else if (canChannel == "CAN 2"){caninterface = "can1";}
 	
 	/* extract type of CAN identifier */
 	var extendedid;

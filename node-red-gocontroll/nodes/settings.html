@@ -6,10 +6,12 @@
             name: {value:"Settings"},
 			ssid: {value:"GOcontroll-AP"},
 			pass: {value:"Moduline3"},
+			speedc1: { value:"250000"},
+			speedc2: { value:"250000"}
         },
         inputs:0,
         outputs:0,
-        icon: "settings.png",
+        icon: "font-awesome/fa-cogs",
         label: function() {
             return this.name||"Settings";
         }
@@ -35,7 +37,34 @@
         <label for="node-input-pass"><i class="fa fa-key"></i> Password</label>
         <input type="text" id="node-input-pass" placeholder="Password">
     </div>	
+</fieldset>
 
+<fieldset>
+<legend>CAN communication settings</legend> 
+
+    <div class="form-row">
+    <label for="node-input-speedc1"><i class="fa fa-random"></i> CAN 1 Speed</label>
+	<select type="text" id="node-input-speedc1">
+		<option value="125000">125 kB/s</option>
+		<option value="250000">250 kB/s</option>
+		<option value="500000">500 kB/s</option>
+		<option value="1000000">1 MB/s</option>
+	</select>
+	  </div>
+	
+	<div class="form-row">
+    <label for="node-input-speedc2"><i class="fa fa-random"></i> CAN 2 Speed</label>
+	<select type="text" id="node-input-speedc2">
+		<option value="125000">125 kB/s</option>
+		<option value="250000">250 kB/s</option>
+		<option value="500000">500 kB/s</option>
+		<option value="1000000">1 MB/s</option>
+	</select>
+	 </div>
+	
+
+</fieldset>
+	
 	
 </script>
 

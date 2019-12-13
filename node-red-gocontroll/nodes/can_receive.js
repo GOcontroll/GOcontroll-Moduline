@@ -10,7 +10,7 @@ module.exports = function(RED) {
 	var node = this; 
 	
 	/* Parse configuration as string from can config */
-	const canConfig = RED.nodes.getNode(receiveNode.canConfig);  
+	const canChannel = receiveNode.caninterface;  
 	   
 	/* Parse the CAN ID to filter on */
 	const canid = parseInt(receiveNode.canid,16);
@@ -54,17 +54,11 @@ module.exports = function(RED) {
 	
 	/* Make variabele to store values in */
 	var value = {};   
-   
-	/* Extract the right CAN interface */
-	var canInterface;
-	if(canConfig.channel == "CAN 1"){
-	canInterface = "can0";}
-	else if(canConfig.channel == "CAN 2"){	
-	canInterface = "can1";}
-	else{	
-	canInterface = "can0";}
-	
-
+  
+  	var canInterface = "can0";
+	if(canChannel == "CAN 1"){canInterface = "can0";}
+	else if (canChannel == "CAN 2"){caninterface = "can1";}
+  
 	/* Create channel to communicate on */
 	var channel;
 	try {
