@@ -99,7 +99,6 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd.conf /etc/hostapd
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd /etc/default
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/dnsmasq.conf /etc
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/settings.js /root/.node-red
-cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-contrib-canbus/ /usr
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/qmi-network-raw /usr/local/bin
 
@@ -117,6 +116,10 @@ echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
 cd ~/.node-red
 
 echo -e "${YELLOW}Install local node packages ${NORMAL}"
+
+# It seems that NPM not always installs AND builds the dependencies again. It is important to delete
+# the node modules first and then also delete the package.lock.json file!
+# https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
 
 npm install /usr/node-red-gocontroll
 
