@@ -37,7 +37,7 @@
         },
         inputs:1,
         outputs:0,
-        icon: "light.png",
+        icon: "inject.png",
         label: function() {
 		if(this.canid != "")
 			return "Send CAN on: 0x"+this.canid;
@@ -180,14 +180,40 @@
 
 
 <script type="text/x-red" data-help-name="CAN-Send">
-   <p>The status led can be used to give feedback to the end user by controlling the four LED's on top of the GOcontroll Moduline Enclosure.</p>
-<p>The LED's can be switched on and off in three differenet colors, red, green and blue. Select the LED you want to control and choos a color. If a LED is controlled by two nodes which are configured with a different color, both colours will be switched on.</p>
-<p><em>LED:</em></p>
-<p>Choose which LED nneds to be controlled.</p>
-<p><em>Color:</em></p>
-<p>Select the color from de pecified LED.</p>
+<p>The CAN send node send a CAN message from on of the two onboard CAN busses. The node wil convert the incoming JSON object to a corresponding CAN message</p>
+<h2><strong>How to configure:</strong></h2>
+<p><strong>Config:</strong></p>
+<p>Here you select the onboard CAN bus from the controller. If used the first time, also the speed of the CAN bus needs to be set.</p>
+<p>The two CAN busses are connected to the C connecter (middle).</p>
+<p>CAN 1 Low: pin 14&nbsp;</p>
+<p>CAN 1 High: pin 15&nbsp;</p>
+<p>CAN 2 Low: pin 20&nbsp;</p>
+<p>CAN 2 High: pin 21&nbsp;&nbsp;</p>
 <p>&nbsp;</p>
-<p><strong>How to control:</strong></p>
-<p>By simply injecting data into this node, the LED can be switched on and of. A string <strong>on&nbsp;</strong>will turn the LED on while <strong>off</strong> will turn the LED off.</p>
+<p><strong>ID type:&nbsp;</strong></p>
+<p>The node needs to know what type of CAN message to send. Her youo specify the standard identifier (11 bits) or an extended identifier (29 bits).</p>
+<p><strong>CAN ID:&nbsp;</strong></p>
+<p>The CAN ID needs to be given in hexadecimal format and can be either a 11 bit (standard) or 29 bit (extended) identifier. This identifier will be used as CAN message identifier</p>
+<p><strong>Send Trigger:</strong></p>
+<p>When the CAN message is send by the node, is determined with the trigger. If the message needs to be send with an interval, simply connect an injection node configured with time interval. The outputstring of this node needs to be <em>send</em>.</p>
+<p>Signals can also be send when the value is changed. This prevents the CAN bus from overload.</p>
+<p><strong>Signals:&nbsp;</strong></p>
+<p>Here can be specified which signals are injected into the CAN send node. Data is injected by JSON objects. If a key from the injected JSON string matches one with the configured signal keys, the value of this key is converted to the specified data bytes (start en end byte) from the CAN message. The data length code (DLC) is automatically calculated.</p>
+<p>Example:</p>
+<p>A JSON object with several keys and values are injected into the CAN Send node:</p>
+<p>{"vehicleSpeed" : 84, "engineSpeed" : 2560, "engineTemperature": 89}&nbsp;</p>
+<p>We only want to send the vehicle speed and the engine speed so we configure the CAN Send node signal as follow:</p>
+<div class="form-row">
+ Signal 1 key: <input  style="width: 100px;" type="text" value="engineSpeed" /> 
+  Start byte: <input  style="width: 25px;" type="text" value="1" />
+  End byte: <input  style="width: 25px;" type="text" value="2" /></div>
+<div class="form-row">&nbsp;</div>
+<div class="form-row">
+Signal 1 key: <input  style="width: 100px;" type="text" value="vehicleSpeed" /> 
+Start byte: <input   style="width: 25px;" type="text" value="3" /> 
+End byte: <input style="width: 25px;" type="text" value="3" />
+</div>
+<div class="form-row">&nbsp;</div>
+<div class="form-row">The node will extract these two key's from the JSON object and put it into the first three bytes of the CAN message. Depending on the Send Trigger setting, the message will be send on the send command or if at least one value from a key is changed.&nbsp;</div>
 <p>&nbsp;</p>
 </script>
