@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# url to bash this script:
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install)
+
+
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
