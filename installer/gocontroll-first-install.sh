@@ -3,9 +3,8 @@
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
-
-#call to this script:
-#bash <(curl -sL https://github.com/Rick-GO/GOcontroll-Moduline-III/blob/master/installer/gocontroll-first-install)
+# call to this script:
+# curl -s https://github.com/Rick-GO/GOcontroll-Moduline-III/blob/master/installer/gocontroll-first-install.sh >gocontroll-first-install.sh
 
 # before system update start, update repositories
 echo -e "${YELLOW} Update repositories before we do a system update ${NORMAL}"
