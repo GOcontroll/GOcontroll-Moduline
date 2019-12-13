@@ -3,8 +3,6 @@
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
-
-# before system update start, update repositories
 echo -e "${YELLOW} Update repositories before we do a system update ${NORMAL}"
 apt-get update
 
