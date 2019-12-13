@@ -191,14 +191,14 @@
 <p>CAN 2 High: pin 21&nbsp;&nbsp;</p>
 <p>&nbsp;</p>
 <p><strong>ID type:&nbsp;</strong></p>
-<p>The node needs to know what type of CAN message to send. Her youo specify the standard identifier (11 bits) or an extended identifier (29 bits).</p>
+<p>The node needs to know what type of CAN message to send. Here you specify the standard identifier (11 bits) or an extended identifier (29 bits).</p>
 <p><strong>CAN ID:&nbsp;</strong></p>
 <p>The CAN ID needs to be given in hexadecimal format and can be either a 11 bit (standard) or 29 bit (extended) identifier. This identifier will be used as CAN message identifier</p>
 <p><strong>Send Trigger:</strong></p>
-<p>When the CAN message is send by the node, is determined with the trigger. If the message needs to be send with an interval, simply connect an injection node configured with time interval. The outputstring of this node needs to be <em>send</em>.</p>
+<p>When the CAN message is send by the node, is determined with the trigger. If the message needs to be send with an interval, simply connect an injection node configured with time interval. The output string of this node needs to be <em>send</em>.</p>
 <p>Signals can also be send when the value is changed. This prevents the CAN bus from overload.</p>
 <p><strong>Signals:&nbsp;</strong></p>
-<p>Here can be specified which signals are injected into the CAN send node. Data is injected by JSON objects. If a key from the injected JSON string matches one with the configured signal keys, the value of this key is converted to the specified data bytes (start en end byte) from the CAN message. The data length code (DLC) is automatically calculated.</p>
+<p>Here can be specified which signals are injected into the CAN send node. Data is injected by JSON objects. If a key from the injected JSON string matches one with the configured signal keys, the value of this key is converted to the specified data bytes (start and end byte) from the CAN message. The data length code (DLC) is automatically calculated.</p>
 <p>Example:</p>
 <p>A JSON object with several keys and values are injected into the CAN Send node:</p>
 <p>{"vehicleSpeed" : 84, "engineSpeed" : 2560, "engineTemperature": 89}&nbsp;</p>
