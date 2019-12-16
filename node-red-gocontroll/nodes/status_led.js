@@ -4,61 +4,70 @@ module.exports = function(RED) {
 	function GOcontrollStatusLed(config) {
 	   RED.nodes.createNode(this,config);
 
-	this.led = config.led;
-	this.color = config.color;
-	
+	const ledConfig = config.led;
+
 	var ledName = 'Status1';
-	var ledColor = '-b'; 
-	
+
 	var Led = require('led');
 	
-	if(this.led === 'LED 1')
+	if(ledConfig === 'LED 1')
 	{
-	ledName = 'Status1'	
+	ledName = 'Status1';
 	}
-	if(this.led === 'LED 2')
+	if(ledConfig === 'LED 2')
 	{
-	ledName = 'Status2'	
+	ledName = 'Status2'	;
 	}
-	if(this.led === 'LED 3')
+	if(ledConfig === 'LED 3')
 	{
-	ledName = 'Status3'	
+	ledName = 'Status3'	;
 	}
-	if(this.led === 'LED 4')
+	if(ledConfig === 'LED 4')
 	{
-	ledName = 'Status4'	
+	ledName = 'Status4';
 	}
-	
-	if(this.color === 'Red')
-	{
-	ledColor = '-r'	
-	}
-	if(this.color === 'Green')
-	{
-	ledColor = '-g'	
-	}
-	if(this.color === 'Blue')
-	{
-	ledColor = '-b'	
-	}	
-	
-	
-	
-	
-	const led = new Led(ledName + ledColor);
+
+
+	const ledRed = new Led(ledName + '-r');
+	const ledGreen = new Led(ledName + '-g');
+	const ledBlue = new Led(ledName + '-b');
 	
 	this.on('input', function(msg) {
+		
+		
+	/* Control Red LED */
+	if(msg.payload["red"] == 1)
+	{
+		ledRed.on();
+	}
+	else if (msg.payload["red"] == 0)
+	{
+		ledRed.off();
+	}
 
-	if(msg.payload == 'on' || msg.payload == 1)
+
+	/* Control Green LED */
+	if(msg.payload["green"] == 1)
 	{
-	led.on();
+		ledGreen.on();
 	}
-	else
+	else if(msg.payload["green"] == 0)
 	{
-	led.off();
+		ledGreen.off();
 	}
-            msg.payload = this.color;
-            this.send(msg);
+	
+	
+	/* Control Blue LED */
+	if(msg.payload["blue"] == 1)
+	{
+		ledBlue.on();
+	}
+	else if(msg.payload["blue"] == 0)
+	{
+		ledBlue.off();
+	}
+
+
         });
     }
 	RED.nodes.registerType("Status-Led",GOcontrollStatusLed);

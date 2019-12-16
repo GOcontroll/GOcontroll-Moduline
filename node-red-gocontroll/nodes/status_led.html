@@ -5,15 +5,14 @@
         defaults: {
         name: {value:""},
 	    led: {value:""},
-	    color: {value:""}
         },
         inputs:1,
         outputs:0,
         icon: "font-awesome/fa-lightbulb-o",
         label: function() {
-			if(this.led != "" && this.color != "")
+			if(this.led != "")
 			{
-			return (this.led + ' ' + this.color);
+			return (this.led);
 			}
           return "Choose Led";
         }
@@ -32,14 +31,6 @@
             <option value="LED 2">Led 2</option>
             <option value="LED 3">Led 3</option>
             <option value="LED 4">Led 4</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-color"><i class="fa fa-pencil"></i> Color</label>
-        <select id="node-input-color" style="width:204px">
-            <option value="Red">Red</option>
-            <option value="Green">Green</option>
-	    <option value="Blue">Blue</option>
         </select>
     </div>
 
