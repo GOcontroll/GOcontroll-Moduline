@@ -37,7 +37,17 @@ module.exports = function(RED) {
 		this.v6 = config.v6;
 		this.pu6 = config.pu6;
 		this.pd6 = config.pd6;
-        var node = this;
+        
+		const key1 = config.key1;
+		const key2 = config.key2;
+		const key3 = config.key3;
+		const key4 = config.key4;
+		const key5 = config.key5;
+		const key6 = config.key6;
+		
+		
+		var node = this;
+		
 		
 		var sL, sB;
 		
@@ -171,14 +181,13 @@ module.exports = function(RED) {
 						/*In case dat is received that holds module information */
 						if(receiveBuffer.readInt32LE(2) == 2)
 						{
-							msg.payload = {
-							"inputSignal1": receiveBuffer.readInt32LE(6),
-							"inputSignal2": receiveBuffer.readInt32LE(14),
-							"inputSignal3": receiveBuffer.readInt32LE(22),
-							"inputSignal4": receiveBuffer.readInt32LE(30),
-							"inputSignal5": receiveBuffer.readInt32LE(38),
-							"inputSignal6": receiveBuffer.readInt32LE(46)
-							}
+							msg[key1] = receiveBuffer.readInt32LE(6),
+							msg[key2] = receiveBuffer.readInt32LE(14),
+							msg[key3] = receiveBuffer.readInt32LE(22),
+							msg[key4] = receiveBuffer.readInt32LE(30),
+							msg[key5] = receiveBuffer.readInt32LE(38),
+							msg[key6] = receiveBuffer.readInt32LE(46),
+						
 						node.send(msg);
 						}
 					}					

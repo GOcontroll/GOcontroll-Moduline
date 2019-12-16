@@ -30,6 +30,12 @@
 			v6:{value:0},
 			pu6: {value:0},
 			pd6: {value:0},
+			key1: {value: "inputSignal1"},
+			key2: {value: "inputSignal2"},
+			key3: {value: "inputSignal3"},
+			key4: {value: "inputSignal4"},
+			key5: {value: "inputSignal5"},
+			key6: {value: "inputSignal6"},
         },
         inputs:1,
         outputs:1,
@@ -57,7 +63,7 @@
 
     <div class="form-row">
         <label for="node-input-moduleLocation"><i class="fa fa-microchip"></i> Module</label>
-        <select id="node-input-moduleLocation" style="width:300px">
+        <select id="node-input-moduleLocation" style="width:300px" title="Select the slot on which the module is plugged into">
             <option value=1>Module on slot 1</option>
             <option value=2>Module on slot 2</option>
             <option value=3>Module on slot 3</option>
@@ -71,7 +77,7 @@
 	
 	<div class="form-row">
         <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time</label>
-        <select id="node-input-sampleTime" style="width:300px">
+        <select id="node-input-sampleTime" style="width:300px" title="The sample time sets the period on which the signals are retrieved">
 		    <option value="0">Trigger by inject</option>
             <option value="10">10 ms</option>
             <option value="100">100 ms</option>
@@ -81,6 +87,12 @@
 	
 <fieldset>
 <legend>Input channel 1</legend> 
+
+	<div class="form-row">
+        <label for="node-input-key1"><i class="fa fa-id-card"></i> Signal key</label>
+        <input type="text" id="node-input-key1">
+    </div>
+
     <div class="form-row">
         <label for="node-input-input1"><i class="fa fa-sign-in"></i> Signal type</label>
         <select id="node-input-input1" style="width:300px">
@@ -123,10 +135,18 @@
             <option value=2>10 kilo-ohm</option>
         </select>
     </div>  
+	
+
 </fieldset>
 
 <fieldset>
 <legend>Input channel 2</legend> 
+
+	<div class="form-row">
+        <label for="node-input-key2"><i class="fa fa-id-card"></i> Signal key</label>
+        <input type="text" id="node-input-key2">
+    </div>	
+
     <div class="form-row">
         <label for="node-input-input2"><i class="fa fa-sign-in"></i> Signal type</label>
         <select id="node-input-input2" style="width:300px">
@@ -168,11 +188,18 @@
             <option value=1>4,7 kilo-ohm </option>
             <option value=2>10 kilo-ohm</option>
         </select>
-    </div>  
+    </div> 
+
 </fieldset>
 
 <fieldset>
 <legend>Input channel 3</legend> 
+
+		<div class="form-row">
+        <label for="node-input-key3"><i class="fa fa-id-card"></i> Signal key</label>
+        <input type="text" id="node-input-key3">
+    </div>
+
     <div class="form-row">
         <label for="node-input-input3"><i class="fa fa-sign-in"></i> Signal type</label>
         <select id="node-input-input3" style="width:300px">
@@ -215,10 +242,17 @@
             <option value=2>10 kilo-ohm</option>
         </select>
     </div> 
+	
+
 </fieldset>
 
 <fieldset>
 <legend>Input channel 4</legend> 
+
+		<div class="form-row">
+        <label for="node-input-key4"><i class="fa fa-id-card"></i> Signal key</label>
+        <input type="text" id="node-input-key4">
+    </div>
     <div class="form-row">
         <label for="node-input-input4"><i class="fa fa-sign-in"></i> Signal type</label>
         <select id="node-input-input4" style="width:300px">
@@ -261,10 +295,17 @@
             <option value=2>10 kilo-ohm</option>
         </select>
     </div> 
+	
+
 </fieldset>
 
 <fieldset>
 <legend>Input channel 5</legend> 
+	<div class="form-row">
+        <label for="node-input-key5"><i class="fa fa-id-card"></i> Signal key</label>
+        <input type="text" id="node-input-key5">
+    </div>	
+
     <div class="form-row">
         <label for="node-input-input5"><i class="fa fa-sign-in"></i> Signal type</label>
         <select id="node-input-input5" style="width:300px">
@@ -306,11 +347,18 @@
             <option value=1>4,7 kilo-ohm </option>
             <option value=2>10 kilo-ohm</option>
         </select>
-    </div> 
+    </div>
+
 </fieldset>
 
 <fieldset>
 <legend>Input channel 6</legend> 
+
+    </div> 
+		<div class="form-row">
+        <label for="node-input-key6"><i class="fa fa-id-card"></i> Signal key</label>
+        <input type="text" id="node-input-key6">
+    </div>
     <div class="form-row">
         <label for="node-input-input6"><i class="fa fa-sign-in"></i> Signal type</label>
         <select id="node-input-input6" style="width:300px">
@@ -352,19 +400,19 @@
             <option value=1>4,7 kilo-ohm </option>
             <option value=2>10 kilo-ohm</option>
         </select>
-    </div> 
+
 </fieldset>
 
 </script>
 
 <script type="text/x-red" data-help-name="Input-Module">
 <p>The input module is used to read in a wide range of input signals. During initialization, the settings for each input channel are send to the module. The signal will be converted inside the module according the given settings.</p>
-<h2><strong>Configuration</strong></h2>
+<h2>Configuration</h2>
 <p><strong><em>Module:</em></strong></p>
 <p>Select the module slot on which the input module is installed to.</p>
 <p><strong><em>Sample time:</em></strong></p>
 <p>Specify the way the signals are retrieved from the input module. If the user selects Trigger by inject, the data from each signal is only retrieved when random data is injected in the node by for example the injection node. This can be meaningful during the design of the system. If the sample time is set to a time base, the node will output all signals with the specified sample time.</p>
-<h3><strong>Input channel n</strong></h3>
+<h2><strong>Input channel n</strong></h2>
 <p>Each channel (1 to 6) can be configured according user demands. Each input channel has the same options.</p>
 <p><strong><em>Signal type:</em></strong></p>
 <p>Here, the user can select the type of input depending on the senor that is connected.</p>
@@ -401,7 +449,7 @@
 <ul>
 <li>Digital Input &ndash; rotation speed (rps) (not yet available)</li>
 </ul>
-<p>The module can calculate a rotation speed from for example an axle. Selecting this feature requires the pulses per rotation to be set. Simply fill in the number of pulses for each rotation and the module returns the calculated rotation speed.</p>
+<p>The module can calculate a rotation speed from for example an axle. Selecting this feature requires the pulses per rotation to be set. Simply fill in the number of pulses for each rotation and the module returns the calculated rotation speed. (future option)</p>
 <p>&nbsp;</p>
 <ul>
 <li>Digital Input &ndash; pulse counter</li>
@@ -416,19 +464,14 @@
 <p>If required, pull-up and pull down resistors can be enabled on the input signals. 3 values can be selected. 3.2, 4.7 and 10 kilo Ohm.</p>
 <p>&nbsp;</p>
 <h2><strong>Data format</strong></h2>
-<p>The data coming from the module is pushed out of the node in a JSON string format holding 6 key&rsquo;s and 6 values.</p>
-<p><em>{"inputSignaln" : y , &hellip;</em></p>
-<p>The key is: <em>inputSignaln</em></p>
-<p><em>&nbsp;</em><em>(n stands for signal 1 to 6)</em></p>
-<p>The value: <em>y</em></p>
-<p>(y depends on the chosen input type and the actual value of the sensor)</p>
+<p>The data coming from the module is pushed out of the node in a JSON string format holding 6 key&rsquo;s and 6 values. The keys can be customized to descriptive input signal names. This improves the readability from signals in the model.</p>
 <p>&nbsp;</p>
 <h2><strong>Example</strong></h2>
 <p>This example shows the data from an input node during operation.</p>
-<p>{"inputSignal1" : 542 ,</p>
-<p>"inputSignal2" : 0 ,</p>
-<p>"inputSignal3" : 2 ,</p>
-<p>"inputSignal4" : 62 ,</p>
-<p>"inputSignal5" : 48900 ,</p>
-<p>"inputSignal6" : 1002 }</p>
+<p>{"throttlePosition" : 2766 ,</p>
+<p>"engineSpeed" : 2650 ,</p>
+<p>"engineOilPressure" : 2456 ,</p>
+<p>"engineTemperature" : 62 ,</p>
+<p>"oilTemperature" : 92 ,</p>
+<p>"ConnectorApin13" : 1002 }</p>
 </script>
