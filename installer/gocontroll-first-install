@@ -92,6 +92,9 @@ chmod +x /usr/bin/node-red-st*
 systemctl daemon-reload
 
 echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
+
+
+
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/lib /
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/nodered.service /lib/systemd/system
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/interfaces /etc/network
@@ -99,9 +102,23 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd.conf /etc/hostapd
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd /etc/default
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/dnsmasq.conf /etc
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/settings.js /root/.node-red
+
+# Before we copy the conten tof node-red-gocontroll, we first have to delete
+# the folder if present.
+
+# Go to usr folder
+cd /usr
+
+if [ -d node-red-gocontroll ]
+then
+	rm -r node-red-gocontroll
+fi
+
+# jump back to root
+cd ~ 
+
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/qmi-network-raw /usr/local/bin
-
 
 chmod 777 /usr/local/bin/qmi-network-raw
 
