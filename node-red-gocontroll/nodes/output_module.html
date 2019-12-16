@@ -6,17 +6,20 @@
             name: {value:""},
 			moduleLocation: {value:"0"},
 			output1:{value:"1"},
-			freq1: {value:"1"},
+			freq12: {value:"1"},
 			output2:{value:"1"},
-			freq2: {value:"1"},
 			output3:{value:"1"},
-			freq3: {value:"1"},
+			freq34: {value:"1"},
 			output4:{value:"1"},
-			freq4: {value:"1"},
 			output5:{value:"1"},
-			freq5: {value:"1"},
+			freq56: {value:"1"},
 			output6:{value:"1"},
-			freq6: {value:"1"},
+			key1: {value: "outputSignal1"},
+			key2: {value: "outputSignal2"},
+			key3: {value: "outputSignal3"},
+			key4: {value: "outputSignal4"},
+			key5: {value: "outputSignal5"},
+			key6: {value: "outputSignal6"},
         },
         inputs:1,
         outputs:1,
@@ -57,22 +60,11 @@
     </div>
 	
 <fieldset>
-<legend>Output channel 1</legend> 
+
+<legend>Output 1 and 2</legend>
     <div class="form-row">
-        <label for="node-input-output1"><i class="fa fa-sign-out"></i> Output type</label>
-        <select id="node-input-output1" style="width:300px">
-		    <option value="1">Output channel disabled</option>
-            <option value="2">Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
-            <option value="3">Low side switch duty cycle controlled 0 – 100% (0-1000) </option>
-            <option value="4">High side switch duty cycle controlled 0 – 100% (0-1000)</option>
-            <option value="5">Low side switch on – off</option>
-            <option value="6">High side switch on – off</option>
-        </select>
-    </div>
- 
-    <div class="form-row">
-        <label for="node-input-freq1"><i class="fa fa-signal"></i> Frequency</label>
-        <select id="node-input-freq1" style="width:300px">
+        <label for="node-input-freq12"><i class="fa fa-signal"></i> Frequency </label>
+        <select id="node-input-freq12" style="width:300px">
 		    <option value=1>1 kHz</option>
             <option value=2>2 kHz</option>
             <option value=3>5 kHz </option>
@@ -82,12 +74,33 @@
             <option value=7>21 kHz</option>
         </select>
     </div>
-</fieldset>
 
-<fieldset>
-<legend>Output channel 2</legend> 
+     </div> 
+		<div class="form-row">
+        <label for="node-input-key1"><i class="fa fa-id-card"></i> Output 1 key</label>
+        <input type="text" id="node-input-key1">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-output1"><i class="fa fa-sign-out"></i> Output 1</label>
+        <select id="node-input-output1" style="width:300px">
+		    <option value="1">Output channel disabled</option>
+            <option value="2">Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
+            <option value="3">Low side switch duty cycle controlled 0 – 100% (0-1000) </option>
+            <option value="4">High side switch duty cycle controlled 0 – 100% (0-1000)</option>
+            <option value="5">Low side switch on – off</option>
+            <option value="6">High side switch on – off</option>
+        </select>
+    </div>
+	
+	     </div> 
+		<div class="form-row">
+        <label for="node-input-key2"><i class="fa fa-id-card"></i> Output 2 key</label>
+        <input type="text" id="node-input-key2">
+    </div>
+ 
      <div class="form-row">
-        <label for="node-input-output2"><i class="fa fa-sign-out"></i> Output type</label>
+        <label for="node-input-output2"><i class="fa fa-sign-out"></i> Output 2</label>
         <select id="node-input-output2" style="width:300px">
 		    <option value=1>Output channel disabled</option>
             <option value=2>Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
@@ -98,10 +111,15 @@
         </select>
     </div>
  
+</fieldset>
+
+<fieldset>
+
+<legend>Output 3 and 4</legend>
     <div class="form-row">
-        <label for="node-input-freq2"><i class="fa fa-signal"></i> Frequency</label>
-        <select id="node-input-freq2" style="width:300px">
-			<option value=1>1 kHz</option>
+        <label for="node-input-freq34"><i class="fa fa-signal"></i> Frequency </label>
+        <select id="node-input-freq34" style="width:300px">
+		    <option value=1>1 kHz</option>
             <option value=2>2 kHz</option>
             <option value=3>5 kHz </option>
             <option value=4>10 kHz</option>
@@ -109,13 +127,15 @@
 			<option value=6>17 kHz </option>
             <option value=7>21 kHz</option>
         </select>
-    </div> 
-</fieldset>
+    </div>
+     </div> 
+		<div class="form-row">
+        <label for="node-input-key3"><i class="fa fa-id-card"></i> Output 3 key</label>
+        <input type="text" id="node-input-key3">
+    </div>
 
-<fieldset>
-<legend>Output channel 3</legend> 
     <div class="form-row">
-        <label for="node-input-output3"><i class="fa fa-sign-out"></i> Output type</label>
+        <label for="node-input-output3"><i class="fa fa-sign-out"></i> Output 3</label>
         <select id="node-input-output3" style="width:300px">
 		    <option value=1>Output channel disabled</option>
             <option value=2>Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
@@ -125,25 +145,14 @@
             <option value=6>High side switch on – off</option>
         </select>
     </div>
- 
-    <div class="form-row">
-        <label for="node-input-freq3"><i class="fa fa-signal"></i> Frequency</label>
-        <select id="node-input-freq3" style="width:300px">
-			<option value=1>1 kHz</option>
-            <option value=2>2 kHz</option>
-            <option value=3>5 kHz </option>
-            <option value=4>10 kHz</option>
-			<option value=5>14 kHz </option>
-			<option value=6>17 kHz </option>
-            <option value=7>21 kHz</option>
-        </select>
+      </div> 
+		<div class="form-row">
+        <label for="node-input-key4"><i class="fa fa-id-card"></i> Output 4 key</label>
+        <input type="text" id="node-input-key4">
     </div>
-</fieldset>
-
-<fieldset>
-<legend>Output channel 4</legend> 
+ 
      <div class="form-row">
-        <label for="node-input-output4"><i class="fa fa-sign-out"></i> Output type</label>
+        <label for="node-input-output4"><i class="fa fa-sign-out"></i> Output 4</label>
         <select id="node-input-output4" style="width:300px">
 		    <option value=1>Output channel disabled</option>
             <option value=2>Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
@@ -153,11 +162,19 @@
             <option value=6>High side switch on – off</option>
         </select>
     </div>
- 
+
+</fieldset>
+
+
+
+<fieldset>
+
+<legend>Output channel 5 and 6</legend> 
+
     <div class="form-row">
-        <label for="node-input-freq4"><i class="fa fa-signal"></i> Frequency</label>
-        <select id="node-input-freq4" style="width:300px">
-			<option value=1>1 kHz</option>
+        <label for="node-input-freq56"><i class="fa fa-signal"></i> Frequency </label>
+        <select id="node-input-freq56" style="width:300px">
+		    <option value=1>1 kHz</option>
             <option value=2>2 kHz</option>
             <option value=3>5 kHz </option>
             <option value=4>10 kHz</option>
@@ -166,12 +183,16 @@
             <option value=7>21 kHz</option>
         </select>
     </div>
-</fieldset>
 
-<fieldset>
-<legend>Output channel 5</legend> 
+
+     </div> 
+		<div class="form-row">
+        <label for="node-input-key5"><i class="fa fa-id-card"></i> Output 5 key</label>
+        <input type="text" id="node-input-key5">
+    </div>
+
     <div class="form-row">
-        <label for="node-input-output5"><i class="fa fa-sign-out"></i> Output type</label>
+        <label for="node-input-output5"><i class="fa fa-sign-out"></i> Output 5</label>
         <select id="node-input-output5" style="width:300px">
 		    <option value=1>Output channel disabled</option>
             <option value=2>Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
@@ -181,25 +202,15 @@
             <option value=6>High side switch on – off</option>
         </select>
     </div>
- 
-    <div class="form-row">
-        <label for="node-input-freq5"><i class="fa fa-signal"></i> Frequency</label>
-        <select id="node-input-freq5" style="width:300px">
-			<option value=1>1 kHz</option>
-            <option value=2>2 kHz</option>
-            <option value=3>5 kHz </option>
-            <option value=4>10 kHz</option>
-			<option value=5>14 kHz </option>
-			<option value=6>17 kHz </option>
-            <option value=7>21 kHz</option>
-        </select>
+	
+     </div> 
+		<div class="form-row">
+        <label for="node-input-key6"><i class="fa fa-id-card"></i> Output 6 key</label>
+        <input type="text" id="node-input-key6">
     </div>
-</fieldset>
 
-<fieldset>
-<legend>Output channel 6</legend> 
     <div class="form-row">
-        <label for="node-input-output6"><i class="fa fa-sign-out"></i> Output type</label>
+        <label for="node-input-output6"><i class="fa fa-sign-out"></i> Output 6</label>
         <select id="node-input-output6" style="width:300px">
 		    <option value=1>Output channel disabled</option>
             <option value=2>Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
@@ -207,19 +218,6 @@
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option>
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
-        </select>
-    </div>
- 
-    <div class="form-row">
-        <label for="node-input-freq6"><i class="fa fa-signal"></i> Frequency</label>
-        <select id="node-input-freq6" style="width:300px">
-			<option value=1>1 kHz</option>
-            <option value=2>2 kHz</option>
-            <option value=3>5 kHz </option>
-            <option value=4>10 kHz</option>
-			<option value=5>14 kHz </option>
-			<option value=6>17 kHz </option>
-            <option value=7>21 kHz</option>
         </select>
     </div>
 </fieldset>

@@ -20,18 +20,29 @@ module.exports = function(RED) {
 		this.moduleLocation = config.moduleLocation; 
 		this.sampleTime = config.sampleTime;
 		this.output1 = config.output1;
-		this.freq1 = config.freq1;
+		this.freq12 = config.freq1;
 		this.output2 = config.output2;
-		this.freq2 = config.freq2;
 		this.output3 = config.output3;
-		this.freq3 = config.freq3;
+		this.freq34 = config.freq3;
 		this.output4 = config.output4;
-		this.freq4 = config.freq4;
 		this.output5 = config.output5;
-		this.freq5 = config.freq5;
+		this.freq56 = config.freq5;
 		this.output6 = config.output6;
-		this.freq6 = config.freq6;
+		
         var node = this;
+		
+		var key={};
+		
+		key[0] = config.key1;
+		key[1] = config.key2;
+		key[2] = config.key3;
+		key[3] = config.key4;
+		key[4] = config.key5;
+		key[5] = config.key6;
+		
+		
+		
+		
 		
 		var sL, sB;
 		
@@ -119,6 +130,9 @@ module.exports = function(RED) {
 				speedHz: SPISPEED 
 			  }];
 
+
+
+			var value = {};
 			/***execution initiated by event *******/
 			node.on('input', function(msg) {
 				
@@ -133,6 +147,18 @@ module.exports = function(RED) {
 			sendBuffer[1] = MESSAGELENGTH-1;
 			sendBuffer[2] = 102;
 			
+			
+			
+			for(var s =0; s <6; s++)
+			{
+			   if(msg.payload[key[s]] <= 1000 && msg.payload[key[s]] >= 0)
+			   {
+				sendBuffer.writeUInt16LE(msg.payload[key[s]], (s*6)+6);
+				//node.log("value received");
+			   }				   	
+			}
+			
+			/*
 			if(msg.payload.outputChannel1 >= 0 &&  msg.payload.outputChannel1 <= 1000)
 			{
 			output1 = msg.payload.outputChannel1	
@@ -164,7 +190,7 @@ module.exports = function(RED) {
 			sendBuffer.writeUInt16LE(output4, 24);
 			sendBuffer.writeUInt16LE(output5, 30);
 			sendBuffer.writeUInt16LE(output6, 36);
-			
+			*/
 			sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 			
 			
@@ -174,21 +200,20 @@ module.exports = function(RED) {
 						/*In case dat is received that holds module information */
 						if(receiveBuffer.readInt32LE(2) === 103)
 						{
-							msg.payload = {
-							"moduleTemperature": receiveBuffer.readInt16LE(6),
-							"moduleGroundShift": receiveBuffer.readUInt16LE(8),
-							"currentChannel1": receiveBuffer.readUInt16LE(10),
-							"currentChannel2": receiveBuffer.readUInt16LE(12),
-							"currentChannel3": receiveBuffer.readUInt16LE(14),
-							"currentChannel4": receiveBuffer.readUInt16LE(16),
-							"currentChannel5": receiveBuffer.readUInt16LE(18),
-							"currentChannel6": receiveBuffer.readUInt16LE(20)
-							}	
+							
+							msg["moduleTemperature"] = receiveBuffer.readInt16LE(6),
+							msg["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
+							ms["currentChannel1"]= receiveBuffer.readInt16LE(10),
+							ms["currentChannel2"]= receiveBuffer.readInt16LE(12),
+							ms["currentChannel3"]= receiveBuffer.readInt16LE(14),
+							ms["currentChannel4"]= receiveBuffer.readInt16LE(16),
+							ms["currentChannel5"]= receiveBuffer.readInt16LE(18),
+							ms["currentChannel6"]= receiveBuffer.readInt16LE(20)
+								
 						node.send(msg);	
 						}
 					}
 				});
-			
 		});
 	}
 
