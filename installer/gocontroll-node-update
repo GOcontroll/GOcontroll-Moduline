@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # url to bash this script:
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update.bash)
-
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update)
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
