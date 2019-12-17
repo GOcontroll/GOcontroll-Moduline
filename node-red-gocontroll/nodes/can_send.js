@@ -12,6 +12,7 @@ module.exports = function(RED) {
 	const canChannel = sendNode.caninterface;  
 	
 	/* Parse the CAN ID to send */
+	const canIdHex = sendNode.canid;
 	const canid = parseInt(sendNode.canid,16);
 	
 		/* parse the identifier ID type */
@@ -95,7 +96,7 @@ module.exports = function(RED) {
 		}
 		if(key[i] == "")
 		{
-		node.error("Key for signal "+i+" not given");		
+		node.error("Key for signal "+i+" from ID: 0x"+canIdHex+" not given");		
 		}
 	}
 	
@@ -110,7 +111,7 @@ module.exports = function(RED) {
 	else{
 	extendedid = true;}
 	
-	node.warn("CAN send on: "+canInterface);
+
 	
 	/* Create channel to communicate on */
 	var channel;
