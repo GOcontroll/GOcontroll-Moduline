@@ -142,8 +142,6 @@ npm install /usr/node-red-gocontroll
 
 echo -e "${YELLOW}Install extra webpackages ${NORMAL}"
 npm install node-red-dashboard
-npm install node-red-contrib-boolean-logic
-npm install node-red-contrib-dsm
 
 echo -e "${YELLOW}Start Node-RED service ${NORMAL}"
 systemctl enable nodered.service 
