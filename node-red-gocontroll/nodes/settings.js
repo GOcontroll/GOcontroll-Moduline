@@ -12,9 +12,7 @@ module.exports = function(RED) {
 	const speedc1 = config.speedc1;
 	const speedc2 = config.speedc2;
 	
-	this.log(node.name);
 	
-
 	fs.readFile('/etc/hostapd/hostapd.conf', 'utf8', function (err,data) {
 
 		var credentialsFormatted = 	data.replace(/^ssid=.*$/m, 'ssid='+ node.ssid)
@@ -23,7 +21,7 @@ module.exports = function(RED) {
 		fs.writeFile('/etc/hostapd/hostapd.conf', credentialsFormatted, 'utf8', function (err) {
 			if (err) throw err;
 
-			node.log('WiFi credentials saved');
+			node.warn('WiFi credentials saved');
 		});
 	
 	});
@@ -40,12 +38,17 @@ module.exports = function(RED) {
 
 	fs.writeFile('/etc/network/interfaces', canFormatted, 'utf8', function (err) {
 		if (err) throw err;
-		node.log('CAN settings saved!');
+		node.warn('CAN settings saved!');
 		
 					});
 	});
 		
-	node.log('after function!');
+		
+	var packageFile = fs.readFileSync("/usr/node-red-gocontroll/package.json")
+	
+	var jsonContent = JSON.parse(packageFile);
+	
+	node.status({fill:"green",shape:"dot",text:"GOcontroll node version: "+jsonContent.version});
 
 	this.on('input', function(msg) {
 
