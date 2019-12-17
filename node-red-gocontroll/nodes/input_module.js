@@ -1,12 +1,12 @@
 module.exports = function(RED) {
     "use strict"
 	
-	var cron = require("cron");
+	const cron = require("cron");
 	const spi = require('spi-device');
-	var ModuleReset = require('led');
+	const ModuleReset = require('led');
 	
-	var MESSAGELENGTH = 55;
-	var SPISPEED = 2000000;
+	const MESSAGELENGTH = 55;
+	const SPISPEED = 2000000;
 	
 	function GOcontrollInputModule(config) { 	 
 	   RED.nodes.createNode(this,config);
@@ -38,12 +38,13 @@ module.exports = function(RED) {
 		this.pu6 = config.pu6;
 		this.pd6 = config.pd6;
         
-		const key1 = config.key1;
-		const key2 = config.key2;
-		const key3 = config.key3;
-		const key4 = config.key4;
-		const key5 = config.key5;
-		const key6 = config.key6;
+		var key	={};
+		key[0] = config.key1;
+		key[1] = config.key2;
+		key[2] = config.key3;
+		key[3] = config.key4;
+		key[4] = config.key5;
+		key[5] = config.key6;
 		
 		
 		var node = this;
@@ -117,10 +118,20 @@ module.exports = function(RED) {
 				speedHz: SPISPEED 
 			  }];
 
-			  /* in this case, no data is received from module */
+			  /* Only in this scope, receive buffer is available */
 			  inputModule.transfer(message, (err, message) => {
-			  });
-			  
+				  
+					if((receiveBuffer[6] != 20 || receiveBuffer[7] != 10 || receiveBuffer[8] != 1)&&(receiveBuffer[6] != 0 && receiveBuffer[7] != 0 && receiveBuffer[8] != 0)){
+					node.status({fill:"red",shape:"dot",text:"Module does not match node"});
+					}
+					else if(receiveBuffer[6] == 0 && receiveBuffer[7] == 0 && receiveBuffer[8] == 0){
+					node.status({fill:"red",shape:"dot",text:"No module installed"});
+					}
+					else{	
+					const statusText = "HW:V"+receiveBuffer[6]+receiveBuffer[7]+receiveBuffer[8]+receiveBuffer[9]+"  SW:V"+receiveBuffer[10]+"."+receiveBuffer[11]+"."+receiveBuffer[12];
+					node.status({fill:"green",shape:"dot",text:statusText});
+					}
+				});
 			});
 		}
 
@@ -181,12 +192,12 @@ module.exports = function(RED) {
 						/*In case dat is received that holds module information */
 						if(receiveBuffer.readInt32LE(2) == 2)
 						{
-							msg[key1] = receiveBuffer.readInt32LE(6),
-							msg[key2] = receiveBuffer.readInt32LE(14),
-							msg[key3] = receiveBuffer.readInt32LE(22),
-							msg[key4] = receiveBuffer.readInt32LE(30),
-							msg[key5] = receiveBuffer.readInt32LE(38),
-							msg[key6] = receiveBuffer.readInt32LE(46),
+							msg[key[0]] = receiveBuffer.readInt32LE(6),
+							msg[key[1]] = receiveBuffer.readInt32LE(14),
+							msg[key[2]] = receiveBuffer.readInt32LE(22),
+							msg[key[3]] = receiveBuffer.readInt32LE(30),
+							msg[key[4]] = receiveBuffer.readInt32LE(38),
+							msg[key[5]] = receiveBuffer.readInt32LE(46),
 						
 						node.send(msg);
 						}

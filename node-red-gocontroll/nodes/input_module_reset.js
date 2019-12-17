@@ -3,8 +3,8 @@ module.exports = function(RED) {
 	
 	const spi = require('spi-device');
 	
-	var MESSAGELENGTH = 55;
-	var SPISPEED = 2000000;
+	const MESSAGELENGTH = 55;
+	const SPISPEED = 2000000;
 	
 	function GOcontrollInputModuleReset(config) { 	 
 	   RED.nodes.createNode(this,config);
@@ -45,6 +45,10 @@ module.exports = function(RED) {
 			{
 			sendBuffer[6] = node.channel;
 			sendBuffer.writeInt32LE(msg.payload.pulscounterValue, 7);	
+			}
+			else{
+				node.warn("Reset counter value of module "+ node.moduleLocation+ "channel "+node.channel+" is outside range."); 
+				return;
 			}
 			
 			sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
