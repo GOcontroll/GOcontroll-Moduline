@@ -1,13 +1,17 @@
 #!/bin/bash
 
 # url to bash this script:
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install)
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update)
 
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
 echo -e "${YELLOW}Update GOcontroll nodes ${NORMAL}"
+# Stop node-red service
+
+echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
+systemctl stop nodered
 
 # Go to root folder
 cd 
@@ -66,5 +70,6 @@ echo -e "${YELLOW}Install local node packages ${NORMAL}"
 
 npm install /usr/node-red-gocontroll
 
-echo -e "${YELLOW}Reboot ${NORMAL}"
-reboot
+echo -e "${YELLOW}Start Node-RED again ${NORMAL}"
+systemctl start nodered
+
