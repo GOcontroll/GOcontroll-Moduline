@@ -2,37 +2,44 @@ module.exports = function(RED) {
     "use strict"
 
 	const spi = require('spi-device');
-	var ModuleReset = require('led');
+	const ModuleReset = require('led');
 	
-	var MESSAGELENGTH = 44;
-	var SPISPEED = 2000000;
-	
-	var output1 = 0;
-	var output2 = 0;
-	var output3 = 0;
-	var output4 = 0;
-	var output5 = 0;
-	var output6 = 0;
+	const MESSAGELENGTH = 44;
+	const SPISPEED = 2000000;
+
 	
 	function GOcontrollOutputModule(config) { 	 
 	   RED.nodes.createNode(this,config);
 	   
-		this.moduleLocation = config.moduleLocation; 
+		this.moduleSlot = config.moduleSlot; 
 		this.sampleTime = config.sampleTime;
-		this.output1 = config.output1;
-		this.freq12 = config.freq1;
-		this.output2 = config.output2;
-		this.output3 = config.output3;
-		this.freq34 = config.freq3;
-		this.output4 = config.output4;
-		this.output5 = config.output5;
-		this.freq56 = config.freq5;
-		this.output6 = config.output6;
+		var node = this;
+	
+		var outputType = {};
+		outputType[0] = config.output1;
+		outputType[1] = config.output2;
+		outputType[2] = config.output3;
+		outputType[3] = config.output4;
+		outputType[4] = config.output5;
+		outputType[5] = config.output6;
 		
-        var node = this;
+		var outputFreq = {};
+		outputFreq[0] = config.freq12;
+		outputFreq[1] = config.freq12;
+		outputFreq[2] = config.freq34;
+		outputFreq[3] = config.freq34;
+		outputFreq[4] = config.freq56;
+		outputFreq[5] = config.freq56;
+		
+		var outputCurrent = {};
+		outputCurrent[0] = config.current1;
+		outputCurrent[1] = config.current2;
+		outputCurrent[2] = config.current3;
+		outputCurrent[3] = config.current4;
+		outputCurrent[4] = config.current5;
+		outputCurrent[5] = config.current6;
 		
 		var key={};
-		
 		key[0] = config.key1;
 		key[1] = config.key2;
 		key[2] = config.key3;
@@ -40,9 +47,7 @@ module.exports = function(RED) {
 		key[4] = config.key5;
 		key[5] = config.key6;
 		
-		
-		
-		
+		//var statusText = "test";
 		
 		var sL, sB;
 		
@@ -53,7 +58,7 @@ module.exports = function(RED) {
 		var spiReady = 0;
 		/*Execute initialisation steps */
 		/*Define the SPI port according the chosen module */
-		switch(this.moduleLocation)
+		switch(this.moduleSlot)
 		{
 			case "1": sL = 1; sB = 0;    break;
 			case "2": sL = 1; sB = 1;    break;
@@ -66,7 +71,7 @@ module.exports = function(RED) {
 		}
 
 		/*Create the module reset identifier and the convert the sampletime */
-		const moduleReset = new ModuleReset("ResetM-" + String(this.moduleLocation));			
+		const moduleReset = new ModuleReset("ResetM-" + String(this.moduleSlot));			
 		const sampleTime = parseInt(this.sampleTime);
 	
 		/*Start module reset */
@@ -82,39 +87,51 @@ module.exports = function(RED) {
 			setTimeout(initializeModule, 800);
 		}
 		
-			/*At this point, device is booted so send the initialization data */
-			function initializeModule (){
+		
+		
+		/*At this point, device is booted so send the initialization data */
+		function initializeModule (){
 
+		sendBuffer[0] = 1;
+		sendBuffer[1] = MESSAGELENGTH;
+		sendBuffer[2] = 101;
 			
-			sendBuffer[0] = 1;
-			sendBuffer[1] = MESSAGELENGTH;
-			sendBuffer[2] = 101;
-			sendBuffer[6] = (node.freq1&15)|((node.output1&15)<<4);
-			sendBuffer[7] = (node.freq2&15)|((node.output2&15)<<4);
-			sendBuffer[8] = (node.freq3&15)|((node.output3&15)<<4);
-			sendBuffer[9] = (node.freq4&15)|((node.output4&15)<<4);
-			sendBuffer[10] = (node.freq5&15)|((node.output5&15)<<4);
-			sendBuffer[11] = (node.freq6&15)|((node.output6&15)<<4);
+		for(var s =0; s <6; s++)
+		{
+		sendBuffer[6+s] = (outputFreq[s]&15)|((outputType[s]&15)<<4);
+		sendBuffer.writeUInt16LE(outputCurrent[s], 12+(s*2));
+		}
+						
+		sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
+			
+			const outputModule = spi.open(sL,sB, (err) => {
+			  const message = [{
+				sendBuffer, 
+				receiveBuffer,           
+				byteLength: MESSAGELENGTH+1,
+				speedHz: SPISPEED 
+			  }];
+
+				/* Only in this scope, receive buffer is available */
+				outputModule.transfer(message, (err, message) => {
 					
-			sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
-			
-				const outputModule = spi.open(sL,sB, (err) => {
-
-				  const message = [{
-					sendBuffer,//: Buffer.from(dataToSend), 
-					receiveBuffer,//: Buffer.from(dataToReceive),             
-					byteLength: MESSAGELENGTH+1,
-					speedHz: SPISPEED 
-				  }];
-
-				  outputModule.transfer(message, (err, message) => {
-				  });
-				  
+					if((receiveBuffer[6] != 20 || receiveBuffer[7] != 20 || receiveBuffer[8] != 2)&&(receiveBuffer[6] != 0 && receiveBuffer[7] != 0 && receiveBuffer[8] != 0)){
+					node.status({fill:"red",shape:"dot",text:"Module does not match node"});
+					}
+					else if(receiveBuffer[6] == 0 && receiveBuffer[7] == 0 && receiveBuffer[8] == 0){
+					node.status({fill:"red",shape:"dot",text:"No module installed"});
+					}
+					else{	
+					const statusText = "HW:V"+receiveBuffer[6]+receiveBuffer[7]+receiveBuffer[8]+receiveBuffer[9]+"  SW:V"+receiveBuffer[10]+"."+receiveBuffer[11]+"."+receiveBuffer[12];
+					node.status({fill:"green",shape:"dot",text:statusText});
+					}
 				});
-			}
-			
-			
-			
+			});
+				
+		
+				
+		}
+
 		/* open SPI device for communication */
 		var outputModule = spi.open(sL,sB, (err) => {
 			if(!err)
@@ -141,60 +158,23 @@ module.exports = function(RED) {
 				return;
 			}
 
-
-
 			sendBuffer[0] = 1;
 			sendBuffer[1] = MESSAGELENGTH-1;
 			sendBuffer[2] = 102;
-			
-			
-			
+						
 			for(var s =0; s <6; s++)
 			{
 			   if(msg.payload[key[s]] <= 1000 && msg.payload[key[s]] >= 0)
 			   {
 				sendBuffer.writeUInt16LE(msg.payload[key[s]], (s*6)+6);
-				//node.log("value received");
 			   }				   	
 			}
 			
-			/*
-			if(msg.payload.outputChannel1 >= 0 &&  msg.payload.outputChannel1 <= 1000)
-			{
-			output1 = msg.payload.outputChannel1	
-			}
-			if(msg.payload.outputChannel2 >= 0 &&  msg.payload.outputChannel2 <= 1000)
-			{
-			output2 = msg.payload.outputChannel2	
-			}
-			if(msg.payload.outputChannel3 >= 0 &&  msg.payload.outputChannel3 <= 1000)
-			{
-			output3 = msg.payload.outputChannel3	
-			}
-			if(msg.payload.outputChannel4 >= 0 &&  msg.payload.outputChannel4 <= 1000)
-			{
-			output4 = msg.payload.outputChannel4	
-			}
-			if(msg.payload.outputChannel5 >= 0 &&  msg.payload.outputChannel5 <= 1000)
-			{
-			output5 = msg.payload.outputChannel5	
-			}
-			if(msg.payload.outputChannel6 >= 0 &&  msg.payload.outputChannel6 <= 1000)
-			{
-			output6 = msg.payload.outputChannel6	
-			}
-			
-			sendBuffer.writeUInt16LE(output1, 6);
-			sendBuffer.writeUInt16LE(output2, 12);
-			sendBuffer.writeUInt16LE(output3, 18);
-			sendBuffer.writeUInt16LE(output4, 24);
-			sendBuffer.writeUInt16LE(output5, 30);
-			sendBuffer.writeUInt16LE(output6, 36);
-			*/
 			sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 			
 			
 				  outputModule.transfer(message, (err, message) => {
+					  
 					if(receiveBuffer[MESSAGELENGTH-1] === ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
 					{
 						/*In case dat is received that holds module information */
@@ -203,12 +183,12 @@ module.exports = function(RED) {
 							
 							msg["moduleTemperature"] = receiveBuffer.readInt16LE(6),
 							msg["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
-							ms["currentChannel1"]= receiveBuffer.readInt16LE(10),
-							ms["currentChannel2"]= receiveBuffer.readInt16LE(12),
-							ms["currentChannel3"]= receiveBuffer.readInt16LE(14),
-							ms["currentChannel4"]= receiveBuffer.readInt16LE(16),
-							ms["currentChannel5"]= receiveBuffer.readInt16LE(18),
-							ms["currentChannel6"]= receiveBuffer.readInt16LE(20)
+							msg[key[0]+"Current"]= receiveBuffer.readInt16LE(10),
+							msg[key[1]+"Current"]= receiveBuffer.readInt16LE(12),
+							msg[key[2]+"Current"]= receiveBuffer.readInt16LE(14),
+							msg[key[3]+"Current"]= receiveBuffer.readInt16LE(16),
+							msg[key[4]+"Current"]= receiveBuffer.readInt16LE(18),
+							msg[key[5]+"Current"]= receiveBuffer.readInt16LE(20)
 								
 						node.send(msg);	
 						}
@@ -219,6 +199,8 @@ module.exports = function(RED) {
 
 	RED.nodes.registerType("Output-Module",GOcontrollOutputModule);
 	
+	
+	/* Function to calculate the checksum for a message */
 	function ChecksumCalculator(array, length)
 	{
 	var pointer = 0;

@@ -4,7 +4,7 @@
         color: '#f76d11',
         defaults: {
             name: {value:""},
-			moduleLocation: {value:"0"},
+			moduleSlot: {value:"0"},
 			output1:{value:"1"},
 			freq12: {value:"1"},
 			output2:{value:"1"},
@@ -20,21 +20,27 @@
 			key4: {value: "outputSignal4"},
 			key5: {value: "outputSignal5"},
 			key6: {value: "outputSignal6"},
+			current1 : {value: "4000"},
+			current2 : {value: "4000"},
+			current3 : {value: "4000"},
+			current4 : {value: "4000"},
+			current5 : {value: "4000"},
+			current6 : {value: "4000"},
         },
         inputs:1,
         outputs:1,
         icon: "arrow-in.png",
-		paletteLabel: "Output mod",
+		paletteLabel: "Output module",
         label: function() {
 			if(this.name != "")
 			{
             return this.name;
 			}
-			if(this.moduleLocation == "0")
+			if(this.moduleSlot == "0")
 			{
             return "Choose output module location";
 			}
-		return "Output module on slot " + this.moduleLocation;
+		return "Output module on slot " + this.moduleSlot;
         }
     });
 </script>
@@ -46,8 +52,8 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-moduleLocation"><i class="fa fa-microchip"></i> Module</label>
-        <select id="node-input-moduleLocation" style="width:300px">
+        <label for="node-input-moduleSlot"><i class="fa fa-microchip"></i> Module</label>
+        <select id="node-input-moduleSlot" style="width:300px">
             <option value="1">Module on slot 1</option>
             <option value="2">Module on slot 2</option>
             <option value="3">Module on slot 3</option>
@@ -60,6 +66,7 @@
     </div>
 	
 <fieldset>
+
 
 <legend>Output 1 and 2</legend>
     <div class="form-row">
@@ -75,14 +82,16 @@
         </select>
     </div>
 
+
+<p><strong>Output 1:</strong></p>
      </div> 
 		<div class="form-row">
-        <label for="node-input-key1"><i class="fa fa-id-card"></i> Output 1 key</label>
+        <label for="node-input-key1"><i class="fa fa-id-card"></i> Key</label>
         <input type="text" id="node-input-key1">
     </div>
 
     <div class="form-row">
-        <label for="node-input-output1"><i class="fa fa-sign-out"></i> Output 1</label>
+        <label for="node-input-output1"><i class="fa fa-sign-out"></i> Config</label>
         <select id="node-input-output1" style="width:300px">
 		    <option value="1">Output channel disabled</option>
             <option value="2">Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
@@ -93,6 +102,13 @@
         </select>
     </div>
 	
+	     </div> 
+		<div class="form-row">
+        <label for="node-input-current1"><i class="fa fa-line-chart"></i> Max I (mA)</label>
+        <input type="text" id="node-input-current1">
+    </div>
+
+<p><strong>Output 2:</strong></p>
 	     </div> 
 		<div class="form-row">
         <label for="node-input-key2"><i class="fa fa-id-card"></i> Output 2 key</label>
@@ -110,8 +126,14 @@
             <option value=6>High side switch on – off</option>
         </select>
     </div>
- 
+	     </div> 
+		<div class="form-row">
+        <label for="node-input-current2"><i class="fa fa-line-chart"></i> Max I (mA)</label>
+        <input type="text" id="node-input-current2">
+    </div>
 </fieldset>
+
+
 
 <fieldset>
 
@@ -128,6 +150,7 @@
             <option value=7>21 kHz</option>
         </select>
     </div>
+	<p><strong>Output 3:</strong></p>
      </div> 
 		<div class="form-row">
         <label for="node-input-key3"><i class="fa fa-id-card"></i> Output 3 key</label>
@@ -145,6 +168,12 @@
             <option value=6>High side switch on – off</option>
         </select>
     </div>
+		     </div> 
+		<div class="form-row">
+        <label for="node-input-current3"><i class="fa fa-line-chart"></i> Max I (mA)</label>
+        <input type="text" id="node-input-current3">
+    </div>
+	<p><strong>Output 4:</strong></p>
       </div> 
 		<div class="form-row">
         <label for="node-input-key4"><i class="fa fa-id-card"></i> Output 4 key</label>
@@ -161,6 +190,11 @@
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
         </select>
+    </div>
+		     </div> 
+		<div class="form-row">
+        <label for="node-input-current4"><i class="fa fa-line-chart"></i> Max I (mA)</label>
+        <input type="text" id="node-input-current4">
     </div>
 
 </fieldset>
@@ -184,7 +218,7 @@
         </select>
     </div>
 
-
+<p><strong>Output 5:</strong></p>
      </div> 
 		<div class="form-row">
         <label for="node-input-key5"><i class="fa fa-id-card"></i> Output 5 key</label>
@@ -202,7 +236,12 @@
             <option value=6>High side switch on – off</option>
         </select>
     </div>
-	
+		     </div> 
+		<div class="form-row">
+        <label for="node-input-current5"><i class="fa fa-line-chart"></i> Max I (mA)</label>
+        <input type="text" id="node-input-current5">
+    </div>
+	<p><strong>Output 6:</strong></p>
      </div> 
 		<div class="form-row">
         <label for="node-input-key6"><i class="fa fa-id-card"></i> Output 6 key</label>
@@ -219,6 +258,11 @@
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
         </select>
+    </div>
+		     </div> 
+		<div class="form-row">
+        <label for="node-input-current6"><i class="fa fa-line-chart"></i> Max I (mA)</label>
+        <input type="text" id="node-input-current6">
     </div>
 </fieldset>
 
