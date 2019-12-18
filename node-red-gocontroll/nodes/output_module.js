@@ -165,6 +165,7 @@ module.exports = function(RED) {
 
 
 			var value = {};
+			var msgOut = {};
 			/***execution initiated by event *******/
 			node.on('input', function(msg) {
 				
@@ -179,9 +180,9 @@ module.exports = function(RED) {
 						
 			for(var s =0; s <6; s++)
 			{
-			   if(msg.payload[key[s]] <= 1000 && msg.payload[key[s]] >= 0)
+			   if(msg[key[s]] <= 1000 && msg[key[s]] >= 0)
 			   {
-				sendBuffer.writeUInt16LE(msg.payload[key[s]], (s*6)+6);
+				sendBuffer.writeUInt16LE(msg[key[s]], (s*6)+6);
 			   }				   	
 			}
 			
@@ -196,16 +197,16 @@ module.exports = function(RED) {
 						if(receiveBuffer.readInt32LE(2) === 103)
 						{
 							
-							msg["moduleTemperature"] = receiveBuffer.readInt16LE(6),
-							msg["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
-							msg[key[0]+"Current"]= receiveBuffer.readInt16LE(10),
-							msg[key[1]+"Current"]= receiveBuffer.readInt16LE(12),
-							msg[key[2]+"Current"]= receiveBuffer.readInt16LE(14),
-							msg[key[3]+"Current"]= receiveBuffer.readInt16LE(16),
-							msg[key[4]+"Current"]= receiveBuffer.readInt16LE(18),
-							msg[key[5]+"Current"]= receiveBuffer.readInt16LE(20)
+							msgOut["moduleTemperature"] = receiveBuffer.readInt16LE(6),
+							msgOut["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
+							msgOut[key[0]+"Current"]= receiveBuffer.readInt16LE(10),
+							msgOut[key[1]+"Current"]= receiveBuffer.readInt16LE(12),
+							msgOut[key[2]+"Current"]= receiveBuffer.readInt16LE(14),
+							msgOut[key[3]+"Current"]= receiveBuffer.readInt16LE(16),
+							msgOut[key[4]+"Current"]= receiveBuffer.readInt16LE(18),
+							msgOut[key[5]+"Current"]= receiveBuffer.readInt16LE(20)
 								
-						node.send(msg);	
+						node.send(msgOut);	
 						}
 					}
 				});
