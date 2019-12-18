@@ -11,8 +11,9 @@ module.exports = function(RED) {
 	function GOcontrollOutputModule(config) { 	 
 	   RED.nodes.createNode(this,config);
 	   
-		this.moduleSlot = config.moduleSlot; 
-		this.sampleTime = config.sampleTime;
+	   	var interval = null;
+		const moduleSlot = config.moduleSlot; 
+		const sampleTime = config.sampleTime;
 		var node = this;
 	
 		var outputType = {};
@@ -58,7 +59,7 @@ module.exports = function(RED) {
 		var spiReady = 0;
 		/*Execute initialisation steps */
 		/*Define the SPI port according the chosen module */
-		switch(this.moduleSlot)
+		switch(moduleSlot)
 		{
 			case "1": sL = 1; sB = 0;    break;
 			case "2": sL = 1; sB = 1;    break;
@@ -71,8 +72,7 @@ module.exports = function(RED) {
 		}
 
 		/*Create the module reset identifier and the convert the sampletime */
-		const moduleReset = new ModuleReset("ResetM-" + String(this.moduleSlot));			
-		const sampleTime = parseInt(this.sampleTime);
+		const moduleReset = new ModuleReset("ResetM-" + String(moduleSlot));			
 	
 		/*Send dummy message to setup the SPI bus properly */
 		const dummy = spi.open(sL,sB, (err) => {
@@ -142,10 +142,28 @@ module.exports = function(RED) {
 					}
 				});
 			});
-				
-		
-				
+			setTimeout(clearBuffer, 100);	
 		}
+		
+		/* Cleanup sendbuffer for next messages */ 	
+		function clearBuffer(){	
+		
+		sendBuffer[0] = 1;
+		sendBuffer[1] = MESSAGELENGTH-1;
+		sendBuffer[2] = 102;
+			
+			for(var s =3; s <MESSAGELENGTH; s++)
+			{
+				sendBuffer[s] = 0;		   	
+			}
+				
+		sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);	
+		
+		/* Start interval to get module data */
+		interval = setInterval(sendAndGetModuleData, parseInt(sampleTime));		
+		}
+		
+		
 
 		/* open SPI device for communication */
 		var outputModule = spi.open(sL,sB, (err) => {
@@ -162,22 +180,13 @@ module.exports = function(RED) {
 				speedHz: SPISPEED 
 			  }];
 
-
-
-			var value = {};
-			var msgOut = {};
 			/***execution initiated by event *******/
-			node.on('input', function(msg) {
-				
-			if(!spiReady)
-			{
-				return;
-			}
-
+		node.on('input', function(msg) {
+			
 			sendBuffer[0] = 1;
 			sendBuffer[1] = MESSAGELENGTH-1;
 			sendBuffer[2] = 102;
-						
+			
 			for(var s =0; s <6; s++)
 			{
 			   if(msg[key[s]] <= 1000 && msg[key[s]] >= 0)
@@ -188,7 +197,17 @@ module.exports = function(RED) {
 			
 			sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 			
+		});
+		
+		var msgOut = {};
+		
+		/* Send and retrieve data to and from output module */
+		function sendAndGetModuleData (){
 			
+			if(!spiReady)
+			{
+				return;
+			}		
 				  outputModule.transfer(message, (err, message) => {
 					  
 					if(receiveBuffer[MESSAGELENGTH-1] === ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
@@ -210,7 +229,14 @@ module.exports = function(RED) {
 						}
 					}
 				});
-		});
+		}
+		
+	/* Event on closing node*/
+	node.on('close', function(done) {
+	clearInterval(interval);
+	done();
+	});		
+		
 	}
 
 	RED.nodes.registerType("Output-Module",GOcontrollOutputModule);
