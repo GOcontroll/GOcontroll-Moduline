@@ -29,9 +29,9 @@
 	<div class="form-row">
         <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time</label>
         <select id="node-input-sampleTime" style="width:300px">
-            <option value="100">100 ms</option>
+            <option value="10000">10 s</option>
             <option value="1000">1 s</option>
-			<option value="10000">10 s</option>
+			<option value="100">100 ms</option>
         </select>
     </div>
 </script>
@@ -40,7 +40,7 @@
 <p>The controller supply node measures the battery voltage (pin 4 - 7) and the contact voltage (pin 3) connected to the GOcontroll Moduline 2 controller. The contact voltage can be used to determine an external shut down event.&nbsp;</p>
 <p>&nbsp;</p>
 <p><strong>Data format</strong></p>
-<p>The supply information is pushed out of the node in a JSON string format holding 2 key&rsquo;s and 2 values.</p>
+<p>The supply information is pushed out of the node in a JSON object holding 2 key&rsquo;s and 2 values.</p>
 <p><em>{"batteryVoltage" : x , "contactVoltage" : y}&nbsp;&nbsp;</em></p>
 <p>The key's are: <em>batteryVoltage </em>and <em>contactVoltage</em></p>
 <p>The values <em>x</em> and <em>y</em> are the measured voltages given in mV</p>

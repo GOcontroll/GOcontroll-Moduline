@@ -1,13 +1,14 @@
 module.exports = function(RED) {
     "use strict"
 	
-	var cron = require("cron");
 	var i2c = require('i2c-bus');
 
 	function GOcontrollControllerSupply(config) { 	 
 	   RED.nodes.createNode(this,config);
 	   
-		this.sampleTime = config.sampleTime;
+	   	var interval = null;
+	   
+		const sampleTime = config.sampleTime;
 
         var node = this;
 		
@@ -37,33 +38,16 @@ module.exports = function(RED) {
 		 i2c1.closeSync();
 
 		
-		/*Convert the sampletime */		
-		const sampleTime = parseInt(this.sampleTime);
-
-		/***start timed event *******/
-		  node.repeaterSetup = function () {
-          if (!isNaN(sampleTime) && sampleTime >= 10) {		
-			if (RED.settings.verbose) {
-			node.log("verbose setting");			
-            }
-            this.interval_id = setInterval(function() {
-            node.emit("input", {});
-            },sampleTime);
-          } else if (this.crontab) {
-            if (RED.settings.verbose) {
-			node.log("verbose settings");	
-            }
-            this.cronjob = new cron.CronJob(this.crontab, function() { node.emit("input", {}); }, null, true);
-          }
-        };
-		
-		/***start timed event *******/
-		node.repeaterSetup();
+		/*Start scheduler */		
+		interval = setInterval(getVoltages, parseInt(sampleTime));
 
 		/***execution initiated by event *******/
 		node.on('input', function(msg) {
-
-		 const i2c1 = i2c.openSync(1);
+    });
+	
+	var msgOut={};
+	function getVoltages(){
+		const i2c1 = i2c.openSync(1);
 		 
 		 sendBuffer[0] = MAX_CONVERT0;
 		 i2c1.i2cWriteSync(MAX_ADDR, 1, sendBuffer);
@@ -79,24 +63,17 @@ module.exports = function(RED) {
 		var batteryVoltage = ((((receiveBufferSignal1[1] | ((receiveBufferSignal1[0] & 0x0f)<<8)) * decimalFactor)/1.5)*11700).toFixed(0);
 		var contactVoltage = ((((receiveBufferSignal2[1] | ((receiveBufferSignal2[0] & 0x0f)<<8)) * decimalFactor)/1.5)*11700).toFixed(0); 
 		
-
-  						msg.payload = {
-							"batteryVoltage": batteryVoltage,
-							"contactVoltage": contactVoltage,
-							}
-		node.send(msg);
-    });
+		msgOut["batteryVoltage"] = batteryVoltage;
+		msgOut["contactVoltage"] = contactVoltage;
+		node.send(msgOut);	
+	}
+	
+	node.on('close', function(done) {
+	clearInterval(interval);
+	done();
+	});
+	
 }
 	RED.nodes.registerType("Controller-Supply",GOcontrollControllerSupply);
-
-	    GOcontrollControllerSupply.prototype.close = function() {
-        if (this.interval_id != null) {
-            clearInterval(this.interval_id);
-            if (RED.settings.verbose) { this.log(RED._("inject.stopped")); }
-        } else if (this.cronjob != null) {
-            this.cronjob.stop();
-            if (RED.settings.verbose) { this.log(RED._("inject.stopped")); }
-            delete this.cronjob;
-        }
-    };
+	
 }
