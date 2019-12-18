@@ -74,17 +74,32 @@ module.exports = function(RED) {
 		const moduleReset = new ModuleReset("ResetM-" + String(this.moduleSlot));			
 		const sampleTime = parseInt(this.sampleTime);
 	
+		/*Send dummy message to setup the SPI bus properly */
+		const dummy = spi.open(sL,sB, (err) => {
+		  const message = [{
+			sendBuffer, 
+			receiveBuffer,           
+			byteLength: 5,
+			speedHz: SPISPEED 
+		  }];
+
+			/* Only in this scope, receive buffer is available */
+			dummy.transfer(message, (err, message) => {
+			});
+		});
+			
+	
 		/*Start module reset */
 		moduleReset.on();
 		
 		/*Give a certain timeout and generate callback*/
-		setTimeout(resetModule, 10);
+		setTimeout(resetModule, 200);
 		
 		/*Callback reset handler to get module out of reset */
 		function resetModule (){
 			moduleReset.off();
 			/*After reset, give the module some time to boot */
-			setTimeout(initializeModule, 800);
+			setTimeout(initializeModule, 600);
 		}
 		
 		
