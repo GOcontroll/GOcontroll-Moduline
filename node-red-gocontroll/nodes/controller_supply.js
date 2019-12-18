@@ -25,9 +25,9 @@ module.exports = function(RED) {
 		/* MSB is 1 */
 		const MAX_SETUP = 0xA2;
 		/* MSB is 0 */
-		const MAX_CONVERT0 = 0x61;
+		const MAX_CONVERT1 = 0x61;
 
-		const MAX_CONVERT1 = 0x63;
+		const MAX_CONVERT0 = 0x63;
 
 		 const i2c1 = i2c.openSync(1);
 		 
