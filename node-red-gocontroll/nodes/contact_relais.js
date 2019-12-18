@@ -9,14 +9,15 @@ module.exports = function(RED) {
 	
 	this.on('input', function(msg) {
 
-			if(msg.payload == 'on' || msg.payload == 1)
+			if(msg["+15"] == 1)
 			{
-			relais.on();
+			relais.on();	
 			}
 			else
 			{
-			relais.off();
+			relais.off();	
 			}
+
         });
     }
 	RED.nodes.registerType("Contact-Relais",GOcontrollContactRelais);

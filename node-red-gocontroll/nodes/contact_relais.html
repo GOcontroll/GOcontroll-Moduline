@@ -23,8 +23,11 @@
 </script>
 
 <script type="text/x-red" data-help-name="Contact-Relais">
-<p>With the help of the +15 Relais node, the controller can be switched off with a delay so there is some time to finish routines before switch off. If Node-RED is started, the relais can be switched on. At this point the controller will keep it's supply source alive even if the +15 pin on the connector (Connector C pin 3) goes down. If the power down is detected, the user can start a delayed off command to the relais.</p>
+<p>With the help of the +15 Relais node, the controller can be switched off with a delay so there is some time to finish routines before switch off. When the controller is switched on by the +15 input pin (connector C pin 3), the onboard relais is directly switched on. At this point the controller will keep it's supply source alive even if the +15 pin on the connector goes down. If the power down is detected, the user can start a delayed off command to the relais.</p>
 <p><strong>How to control:</strong></p>
-<p>By simply injecting data into this node, the +15 relais can be switched on and of. A string <strong>on&nbsp;</strong>will turn the relais on while <strong>off</strong> will turn the relais off.</p>
-<p>&nbsp;</p>
+<p>By simply injecting a JSON object into into this node, the +15 relais can be switched on and off.</p>
+<p>switch on:</p>
+<p>{"+15" : 1 }&nbsp;</p>
+<p>&nbsp;switch off:</p>
+<p>{"+15" : 0 }</p>
 </script>
