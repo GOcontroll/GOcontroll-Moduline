@@ -185,6 +185,8 @@ module.exports = function(RED) {
 				speedHz: SPISPEED 
 			  }];
 
+		var msgOut={};
+
 		/***execution initiated by event *******/
 		node.on('input', function(msg) {
 
@@ -206,14 +208,14 @@ module.exports = function(RED) {
 						/*In case dat is received that holds module information */
 						if(receiveBuffer.readInt32LE(2) == 2)
 						{
-							msg[key[0]] = receiveBuffer.readInt32LE(6),
-							msg[key[1]] = receiveBuffer.readInt32LE(14),
-							msg[key[2]] = receiveBuffer.readInt32LE(22),
-							msg[key[3]] = receiveBuffer.readInt32LE(30),
-							msg[key[4]] = receiveBuffer.readInt32LE(38),
-							msg[key[5]] = receiveBuffer.readInt32LE(46),
+							msgOut[key[0]] = receiveBuffer.readInt32LE(6),
+							msgOut[key[1]] = receiveBuffer.readInt32LE(14),
+							msgOut[key[2]] = receiveBuffer.readInt32LE(22),
+							msgOut[key[3]] = receiveBuffer.readInt32LE(30),
+							msgOut[key[4]] = receiveBuffer.readInt32LE(38),
+							msgOut[key[5]] = receiveBuffer.readInt32LE(46),
 						
-						node.send(msg);
+						node.send(msgOut);
 						}
 					}					
 				});
