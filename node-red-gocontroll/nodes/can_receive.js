@@ -98,11 +98,14 @@ module.exports = function(RED) {
 		
 		channel.start();
 		
-		var msg={};
+		var msgOut={};
 		
 		channel.addListener("onMessage",function(frame) {
 			/* Exit function if message is not matched with identifier */ 
+			node.warn("message received");
+			node.warn(frame.id);
 			if(frame.id != canid){return;}
+			
 			
 			if(error == 1){node.error("Probably wrong node configuration, check your configuration and deploy");return;}
 			
@@ -110,8 +113,8 @@ module.exports = function(RED) {
 			if(frame.data.length > dlc){ node.warn("Received CAN message("+frame.data.length+" bytes)is bigger than expected("+dlc+" bytes)");return;}
 			
 			/* Load some information about the message */
-			msg["dlc"]= frame.data.length;
-			msg["rtr"]= frame.rtr;
+			msgOut["dlc"]= frame.data.length;
+			msgOut["rtr"]= frame.rtr;
 
 				for(var s=0; s<signals; s++)
 				{
@@ -151,9 +154,9 @@ module.exports = function(RED) {
 						}
 					}
 					
-				msg[key[s]]= value[s];
+				msgOut[key[s]]= value[s];
 				}			
-			node.send(msg);
+			node.send(msgOut);
 		});
 
         
