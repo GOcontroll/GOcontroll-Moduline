@@ -102,7 +102,7 @@ module.exports = function(RED) {
 	
 	var canInterface = "can0";
 	if(canChannel == "CAN 1"){canInterface = "can0";}
-	else if (canChannel == "CAN 2"){caninterface = "can1";}
+	else if (canChannel == "CAN 2"){canInterface = "can1";}
 	
 	/* extract type of CAN identifier */
 	var extendedid;
