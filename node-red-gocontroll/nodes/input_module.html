@@ -4,8 +4,8 @@
         color: '#f76d11',
         defaults: {
             name: {value:""},
-			moduleLocation: {value:"0"},
-			sampleTime:{value:1},
+			moduleSlot: {value:"0"},
+			sampleTime:{value:"1000"},
 			input1:{value:1},
 			v1:{value:0},
 			pu1: {value:0},
@@ -37,7 +37,7 @@
 			key5: {value: "inputSignal5"},
 			key6: {value: "inputSignal6"},
         },
-        inputs:1,
+        inputs:0,
         outputs:1,
         icon: "arrow-in.png",
 		paletteLabel: "Input module",
@@ -46,11 +46,11 @@
 			{
             return this.name;
 			}
-			if(this.moduleLocation == "0")
+			if(this.moduleSlot == "0")
 			{
             return "Choose input module location";
 			}
-		return "Input module on slot " + this.moduleLocation;
+		return "Input module on slot " + this.moduleSlot;
         }
     });
 </script>
@@ -62,26 +62,26 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-moduleLocation"><i class="fa fa-microchip"></i> Module</label>
-        <select id="node-input-moduleLocation" style="width:300px" title="Select the slot on which the module is plugged into">
-            <option value=1>Module on slot 1</option>
-            <option value=2>Module on slot 2</option>
-            <option value=3>Module on slot 3</option>
-            <option value=4>Module on slot 4</option>
-            <option value=5>Module on slot 5</option>
-            <option value=6>Module on slot 6</option>
-            <option value=7>Module on slot 7</option>
-            <option value=8>Module on slot 8</option>
+        <label for="node-input-moduleSlot"><i class="fa fa-microchip"></i> Module</label>
+        <select id="node-input-moduleSlot" style="width:300px" title="Select the slot on which the module is plugged into">
+            <option value="1">Module on slot 1</option>
+            <option value="2">Module on slot 2</option>
+            <option value="3">Module on slot 3</option>
+            <option value="4">Module on slot 4</option>
+            <option value="5">Module on slot 5</option>
+            <option value="6">Module on slot 6</option>
+            <option value="7">Module on slot 7</option>
+            <option value="8">Module on slot 8</option>
         </select>
     </div>
 	
 	<div class="form-row">
         <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time</label>
         <select id="node-input-sampleTime" style="width:300px" title="The sample time sets the period on which the signals are retrieved">
-		    <option value="0">Trigger by inject</option>
-            <option value="10">10 ms</option>
-            <option value="100">100 ms</option>
             <option value="1000">1 s</option>
+            <option value="200">200 ms</option>
+            <option value="100">100 ms</option>
+			<option value="50">50 ms</option>
         </select>
     </div>
 	

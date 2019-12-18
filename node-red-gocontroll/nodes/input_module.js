@@ -1,18 +1,21 @@
 module.exports = function(RED) {
     "use strict"
 	
-	const cron = require("cron");
 	const spi = require('spi-device');
 	const ModuleReset = require('led');
 	
 	const MESSAGELENGTH = 55;
 	const SPISPEED = 2000000;
 	
+	
+	
 	function GOcontrollInputModule(config) { 	 
 	   RED.nodes.createNode(this,config);
-	   
-		this.moduleLocation = config.moduleLocation;
-		this.sampleTime = config.sampleTime;
+	  
+		var interval = null;
+		
+		const moduleSlot = config.moduleSlot;
+		const sampleTime = config.sampleTime;
 		this.input1 = config.input1;
 		this.v1 = config.v1;
 		this.pu1 = config.pu1;
@@ -59,7 +62,7 @@ module.exports = function(RED) {
 		
 		/*Execute initialisation steps */
 		/*Define the SPI port according the chosen module */
-		switch(this.moduleLocation)
+		switch(moduleSlot)
 		{
 			case "1": sL = 1; sB = 0;    break;
 			case "2": sL = 1; sB = 1;    break;
@@ -72,8 +75,7 @@ module.exports = function(RED) {
 		}
 
 		/*Create the module reset identifier and the convert the sampletime */
-		const moduleReset = new ModuleReset("ResetM-" + String(this.moduleLocation));			
-		const sampleTime = parseInt(this.sampleTime);
+		const moduleReset = new ModuleReset("ResetM-" + String(moduleSlot));			
 
 		/*Send dummy message to setup the SPI bus properly */
 		const dummy = spi.open(sL,sB, (err) => {
@@ -101,7 +103,7 @@ module.exports = function(RED) {
 			/*After reset, give the module some time to boot */
 			setTimeout(initializeModule, 600);
 		}
-		
+				
 		/*At this point, device is booted so send the initialization data */
 		function initializeModule (){
 		
@@ -147,51 +149,32 @@ module.exports = function(RED) {
 					}
 				});
 			});
+			
+			/* Start interval to get module data */
+		interval = setInterval(getModuleData, parseInt(sampleTime));
 		}
 
-		
-		/***start timed event *******/
-		  node.repeaterSetup = function () {
-          if (!isNaN(sampleTime) && sampleTime >= 10) {		
-			if (RED.settings.verbose) {
-			node.log("verbose setting");			
-            }
-            this.interval_id = setInterval(function() {
-            node.emit("input", {});
-            },sampleTime);
-          } else if (this.crontab) {
-            if (RED.settings.verbose) {
-			node.log("verbose settings");	
-            }
-            this.cronjob = new cron.CronJob(this.crontab, function() { node.emit("input", {}); }, null, true);
-          }
-        };
-		
-		/***start timed event *******/
-		node.repeaterSetup();
+
 
 		/* open SPI device for communication */
-		var inputModule = spi.open(sL,sB, (err) => {
-			if(!err)
-			{
-				spiReady = true;
-			} 
-		});
-		
-			  var message = [{
-				sendBuffer, 
-				receiveBuffer,           
-				byteLength: MESSAGELENGTH+1,
-				speedHz: SPISPEED 
-			  }];
-
-		var msgOut={};
-
-		/***execution initiated by event *******/
-		node.on('input', function(msg) {
-
-		if(!spiReady)
+	var inputModule = spi.open(sL,sB, (err) => {
+		if(!err)
 		{
+			spiReady = true;
+		} 
+	});
+			
+	 var message = [{
+		sendBuffer, 
+		receiveBuffer,           
+		byteLength: MESSAGELENGTH+1,
+		speedHz: SPISPEED 
+	}];
+
+	var msgOut={};
+	
+	function getModuleData (){	
+		if(!spiReady){
 			return;
 		}
 
@@ -202,39 +185,42 @@ module.exports = function(RED) {
 		sendBuffer[MESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 		
 				/*CALLBACK*/
-				inputModule.transfer(message, (err, message) => {
-					if(receiveBuffer[MESSAGELENGTH-1] == ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
+			inputModule.transfer(message, (err, message) => {
+				if(receiveBuffer[MESSAGELENGTH-1] == ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
+				{
+					/*In case dat is received that holds module information */
+					if(receiveBuffer.readInt32LE(2) == 2)
 					{
-						/*In case dat is received that holds module information */
-						if(receiveBuffer.readInt32LE(2) == 2)
-						{
-							msgOut[key[0]] = receiveBuffer.readInt32LE(6),
-							msgOut[key[1]] = receiveBuffer.readInt32LE(14),
-							msgOut[key[2]] = receiveBuffer.readInt32LE(22),
-							msgOut[key[3]] = receiveBuffer.readInt32LE(30),
-							msgOut[key[4]] = receiveBuffer.readInt32LE(38),
-							msgOut[key[5]] = receiveBuffer.readInt32LE(46),
+						msgOut[key[0]] = receiveBuffer.readInt32LE(6),
+						msgOut[key[1]] = receiveBuffer.readInt32LE(14),
+						msgOut[key[2]] = receiveBuffer.readInt32LE(22),
+						msgOut[key[3]] = receiveBuffer.readInt32LE(30),
+						msgOut[key[4]] = receiveBuffer.readInt32LE(38),
+						msgOut[key[5]] = receiveBuffer.readInt32LE(46),
 						
-						node.send(msgOut);
-						}
-					}					
-				});
+					node.send(msgOut);
+					}
+				}					
+			});	
+	}
+	
+	
+	/***execution initiated by event *******/
+	node.on('input', function(msg) {
 
     });
+	
+	
+	node.on('close', function(done) {
+	clearInterval(interval);
+	done();
+	});
+	
+
 	}
+	
 
 	RED.nodes.registerType("Input-Module",GOcontrollInputModule);
-
-	    GOcontrollInputModule.prototype.close = function() {
-        if (this.interval_id != null) {
-            clearInterval(this.interval_id);
-            if (RED.settings.verbose) { this.log(RED._("inject.stopped")); }
-        } else if (this.cronjob != null) {
-            this.cronjob.stop();
-            if (RED.settings.verbose) { this.log(RED._("inject.stopped")); }
-            delete this.cronjob;
-        }
-    };
 	
 	/*Function to calculate the checksum of a message that needs to be send */
 	function ChecksumCalculator(array, length)
