@@ -38,6 +38,11 @@ fi
 # provide some user information:
 echo -e "${YELLOW} Download new node files ${NORMAL}"
 
+if [ -d GOcontroll-Moduline-III ]
+then
+sudo rm -r GOcontroll-Moduline-III
+fi
+
 sudo git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git
 
 
