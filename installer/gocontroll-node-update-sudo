@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # url to bash this script:
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update)
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update | bash
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update-sudo)
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update-sudo | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -27,7 +27,7 @@ echo -e "${YELLOW} Create new GOcontroll folder ${NORMAL}"
 sudo mkdir GOcontroll
 
 # Jump to folder
-sudo cd GOcontroll
+cd GOcontroll
 ls
 
 if ! [ -x "$(command -v git)" ]; then
@@ -41,12 +41,12 @@ echo -e "${YELLOW} Download new node files ${NORMAL}"
 sudo git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git
 
 
-sudo cd ~ 
+cd ~ 
 # Before we copy the content of node-red-gocontroll, we first have to delete
 # the folder if present.
 
 # Go to usr folder
-sudo cd /usr
+cd /usr
 
 if [ -d node-red-gocontroll ]
 then
@@ -54,13 +54,13 @@ sudo rm -r node-red-gocontroll
 fi
 
 # jump back to root
-sudo cd ~ 
+cd ~ 
 
 sudo cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
 
 
 echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
-sudo cd ~/.node-red
+cd ~/.node-red
 
 echo -e "${YELLOW}Install local node packages ${NORMAL}"
 
