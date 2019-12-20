@@ -61,7 +61,7 @@ fi
 # jump back to root
 cd ~ 
 
-sudo cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
+sudo cp -avr /home/pi/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
 
 
 echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
