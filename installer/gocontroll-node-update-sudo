@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# url to bash this script:
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update)
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update | bash
+
+YELLOW='\033[33m'
+NORMAL='\033[0m'
+
+echo -e "${YELLOW}Update GOcontroll nodes ${NORMAL}"
+# Stop node-red service
+
+echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
+sudo systemctl stop nodered
+
+# Go to root folder
+cd 
+
+if [ -d GOcontroll ]
+then
+echo -e "${YELLOW} Delete existing GOcontroll folder ${NORMAL}"
+sudo rm -r GOcontroll
+fi
+
+# Create Folder
+echo -e "${YELLOW} Create new GOcontroll folder ${NORMAL}"
+sudo mkdir GOcontroll
+
+# Jump to folder
+sudo cd GOcontroll
+ls
+
+if ! [ -x "$(command -v git)" ]; then
+echo -e "${YELLOW} Git is not yet installed so let's install first ${NORMAL}"
+sudo apt-get -y install git 
+fi
+
+# provide some user information:
+echo -e "${YELLOW} Download new node files ${NORMAL}"
+
+sudo git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git
+
+
+sudo cd ~ 
+# Before we copy the content of node-red-gocontroll, we first have to delete
+# the folder if present.
+
+# Go to usr folder
+sudo cd /usr
+
+if [ -d node-red-gocontroll ]
+then
+sudo rm -r node-red-gocontroll
+fi
+
+# jump back to root
+sudo cd ~ 
+
+sudo cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
+
+
+echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
+sudo cd ~/.node-red
+
+echo -e "${YELLOW}Install local node packages ${NORMAL}"
+
+# It seems that NPM not always installs AND builds the dependencies again. It is important to delete
+# the node modules first and then also delete the package.lock.json file!
+# https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
+
+sudo npm install --unsafe-perm /usr/node-red-gocontroll
+
+echo -e "${YELLOW}Start Node-RED again ${NORMAL}"
+sudo systemctl start nodered
+
