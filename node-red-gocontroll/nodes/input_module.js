@@ -52,6 +52,9 @@ key[3] = config.key4;
 key[4] = config.key5;
 key[5] = config.key6;
 
+var hwVersion = {};
+var swVersion = {};
+var swVersionAvailable = {};
 
 var node = this;
 
@@ -65,7 +68,7 @@ var spiReady = 0;
 
 const moduleReset = new ModuleReset("ResetM-" + String(moduleSlot));
 
-
+var firmwareFileName;
 
 
 /*Execute initialisation steps */
@@ -103,24 +106,27 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 }
 
 
-	/* Function to check if ne firmware maches the already installed firmware */
+
+
+
+
+
+
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
 	function InputModule_CheckFirmwareVersion(){
 	/* Construct the firmware check message */ 
-
-	sendBuffer[0] = 19;
+	sendBuffer[0] = 9;
 	sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
-	sendBuffer[2] = 19;
+	sendBuffer[2] = 9;
 
-	/* At this point, we need to send the available firmware version starting with the hardware ID*/ 
-	sendBuffer[6] = 20;
-	sendBuffer[7] = 30;
-	sendBuffer[8] = 10;
-	sendBuffer[9] = 10;
-
-	/* Add the software ID */
-	sendBuffer[10] = 0;
-	sendBuffer[11] = 0;
-	sendBuffer[12] = 2;
 
 	/* calculate checksum */
 	sendBuffer[BOOTMESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
@@ -138,33 +144,66 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 
 			if(receiveBuffer[BOOTMESSAGELENGTH-1] != InputModule_ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1)){
 			node.warn("Checksum from bootloader not correct");
+			return;
 			}
 			else if(	receiveBuffer[0] != 9 || receiveBuffer[2] != 9){
 			node.warn("Wrong response from bootloader");
+			return;
 			}
-			else if(sendBuffer[6] != receiveBuffer[6] || sendBuffer[7] != receiveBuffer[7] || sendBuffer[8] != receiveBuffer[8] || sendBuffer[9] != receiveBuffer[9]){
-			node.warn("Hardware version doesn't match the firmware hardware version");
-			}
-			else if(sendBuffer[10] == receiveBuffer[10] && sendBuffer[11] == receiveBuffer[11] && sendBuffer[12] == receiveBuffer[12]){
-			node.warn("Latest firmware installed!");
-			/* Jump to input module initialization */		
-			}
-			else{
-			/* At this point we are going to start a firmwareupload */
-			node.warn("read line from file");
-			InputModule_AnnounceFirmwareUpload();
-			}
-
+			
+			/* Still here so extract HW version and SW version */
+			hwVersion[0] = receiveBuffer[6];
+			hwVersion[1] = receiveBuffer[7];
+			hwVersion[2] = receiveBuffer[8];
+			hwVersion[3] = receiveBuffer[9];
+			
+			swVersion[0] = receiveBuffer[10];
+			swVersion[1] = receiveBuffer[11];
+			swVersion[2] = receiveBuffer[12];
+			
+			/* Check which files are present in the folder */
+			fs.readdir("/root/GOcontroll/GOcontroll-Modules", (err, files) => {
+				files.forEach(file => {
+					
+				var versionStored = file.split("-");
+				
+					if(hwVersion[0] == parseInt(versionStored[0],10) && hwVersion[1] == parseInt(versionStored[1],10) && hwVersion[2] == parseInt(versionStored[2],10) && hwVersion[3] == parseInt(versionStored[3],10)){
+						/* Check if file that matches the hardware has a different software version */
+						swVersionAvailable[0] = parseInt(versionStored[4],10)
+						swVersionAvailable[1] = parseInt(versionStored[5],10)
+						swVersionAvailable[2] = parseInt(versionStored[6],10)
+						
+						node.warn(swVersionAvailable[0]);
+						node.warn(swVersionAvailable[1]);
+						node.warn(swVersionAvailable[2]);
+						
+						if (swVersion[0] != swVersionAvailable[0] || swVersion[1] != swVersionAvailable[1] || swVersion[2] != swVersionAvailable[2]){
+						firmwareFileName =  file;
+						node.warn("New module firmware available" + firmwareFileName);
+						InputModule_AnnounceFirmwareUpload();
+						//InputModule_CancelFirmwareUpload();
+						}
+						else{
+						InputModule_CancelFirmwareUpload();
+						
+						}	
+					}
+				});
+			});
 		});
-
-	//nextExecution:
-	node.warn("next timeout set");
-	//setTimeout(initializeModule, 600);
 	});
 	}			
 
 
-	/*At this point, device is booted so send the initialization data */
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
 	function InputModule_Initialize (){
 
 	sendBuffer[0] = 1;
@@ -225,6 +264,13 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 	});
 
 	var msgOut={};
+
+	var message = [{
+	sendBuffer, 
+	receiveBuffer,             
+	byteLength: MESSAGELENGTH+1,
+	speedHz: SPISPEED 
+	}];
 
 	/***************************************************************************************
 	** \brief
@@ -318,6 +364,38 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 	return (checkSum&255);	
 	}
 
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
+	function InputModule_CancelFirmwareUpload(){
+	sendBuffer[0] = 19;
+	sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+	sendBuffer[2] = 19;
+	
+	sendBuffer[BOOTMESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+
+		const cancel = spi.open(sL,sB, (err) => {
+			
+			const message = [{
+			sendBuffer, 
+			receiveBuffer,           
+			byteLength : BOOTMESSAGELENGTH+1,
+			speedHz: SPISPEED 
+			}];
+
+		cancel.transfer(message, (err, message) => {
+		cancel.close(err =>{});});
+		/* At this point, The module can be initialized */
+		setTimeout(InputModule_Initialize, 600);
+		});
+
+	}
 
 
 
@@ -332,12 +410,15 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 	****************************************************************************************/
 	function InputModule_AnnounceFirmwareUpload(){
 	sendBuffer[0] = 29;
-	sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+	sendBuffer[1] = BOOTMESSAGELENGTH; 
 	sendBuffer[2] = 29;
-		
-	sendBuffer[BOOTMESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
 	
-	/*Send dummy message to setup the SPI bus properly */
+	sendBuffer[6] = swVersionAvailable[0];
+	sendBuffer[7] = swVersionAvailable[1];
+	sendBuffer[8] = swVersionAvailable[2];
+	
+	sendBuffer[BOOTMESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+
 		const announce = spi.open(sL,sB, (err) => {
 			
 			const message = [{
@@ -385,7 +466,7 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 
 	node.warn(firmwareVersion);
 
-		fs.readFile("/root/GOcontroll/GOcontroll-Modules/20-30-10-10_0-0-2.srec", function(err, code){
+		fs.readFile("/root/GOcontroll/GOcontroll-Modules/" + firmwareFileName, function(err, code){
 
 		var str = code.toString();
 		var line = str.split('\n');
@@ -450,12 +531,15 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 						});
 
 						if(messageType == 7){
-						firmware.close(err =>{});	
+						firmware.close(err =>{});
+
+						/* At this point, the module can receive its initialization data */
+						setTimeout(InputModule_Initialize, 600);
 						return;
 						}
 						else
 						{
-							setTimeout(sendData, 2);
+						setTimeout(sendData, 2);
 						}
 				
 					}
@@ -489,7 +573,9 @@ setTimeout(InputModule_CheckFirmwareVersion, 600);
 			}];
 
 			/* Only in this scope, receive buffer is available */
-		dummy.transfer(message, (err, message) => {});
+		dummy.transfer(message, (err, message) => {
+		dummy.close(err =>{});
+		});
 	
 		});
 	}
