@@ -1,0 +1,1 @@
+curl --silent "https://api.github.com/repos/Rick-GO/GOcontroll-Moduline-III/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")'
