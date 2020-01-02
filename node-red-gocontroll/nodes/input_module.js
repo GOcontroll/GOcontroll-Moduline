@@ -18,7 +18,6 @@ function GOcontrollInputModule(config) {
 	/* Get information from the Node configuration */
 	const moduleSlot 		= config.moduleSlot;
 	const sampleTime 		= config.sampleTime;
-	const firmwareVersion 	= config.firmware;
 	
 	const moduleHwId1		= 20;
 	const moduleHwId2		= 10;
@@ -68,8 +67,18 @@ function GOcontrollInputModule(config) {
 	var swVersion = {};
 	var swVersionAvailable = {};
 	
+	var firmwareFileName;
+	
+	/* Declarations for timeout handlers */
+	var resetTimeout;
+	var initializeTimeout;
+	var sendDataTimeout;
+	var checkFirmwareTimeout;
+	var firmwareUploadTimeout;
+	
 	var sL, sB;
-
+	
+	/*Allocate memory for receive and send buffer */
 	var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
 	var	receiveBuffer = Buffer.alloc(MESSAGELENGTH+5);
 
@@ -87,7 +96,7 @@ function GOcontrollInputModule(config) {
 	speedHz: SPISPEED 
 	}];
 
-	var dummyMessage = [{
+	const dummyMessage = [{
 	sendBuffer, 
 	receiveBuffer,           
 	byteLength : 5,
@@ -102,7 +111,7 @@ function GOcontrollInputModule(config) {
 	/* Define the right module reset pin depending on the module location */
 	const moduleReset = new ModuleReset("ResetM-" + String(moduleSlot));
 
-	var firmwareFileName;
+	
 
 
 	/*Execute initialisation steps */
@@ -148,7 +157,7 @@ function GOcontrollInputModule(config) {
 	moduleReset.on();
 
 	/*Give a certain timeout so module is reset properly*/
-	setTimeout(InputModule_Reset, 200);
+	resetTimeout = setTimeout(InputModule_Reset, 200);
 	}
 		
 
@@ -165,9 +174,20 @@ function GOcontrollInputModule(config) {
 	moduleReset.off();
 	/*After reset, give the module some time to boot */
 	/*Next step is to check for new available firmware */
-	setTimeout(InputModule_CheckFirmwareVersion, 100);
+	checkFirmwareTimeout = setTimeout(InputModule_CheckFirmwareVersion, 100);
 	}
 
+
+
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
 	function InputModule_CheckFirmwareVersion(){
 	/* Construct the firmware check message */ 
 	sendBuffer[0] = 9;
@@ -349,6 +369,11 @@ function GOcontrollInputModule(config) {
 	****************************************************************************************/
 	node.on('close', function(done) {
 	clearInterval(interval);
+	clearTimeout(resetTimeout);
+	clearTimeout(initializeTimeout);
+	clearTimeout(sendDataTimeout);
+	clearTimeout(checkFirmwareTimeout);
+	clearTimeout(firmwareUploadTimeout);
 	done();
 	});
 
@@ -395,7 +420,7 @@ function GOcontrollInputModule(config) {
 		cancel.transfer(bootMessage, (err, bootMessage) => {
 		cancel.close(err =>{});});
 		/* At this point, The module can be initialized */
-		setTimeout(InputModule_Initialize, 600);
+		initializeTimeout = setTimeout(InputModule_Initialize, 600);
 		});
 
 	}
@@ -429,7 +454,7 @@ function GOcontrollInputModule(config) {
 		announce.close(err =>{});});
 		
 		/* The bootloader will start a memory erase which will take some seconds to complete. After that, start the firmware upload */
-		setTimeout(InputModule_FirmwareUpload, 2500);
+		firmwareUploadTimeout = setTimeout(InputModule_FirmwareUpload, 2500);
 		});
 
 	}
@@ -447,11 +472,11 @@ function GOcontrollInputModule(config) {
 	**
 	****************************************************************************************/
 	function InputModule_FirmwareUpload(){
-	var messageType;
-	var lineLength;
-	var memoryAddr ;
-	var data;
-	var checksum;
+	//var messageType;
+	//var lineLength;
+	//var memoryAddr ;
+	//var data;
+	//var checksum;
 	var checksumCalculated = new Uint8Array(1);
 	var sendbufferPointer;
 	var messagePointer;
@@ -462,9 +487,24 @@ function GOcontrollInputModule(config) {
 
 		fs.readFile("/root/GOcontroll/GOcontroll-Modules/" + firmwareFileName, function(err, code){
 
+		if (err) {
+			node.warn("Error opening firmware file");
+			node.status({fill:"red",shape:"dot",text:"Error opening firmware file"});
+			throw err;
+		}
+
 		var str = code.toString();
 		var line = str.split('\n');
 		var lineNumber = -1;
+		
+		
+		if(!(line.length > 1))
+		{
+		node.warn("Firmware file corrupt");
+		node.status({fill:"red",shape:"dot",text:"Firmware file corrupt"});
+		initializeTimeout = setTimeout(InputModule_Initialize, 600);
+		return;
+		}
 
 			const firmware = spi.open(sL,sB, (err) => {
 				InputModule_SendData();
@@ -473,12 +513,12 @@ function GOcontrollInputModule(config) {
 			
 	
 					lineNumber++
-					messageType =  parseInt(line[lineNumber].slice(1, 2),16);
+					var messageType =  parseInt(line[lineNumber].slice(1, 2),16);
 					/* Get the decimal length of the specific line */
-					lineLength = parseInt((line[lineNumber].slice(2, 4)),16);
-					memoryAddr = line[lineNumber].slice(4, 12);
-					data = line[lineNumber].slice(12, (line[lineNumber].length - 3));
-					checksum = parseInt(line[lineNumber].slice((line[lineNumber].length - 3), line[lineNumber].length),16);
+					var lineLength = parseInt((line[lineNumber].slice(2, 4)),16);
+					//memoryAddr = line[lineNumber].slice(4, 12);
+					//data = line[lineNumber].slice(12, (line[lineNumber].length - 3));
+					var checksum = parseInt(line[lineNumber].slice((line[lineNumber].length - 3), line[lineNumber].length),16);
 
 
 					sendbufferPointer = 6;
@@ -519,7 +559,7 @@ function GOcontrollInputModule(config) {
 						}
 						else
 						{
-						setTimeout(InputModule_SendData, 2);
+						sendDataTimeout = setTimeout(InputModule_SendData, 2);
 						}
 					}
 			});
