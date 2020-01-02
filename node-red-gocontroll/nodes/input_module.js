@@ -157,7 +157,7 @@ function GOcontrollInputModule(config) {
 	moduleReset.on();
 
 	/*Give a certain timeout so module is reset properly*/
-	resetTimeout = setTimeout(InputModule_Reset, 200);
+	resetTimeout = setTimeout(InputModule_Reset, 300);
 	}
 		
 

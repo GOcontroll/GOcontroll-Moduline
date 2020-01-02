@@ -147,7 +147,7 @@ module.exports = function(RED) {
 		moduleReset.on();
 
 		/*Give a certain timeout so module is reset properly*/
-		resetTimeout = setTimeout(OutputModule_Reset, 200);
+		resetTimeout = setTimeout(OutputModule_Reset, 300);
 		}
 			
 			
