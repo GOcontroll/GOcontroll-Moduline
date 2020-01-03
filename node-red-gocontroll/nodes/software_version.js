@@ -22,10 +22,6 @@ module.exports = function(RED) {
 	Settings_GetVersion ();
 
 
-	
-	
-	
-	
 	/***************************************************************************************
 	** \brief
 	**
@@ -39,8 +35,7 @@ module.exports = function(RED) {
 		var packageFile = fs.readFileSync("/usr/node-red-gocontroll/package.json")
 		
 		jsonContent = JSON.parse(packageFile);
-		
-		node.status({fill:"green",shape:"dot",text:"GOcontroll node version: "+jsonContent.version});
+		node.status({fill:"green",shape:"dot",text:"Node version: "+jsonContent.version + " Click to check latest version"});
 	}
 	
 	
@@ -53,17 +48,18 @@ module.exports = function(RED) {
 				
 			latestVersion = shell.exec(command);
 			
-			var latestVersion3 = latestVersion.substring(1,latestVersion.length-1);
-			node.warn(latestVersion3);
+			var latestVersion = latestVersion.substring(1,latestVersion.length-1);
+			node.warn(latestVersion);
 			node.warn(jsonContent.version);
 			
-				if(jsonContent.version == latestVersion3)
+				if(jsonContent.version == latestVersion)
 				{
-				node.status({fill:"green",shape:"dot",text:"Latest version("+jsonContent.version+") already installed"});
+				node.status({fill:"green",shape:"dot",text:"Latest version ("+jsonContent.version+") already installed"});
 				machineState = 2
 				}
 				else
 				{
+				node.status({fill:"yellow",shape:"dot",text:"New version available ("+jsonContent.version+") Click to update"});
 				machineState = 1	
 				}
 			}
@@ -80,13 +76,10 @@ module.exports = function(RED) {
         });
 		
 		
-
+		
 			RED.httpAdmin.get("/softwareVersion", RED.auth.needsPermission('softwareVersion.read'), function(req,res) {
 			res.json(msgOut);
 		});
-		
-		
-		
     }
 	RED.nodes.registerType("Software",GOcontrollSoftware);
 	

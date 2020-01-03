@@ -3,13 +3,12 @@
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
-		payload : {value:""},
         },
         inputs:0,
         outputs:0,
-        icon: "font-awesome/fa-cogs",
+        icon: "font-awesome/fa-file-code-o",
         label: function() {
-            return this.name||"Click to check latest version";
+            return this.name||"GOcontroll node version updater";
         },
 		button: {
             enabled: function() {
@@ -19,9 +18,7 @@
                 if (this.changed) {
                     return RED.notify(RED._("notification.warning", {message:RED._("notification.warnings.undeployedChanges")}),"warning");
                 }
-				
-				var payload = "Rickert";// this.payload;
-				
+
 				 $.getJSON('softwareVersion',function(data) {
 				 
 					 if(data.machineState == 0)
@@ -31,7 +28,6 @@
 					 else if(data.machineState == 1)
 					 {
 					 RED.notify(node._("New software available! Click to update."),{type:"success",id:"update"});
-					 this.name = "Click to update controller.";
 					 }
 					 else if(data.machineState == 2)
 					 {
@@ -40,13 +36,8 @@
 					 }
 		
 				 });
-              //  var payload = this.payload;
-              //  if ((this.payloadType === 'flow') ||
-              //     (this.payloadType === 'global')) {
-              //      var key = RED.utils.parseContextKey(payload);
-              //      payload = this.payloadType+"."+key.key;
-              //  }
-                var label = this._def.label.call(this);
+
+                var label = "test";//this._def.label.call(this);
                 //if (label.length > 30) {
                 //    label = label.substring(0,50)+"...";
                 //}
@@ -78,14 +69,5 @@
 
 
 <script type="text/x-red" data-help-name="Software">
-<p>The settings block configures the basic settings of the GOcontroll Moduline 3 controller.</p>
-<p>&nbsp;</p>
-<h2>Wireless LAN Acces Point credentials:</h2>
-<p><em>SSID:</em></p>
-<p>The name of the wireless LAN acces point network.</p>
-<p><em>Password:</em></p>
-<p>The credentials of the wireless LAN acces point network.</p>
-<p>&nbsp;</p>
-<h2>CAN speed settings:</h2>
-<p>Here you can select the speed of CAN 1 and CAN 2. Changing these parameters, needs a reboot of the controller after deployment of the new parameters.</p>
+<p>This node can be used to check the online GOcontroll repository for node updates. Before updating, please read the history information on GitHub.</p>
 </script>
