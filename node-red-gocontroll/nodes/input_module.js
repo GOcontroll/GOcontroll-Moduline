@@ -191,7 +191,7 @@ function GOcontrollInputModule(config) {
 	function InputModule_CheckFirmwareVersion(){
 	/* Construct the firmware check message */ 
 	sendBuffer[0] = 9;
-	sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 	sendBuffer[2] = 9;
 
 
@@ -243,6 +243,8 @@ function GOcontrollInputModule(config) {
 								node.status({fill:"blue",shape:"dot",text:"Installing new firmware"});
 								/* In this case, new firmware is available so tell the module there is new software */
 								InputModule_AnnounceFirmwareUpload();
+								/* FOR DEBUG PURPOSES */
+								//InputModule_CancelFirmwareUpload();
 								}
 								else{
 								/* In this case, the latest firmware is installed so show on node status*/
@@ -410,7 +412,7 @@ function GOcontrollInputModule(config) {
 	****************************************************************************************/
 	function InputModule_CancelFirmwareUpload(){
 	sendBuffer[0] = 19;
-	sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 	sendBuffer[2] = 19;
 	
 	sendBuffer[BOOTMESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
@@ -438,7 +440,7 @@ function GOcontrollInputModule(config) {
 	****************************************************************************************/
 	function InputModule_AnnounceFirmwareUpload(){
 	sendBuffer[0] = 29;
-	sendBuffer[1] = BOOTMESSAGELENGTH; 
+	sendBuffer[1] = BOOTMESSAGELENGTH-1; 
 	sendBuffer[2] = 29;
 	
 	sendBuffer[6] = swVersionAvailable[0];
@@ -472,17 +474,12 @@ function GOcontrollInputModule(config) {
 	**
 	****************************************************************************************/
 	function InputModule_FirmwareUpload(){
-	//var messageType;
-	//var lineLength;
-	//var memoryAddr ;
-	//var data;
-	//var checksum;
 	var checksumCalculated = new Uint8Array(1);
 	var sendbufferPointer;
 	var messagePointer;
 
 	sendBuffer[0] = 39;
-	sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 	sendBuffer[2] = 39;
 
 		fs.readFile("/root/GOcontroll/GOcontroll-Modules/" + firmwareFileName, function(err, code){

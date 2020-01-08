@@ -181,7 +181,7 @@ module.exports = function(RED) {
 		function OutputModule_CheckFirmwareVersion(){
 		/* Construct the firmware check message */ 
 		sendBuffer[0] = 9;
-		sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+		sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 		sendBuffer[2] = 9;
 
 
@@ -233,6 +233,8 @@ module.exports = function(RED) {
 									node.status({fill:"blue",shape:"dot",text:"Installing new firmware"});
 									/* In this case, new firmware is available so tell the module there is new software */
 									OutputModule_AnnounceFirmwareUpload();
+									/* FOR DEBUG PURPOSE */
+									//OutputModule_CancelFirmwareUpload();
 									}
 									else{
 									/* In this case, the latest firmware is installed so show on node status*/
@@ -268,7 +270,7 @@ module.exports = function(RED) {
 		function OutputModule_Initialize(){
 
 		sendBuffer[0] = 1;
-		sendBuffer[1] = MESSAGELENGTH;
+		sendBuffer[1] = MESSAGELENGTH-1;
 		sendBuffer[2] = 101;
 			
 		for(var s =0; s <6; s++)
@@ -283,10 +285,10 @@ module.exports = function(RED) {
 
 				/* Only in this scope, receive buffer is available */
 				outputModule.transfer(normalMessage, (err, normalMessage) => {
-
+OutputModule_clearBuffer();
 				});
 			});
-			clearBufferTimeout = setTimeout(OutputModule_clearBuffer, 100);	
+	//		clearBufferTimeout = setTimeout(OutputModule_clearBuffer, 100);	
 		}
 		
 		
@@ -438,7 +440,7 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		function OutputModule_CancelFirmwareUpload(){
 		sendBuffer[0] = 19;
-		sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+		sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 		sendBuffer[2] = 19;
 		
 		sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
@@ -464,7 +466,7 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		function OutputModule_AnnounceFirmwareUpload(){
 		sendBuffer[0] = 29;
-		sendBuffer[1] = BOOTMESSAGELENGTH; 
+		sendBuffer[1] = BOOTMESSAGELENGTH-1; 
 		sendBuffer[2] = 29;
 		
 		sendBuffer[6] = swVersionAvailable[0];
@@ -496,17 +498,12 @@ module.exports = function(RED) {
 		**
 		****************************************************************************************/
 		function OutputModule_FirmwareUpload(){
-	//	var messageType;
-	//	var lineLength;
-		//var memoryAddr ;
-		//var data;
-	//	var checksum;
 		var checksumCalculated = new Uint8Array(1);
 		var sendbufferPointer;
 		var messagePointer;
 
 		sendBuffer[0] = 39;
-		sendBuffer[1] = BOOTMESSAGELENGTH; // Messagelength from bootloader
+		sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 		sendBuffer[2] = 39;
 
 			fs.readFile("/root/GOcontroll/GOcontroll-Modules/" + firmwareFileName, function(err, code){
