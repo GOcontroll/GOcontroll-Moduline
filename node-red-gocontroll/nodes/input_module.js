@@ -72,7 +72,8 @@ function GOcontrollInputModule(config) {
 	/* Declarations for timeout handlers */
 	var resetTimeout;
 	var initializeTimeout;
-	var sendDataTimeout;
+	var sendFirmwareDataTimeout;
+	var getFirmwareStatusTimeout;
 	var checkFirmwareTimeout;
 	var firmwareUploadTimeout;
 	
@@ -373,7 +374,8 @@ function GOcontrollInputModule(config) {
 	clearInterval(interval);
 	clearTimeout(resetTimeout);
 	clearTimeout(initializeTimeout);
-	clearTimeout(sendDataTimeout);
+	clearTimeout(sendFirmwareDataTimeout);
+	clearTimeout(getFirmwareStatusTimeout);
 	clearTimeout(checkFirmwareTimeout);
 	clearTimeout(firmwareUploadTimeout);
 	done();
@@ -478,10 +480,6 @@ function GOcontrollInputModule(config) {
 	var sendbufferPointer;
 	var messagePointer;
 
-	sendBuffer[0] = 39;
-	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
-	sendBuffer[2] = 39;
-
 		fs.readFile("/root/GOcontroll/GOcontroll-Modules/" + firmwareFileName, function(err, code){
 
 		if (err) {
@@ -492,7 +490,7 @@ function GOcontrollInputModule(config) {
 
 		var str = code.toString();
 		var line = str.split('\n');
-		var lineNumber = -1;
+		var lineNumber = 0;
 		
 		
 		if(!(line.length > 1))
@@ -504,12 +502,12 @@ function GOcontrollInputModule(config) {
 		}
 
 			const firmware = spi.open(sL,sB, (err) => {
-				InputModule_SendData();
+				InputModule_SendFirmwareData();
 
-				function InputModule_SendData(){
+
+
+				function InputModule_SendFirmwareData(){
 			
-	
-					lineNumber++
 					var messageType =  parseInt(line[lineNumber].slice(1, 2),16);
 					/* Get the decimal length of the specific line */
 					var lineLength = parseInt((line[lineNumber].slice(2, 4)),16);
@@ -517,6 +515,9 @@ function GOcontrollInputModule(config) {
 					//data = line[lineNumber].slice(12, (line[lineNumber].length - 3));
 					var checksum = parseInt(line[lineNumber].slice((line[lineNumber].length - 3), line[lineNumber].length),16);
 
+					sendBuffer[0] = 39;
+					sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+					sendBuffer[2] = 39;
 
 					sendbufferPointer = 6;
 					sendBuffer[sendbufferPointer++] = lineNumber>>8; 
@@ -549,16 +550,66 @@ function GOcontrollInputModule(config) {
 
 						if(messageType == 7){
 						firmware.close(err =>{});
-
+						node.warn("Firmware from input module on slot: "+moduleSlot+" updated! Now restarting module!");
 						/* At this point, the module can be restarted to check if it provides the new installed firmware */
 						InputModule_StartReset();
 						return;
 						}
 						else
 						{
-						sendDataTimeout = setTimeout(InputModule_SendData, 2);
+						getFirmwareStatusTimeout = setTimeout(InputModule_GetFirmwareStatus, 1);
+						}
+				}
+					
+					
+					
+				/***************************************************************************************
+				** \brief
+				**
+				**
+				** \param
+				** \param
+				** \return
+				**
+				****************************************************************************************/
+				function InputModule_GetFirmwareStatus(){
+				
+				sendBuffer[0] = 49;
+				sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+				sendBuffer[2] = 49;
+						
+				/* calculate checksum */
+				sendBuffer[BOOTMESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+				
+					firmware.transfer(bootMessage, (err, bootMessage) => {
+
+					if(receiveBuffer[BOOTMESSAGELENGTH-1] === InputModule_ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1))
+					{
+						/* Check if received data complies with the actual line number from the .srec file */
+						if(lineNumber == receiveBuffer.readUInt16BE(6))
+						{
+							/* Check if the returned line is correctly received by module*/
+							if(receiveBuffer[8] ==1)
+							{
+								/* At this position, the module has received the line correct so jump to next line */
+								lineNumber++;
+							}
+							else
+							{
+							node.warn("Firmware checksum for input module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
+							}
 						}
 					}
+					else
+					{
+					//node.warn("Firmware checksum for input module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );	
+					}
+							
+					sendFirmwareDataTimeout = setTimeout(InputModule_SendFirmwareData, 1);
+
+					});
+
+				}
 			});
 
 		});	

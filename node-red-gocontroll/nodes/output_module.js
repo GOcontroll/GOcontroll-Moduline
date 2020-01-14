@@ -64,7 +64,8 @@ module.exports = function(RED) {
 		/* Declarations for timeout handlers */
 		var resetTimeout;
 		var initializeTimeout;
-		var sendDataTimeout;
+		var sendFirmwareDataTimeout;
+		var getFirmwareStatusTimeout;
 		var checkFirmwareTimeout;
 		var firmwareUploadTimeout;
 		var clearBufferTimeout;
@@ -122,7 +123,7 @@ module.exports = function(RED) {
 		OutputModule_SendDummyByte();
 			
 		/* Start module reset and initialization proces */
-		OutputModule_StartReset();
+		//OutputModule_StartReset();
 		
 		
 		/* open SPI device for continous communication */
@@ -142,12 +143,38 @@ module.exports = function(RED) {
 		** \return
 		**
 		****************************************************************************************/
+		function OutputModule_SendDummyByte(){
+			
+			/*Send dummy message to setup the SPI bus properly */
+			const dummy = spi.open(sL,sB, (err) => {
+				
+				/* Only in this scope, receive buffer is available */
+			dummy.transfer(dummyMessage, (err, dummyMessage) => {
+			dummy.close(err =>{});
+			/* Here we start the reset routine */
+			//resetTimeout = setTimeout(OutputModule_StartReset, 50);
+			OutputModule_StartReset();
+			});
+		
+			});
+		}
+		
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
 		function OutputModule_StartReset (){
 		/*Start module reset */
 		moduleReset.on();
 
 		/*Give a certain timeout so module is reset properly*/
-		resetTimeout = setTimeout(OutputModule_Reset, 300);
+		/*The stop of the reset is now called after the dummy is properly send */
+		resetTimeout = setTimeout(OutputModule_StopReset, 200);
 		}
 			
 			
@@ -160,7 +187,7 @@ module.exports = function(RED) {
 		** \return
 		**
 		****************************************************************************************/
-		function OutputModule_Reset (){
+		function OutputModule_StopReset (){
 		moduleReset.off();
 		/*After reset, give the module some time to boot */
 		/*Next step is to check for new available firmware */
@@ -285,7 +312,7 @@ module.exports = function(RED) {
 
 				/* Only in this scope, receive buffer is available */
 				outputModule.transfer(normalMessage, (err, normalMessage) => {
-OutputModule_clearBuffer();
+				OutputModule_clearBuffer();
 				});
 			});
 	//		clearBufferTimeout = setTimeout(OutputModule_clearBuffer, 100);	
@@ -401,7 +428,8 @@ OutputModule_clearBuffer();
 		clearInterval(interval);
 		clearTimeout(resetTimeout);
 		clearTimeout(initializeTimeout);
-		clearTimeout(sendDataTimeout);
+		clearTimeout(sendFirmwareDataTimeout);
+		clearTimeout(getFirmwareStatusTimeout);
 		clearTimeout(checkFirmwareTimeout);
 		clearTimeout(firmwareUploadTimeout);
 		clearTimeout(clearBufferTimeout);
@@ -502,10 +530,6 @@ OutputModule_clearBuffer();
 		var sendbufferPointer;
 		var messagePointer;
 
-		sendBuffer[0] = 39;
-		sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
-		sendBuffer[2] = 39;
-
 			fs.readFile("/root/GOcontroll/GOcontroll-Modules/" + firmwareFileName, function(err, code){
 
 			if (err) {
@@ -516,7 +540,7 @@ OutputModule_clearBuffer();
 
 			var str = code.toString();
 			var line = str.split('\n');
-			var lineNumber = -1;
+			var lineNumber = 0;
 			
 			if(!(line.length > 1))
 			{
@@ -527,18 +551,30 @@ OutputModule_clearBuffer();
 			}
 
 				const firmware = spi.open(sL,sB, (err) => {
-					OutputModule_SendData();
+					OutputModule_SendFirmwareData();
 
-					function OutputModule_SendData(){
+
+					/***************************************************************************************
+					** \brief
+					**
+					**
+					** \param
+					** \param
+					** \return
+					**
+					****************************************************************************************/
+					function OutputModule_SendFirmwareData(){
 				
-		
-						lineNumber++
 						var messageType =  parseInt(line[lineNumber].slice(1, 2),16);
 						/* Get the decimal length of the specific line */
 						var lineLength = parseInt((line[lineNumber].slice(2, 4)),16);
 						//memoryAddr = line[lineNumber].slice(4, 12);
 						//data = line[lineNumber].slice(12, (line[lineNumber].length - 3));
 						var checksum = parseInt(line[lineNumber].slice((line[lineNumber].length - 3), line[lineNumber].length),16);
+
+						sendBuffer[0] = 39;
+						sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+						sendBuffer[2] = 39;
 
 
 						var sendbufferPointer = 6;
@@ -572,42 +608,69 @@ OutputModule_clearBuffer();
 
 							if(messageType == 7){
 							firmware.close(err =>{});
-
+							node.warn("Firmware from output module on slot: "+moduleSlot+" updated! Now restarting module!");
 							/* At this point, the module can be restarted to check if it provides the new installed firmware */
 							OutputModule_StartReset();
 							return;
 							}
+							
 							else
 							{
-							sendDataTimeout = setTimeout(OutputModule_SendData, 2);
+							getFirmwareStatusTimeout = setTimeout(OutputModule_GetFirmwareStatus, 1);
 							}
+						}
+						
+						
+						/***************************************************************************************
+						** \brief
+						**
+						**
+						** \param
+						** \param
+						** \return
+						**
+						****************************************************************************************/
+						function OutputModule_GetFirmwareStatus(){
+				
+						sendBuffer[0] = 49;
+						sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+						sendBuffer[2] = 49;
+						
+						/* calculate checksum */
+						sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+						
+							firmware.transfer(bootMessage, (err, bootMessage) => {
+
+							if(receiveBuffer[BOOTMESSAGELENGTH-1] === OutputModule_ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1))
+							{
+								/* Check if received data complies with the actual line number from the .srec file */
+								if(lineNumber == receiveBuffer.readUInt16BE(6))
+								{
+									/* Check if the returned line is correctly received by module*/
+									if(receiveBuffer[8] ==1)
+									{
+										/* At this position, the module has received the line correct so jump to next line */
+										lineNumber++;
+									}
+									else
+									{
+									node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
+									}
+								}
+							}
+							else
+							{
+							//node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );	
+							}
+							
+							sendFirmwareDataTimeout = setTimeout(OutputModule_SendFirmwareData, 1);
+
+							});
+
 						}
 				});
 
 			});	
-		}
-	
-	
-		/***************************************************************************************
-		** \brief
-		**
-		**
-		** \param
-		** \param
-		** \return
-		**
-		****************************************************************************************/
-		function OutputModule_SendDummyByte(){
-			
-			/*Send dummy message to setup the SPI bus properly */
-			const dummy = spi.open(sL,sB, (err) => {
-				
-				/* Only in this scope, receive buffer is available */
-			dummy.transfer(dummyMessage, (err, dummyMessage) => {
-			dummy.close(err =>{});
-			});
-		
-			});
 		}
 	}
 RED.nodes.registerType("Output-Module",GOcontrollOutputModule);
