@@ -1,0 +1,131 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Simulink-In',{
+        category: 'Simulink',
+        color: '#f76d11',
+		defaults: {
+			name: {value:""},
+			pipe: {value:"examplePipe"},
+			signals: {value:8},
+			interval: {value:"1000"},
+			key1 : {value : ""},
+			key2 : {value : ""},
+			key3 : {value : ""},
+			key4 : {value : ""},
+			key5 : {value : ""},
+			key6 : {value : ""},
+			key7 : {value : ""},
+			key8 : {value : ""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "arrow-in.png",
+        label: function() {
+            return this.name||"Data to simulink pipe: "+ this.pipe;
+        },
+		
+		oneditprepare: function() {
+		$(this.signals).trigger("change");
+
+		$("#node-input-signals").on("change", function() {
+			var id = $("#node-input-signals").val();
+			if(id > 0){$("#id-signal-1").show();}else{$("#id-signal-1").hide();}
+			if(id > 1){$("#id-signal-2").show();}else{$("#id-signal-2").hide();}
+			if(id > 2){$("#id-signal-3").show();}else{$("#id-signal-3").hide();}
+			if(id > 3){$("#id-signal-4").show();}else{$("#id-signal-4").hide();}
+			if(id > 4){$("#id-signal-5").show();}else{$("#id-signal-5").hide();}
+			if(id > 5){$("#id-signal-6").show();}else{$("#id-signal-6").hide();}
+			if(id > 6){$("#id-signal-7").show();}else{$("#id-signal-7").hide();}
+			if(id > 7){$("#id-signal-8").show();}else{$("#id-signal-8").hide();}
+          });
+		}
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Simulink-In">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-pipe"><i class="icon-tag"></i> Pipe ID</label>
+        <input type="text" id="node-input-pipe" placeholder="Name">
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-list-ol"></i> Interval</label>
+        <select id="node-input-interval" style="width:204px">
+            <option value="1000">1 s</option>
+            <option value="500">500 ms</option>
+			<option value="100">100 ms</option>
+		    <option value="50">50 ms</option>
+        </select>
+    </div>
+		
+	<div class="form-row" id="number-signal">
+        <label for="node-input-signals"><i class="fa fa-list-ol"></i> Signals</label>
+        <select id="node-input-signals" style="width:204px">
+            <option value=1>1 Signal</option>
+            <option value=2>2 Signals</option>
+			<option value=3>3 Signals</option>
+		    <option value=4>4 Signals</option>
+            <option value=5>5 Signals</option>					
+            <option value=6>6 Signals</option>
+            <option value=7>7 Signals</option>
+            <option value=8>8 Signals</option>
+        </select>
+    </div>
+	
+
+<fieldset>
+<div class="form-row" id="signal-keys">
+<legend>Signal ID keys</legend> 
+
+<div class="form-row" id="id-signal-1">
+	Signal 1 key:  <input type="text" class="form-control  " id="node-input-key1" style="width:100px" placeholder="engineSpeed" />
+  </div>
+  
+  <div class="form-row" id="id-signal-2">
+	Signal 2 key:  <input type="text" class="form-control" id="node-input-key2" style="width:100px" placeholder="engineSpeed" />
+  </div>
+  
+  <div class="form-row" id="id-signal-3">
+	Signal 3 key:  <input type="text" class="form-control" id="node-input-key3" style="width:100px" placeholder="engineSpeed" />
+  </div>
+
+  <div class="form-row" id="id-signal-4">
+	Signal 4 key:  <input type="text" class="form-control" id="node-input-key4" style="width:100px" placeholder="engineSpeed" />
+  </div>
+
+  <div class="form-row" id="id-signal-5">
+	Signal 5 key:  <input type="text" class="form-control" id="node-input-key5" style="width:100px" placeholder="engineSpeed" />
+  </div>
+
+  <div class="form-row" id="id-signal-6">
+	Signal 6 key:  <input type="text" class="form-control" id="node-input-key6" style="width:100px" placeholder="engineSpeed" />
+  </div>
+
+  <div class="form-row" id="id-signal-7">
+	Signal 7 key:  <input type="text" class="form-control" id="node-input-key7" style="width:100px" placeholder="engineSpeed" />
+  </div>
+
+  <div class="form-row" id="id-signal-8">
+	Signal 8 key:  <input type="text" class="form-control" id="node-input-key8" style="width:100px" placeholder="engineSpeed" />
+  </div>  
+  </div>
+</fieldset>
+
+</script>
+
+<script type="text/x-red" data-help-name="Simulink-In">
+   <p>The status led can be used to give feedback to the end user by controlling the four LED's on top of the GOcontroll Moduline Enclosure.</p>
+<p>The LED's can be switched on and off in three differenet colors, red, green and blue. Select the LED you want to control and choos a color. If a LED is controlled by two nodes which are configured with a different color, both colours will be switched on.</p>
+<p><em>LED:</em></p>
+<p>Choose which LED nneds to be controlled.</p>
+<p><em>Color:</em></p>
+<p>Select the color from de pecified LED.</p>
+<p>&nbsp;</p>
+<p><strong>How to control:</strong></p>
+<p>By simply injecting data into this node, the LED can be switched on and of. A string <strong>on&nbsp;</strong>will turn the LED on while <strong>off</strong> will turn the LED off.</p>
+<p>&nbsp;</p>
+</script>
