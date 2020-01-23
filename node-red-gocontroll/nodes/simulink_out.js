@@ -3,7 +3,8 @@ module.exports = function(RED) {
 
 	function GOcontrollSimulinkOut(config) {
 	   RED.nodes.createNode(this,config);
-	
+
+
 	const fs = require('fs');
 
 	var node = this;
@@ -14,7 +15,6 @@ module.exports = function(RED) {
 		
 	var interval;
 
-	node.warn(direction);
 
 	if(pipe != "")
 	{
