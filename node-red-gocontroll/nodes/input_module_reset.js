@@ -41,10 +41,10 @@ module.exports = function(RED) {
 			sendBuffer[1] = MESSAGELENGTH-1;
 			sendBuffer[2] = 3;
 			
-			if(msg.payload.pulscounterValue >= -2147483640 && msg.payload.pulscounterValue <= 2147483640)
+			if(msg["pulscounterValue"] >= -2147483640 && msg["pulscounterValue"] <= 2147483640)
 			{
 			sendBuffer[6] = node.channel;
-			sendBuffer.writeInt32LE(msg.payload.pulscounterValue, 7);	
+			sendBuffer.writeInt32LE(msg["pulscounterValue"], 7);	
 			}
 			else{
 				node.warn("Reset counter value of module "+ node.moduleLocation+ "channel "+node.channel+" is outside range."); 
