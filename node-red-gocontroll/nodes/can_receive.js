@@ -102,8 +102,9 @@ module.exports = function(RED) {
 		
 		channel.addListener("onMessage",function(frame) {
 			/* Exit function if message is not matched with identifier */ 
-			node.warn("message received");
-			node.warn(frame.id);
+		/* These warning give an overload of info */
+		//	node.warn("message received");
+		//	node.warn(frame.id);
 			if(frame.id != canid){return;}
 			
 			

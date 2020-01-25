@@ -3,20 +3,23 @@
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
+			wifi: {value:"1"},
             name: {value:"GOcontroll Settings"},
 			ssid: {value:"GOcontroll-AP"},
 			pass: {value:"Moduline3"},
 			speedc1: { value:"250000"},
-			speedc2: { value:"250000"}
+			speedc2: { value:"250000"},
+			gps4g: {value: "0"}
         },
         inputs:0,
         outputs:0,
         icon: "font-awesome/fa-cogs",
         label: function() {
             return this.name||"Settings";
-        }
+        },
     });
 </script>
+
 
 <script type="text/x-red" data-template-name="Settings">
 
@@ -27,7 +30,14 @@
 
 <fieldset>
 <legend>WLAN settings</legend> 
-
+	<div class="form-row">
+		<label for="node-input-wifi"><i class="fa fa-power-off"></i> WiFi</label>
+		<select type="text" id="node-input-wifi">
+			<option value="0">WiFi disabled</option>
+			<option value="1">Wifi enabled</option>
+		</select>
+	 </div>	
+	 
     <div class="form-row">
         <label for="node-input-ssid"><i class="fa fa-wifi"></i> SSID</label>
         <input type="text" id="node-input-ssid" placeholder="SSID">
@@ -64,7 +74,17 @@
 	
 
 </fieldset>
-	
+
+<fieldset>
+<legend>GPS - 3/4G settings</legend> 
+	<div class="form-row">
+		<label for="node-input-gps4g"><i class="fa fa-power-off"></i> GPS 3/4G</label>
+		<select type="text" id="node-input-gps4g">
+			<option value="0">GPS 3/4G disabled</option>
+			<option value="1">GPS 3/4G enabled</option>
+		</select>
+	 </div>
+</fieldset>	
 	
 </script>
 

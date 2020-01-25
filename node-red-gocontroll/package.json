@@ -22,16 +22,19 @@
     ],
     "node-red": {
         "nodes": {
-            "status_led": "nodes/status_led.js",
-            "contact_relais": "nodes/contact_relais.js",
-            "controller_supply": "nodes/controller_supply.js",
-            "input_module": "nodes/input_module.js",
-            "input_module_reset": "nodes/input_module_reset.js",
-            "output_module": "nodes/output_module.js",
-            "settings": "nodes/settings.js",
-            "gps": "nodes/gps.js",
-            "can_receive": "nodes/can_receive.js",
-            "can_send": "nodes/can_send.js"
+		  "status_led": "nodes/status_led.js",
+		  "contact_relais": "nodes/contact_relais.js",
+		  "controller_supply": "nodes/controller_supply.js",
+		  "input_module": "nodes/input_module.js",
+		  "input_module_reset": "nodes/input_module_reset.js",
+		  "output_module": "nodes/output_module.js",
+		  "settings": "nodes/settings.js",
+		  "software_version": "nodes/software_version.js",
+		  "gps": "nodes/gps.js",
+		  "can_receive": "nodes/can_receive.js",
+		  "can_send": "nodes/can_send.js",
+		  "simulink_in": "nodes/simulink_in.js",
+		  "simulink_out": "nodes/simulink_out.js"
         }
     },
     "author": {

@@ -1,0 +1,73 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Software',{
+        category: 'GOcontroll',
+        color: '#f76d11',
+        defaults: {
+        },
+        inputs:0,
+        outputs:0,
+        icon: "font-awesome/fa-file-code-o",
+        label: function() {
+            return this.name||"GOcontroll node version updater";
+        },
+		button: {
+            enabled: function() {
+                return !this.changed
+            },
+            onclick: function() {
+                if (this.changed) {
+                    return RED.notify(RED._("notification.warning", {message:RED._("notification.warnings.undeployedChanges")}),"warning");
+                }
+
+				 $.getJSON('softwareVersion',function(data) {
+				 
+					 if(data.machineState == 0)
+					 {
+					 RED.notify(node._("Request latest version on GitHub"),{type:"success",id:"update"});
+					 }
+					 else if(data.machineState == 1)
+					 {
+					 RED.notify(node._("New software available! Click to update."),{type:"success",id:"update"});
+					 }
+					 else if(data.machineState == 2)
+					 {
+					 RED.notify(node._("GOcontroll Moduline III is up to date!"),{type:"success",id:"update"});
+					 this.name = "GOcontroll node software";
+					 }
+		
+				 });
+
+                var label = "test";//this._def.label.call(this);
+                //if (label.length > 30) {
+                //    label = label.substring(0,50)+"...";
+                //}
+                label = label.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                var node = this;
+                $.ajax({
+                    url: "inject/"+this.id,
+                    type:"POST",
+                    success: function(resp) {
+                       // RED.notify(node._("Request software update"+payload,{label:label}),{type:"success",id:"update"});
+					//	 RED.notify(node._("Request software update"+payload),{type:"success",id:"update"});
+                    },
+                    error: function(jqXHR,textStatus,errorThrown) {
+                    }
+                });
+            }
+		}
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Software">
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	
+</script>
+
+
+<script type="text/x-red" data-help-name="Software">
+<p>This node can be used to check the online GOcontroll repository for node updates. Before updating, please read the history information on GitHub.</p>
+</script>

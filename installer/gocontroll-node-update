@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # url to bash this script:
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update)
 # wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update | bash
 
 YELLOW='\033[33m'
@@ -38,8 +37,7 @@ fi
 # provide some user information:
 echo -e "${YELLOW} Download new node files ${NORMAL}"
 
-git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git
-
+git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git --branch V0.0.2
 
 cd ~ 
 # Before we copy the content of node-red-gocontroll, we first have to delete
@@ -58,6 +56,8 @@ cd ~
 
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
 
+# Add executable rights to bash script
+chmod 777 /usr/node-red-gocontroll/nodes/software_version.sh
 
 echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
 cd ~/.node-red
