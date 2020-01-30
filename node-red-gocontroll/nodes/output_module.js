@@ -16,6 +16,8 @@ module.exports = function(RED) {
 	   	var interval = null;
 		var node = this;
 		
+		const moduleFirmwareLocation = "/root/GOcontroll/GOcontroll-Moduline-III/module-firmware/";
+		
 		const moduleSlot = config.moduleSlot; 
 		const sampleTime = config.sampleTime;
 		
@@ -60,6 +62,9 @@ module.exports = function(RED) {
 		var swVersionAvailable = {};
 		
 		var firmwareFileName;
+		
+		var firmwareLineCheck = 0;
+		var firmwareErrorCounter = 0;
 		
 		/* Declarations for timeout handlers */
 		var resetTimeout;
@@ -241,7 +246,7 @@ module.exports = function(RED) {
 					swVersion[2] = receiveBuffer[12];
 									
 					/* Check which files are present in the folder */
-					fs.readdir("/root/GOcontroll/GOcontroll-Modules", (err, files) => {
+					fs.readdir(moduleFirmwareLocation, (err, files) => {
 						files.forEach(file => {
 		
 							if(hwVersion[0] == moduleHwId1 && hwVersion[1] == moduleHwId2 && hwVersion[2] == moduleHwId3)
@@ -530,7 +535,7 @@ module.exports = function(RED) {
 		var sendbufferPointer;
 		var messagePointer;
 
-			fs.readFile("/root/GOcontroll/GOcontroll-Modules/" + firmwareFileName, function(err, code){
+			fs.readFile(moduleFirmwareLocation + firmwareFileName, function(err, code){
 
 			if (err) {
 				node.warn("Error opening firmware file");
@@ -655,6 +660,22 @@ module.exports = function(RED) {
 									else
 									{
 									node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
+										if(firmwareLineCheck != lineNumber)
+										{
+										firmwareLineCheck = lineNumber;
+										firmwareErrorCounter = 0;
+										}
+										else
+										{
+											firmwareErrorCounter ++;
+										
+											if(firmwareErrorCounter > 5)
+											{
+											node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , 5 times! Stop firmware update!" );
+											firmwareErrorCounter = 0;
+											return;
+											}
+										}
 									}
 								}
 							}
