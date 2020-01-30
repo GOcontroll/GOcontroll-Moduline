@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # url to bash this script:
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update | bash
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/V0.0.2/installer/gocontroll-node-update | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'

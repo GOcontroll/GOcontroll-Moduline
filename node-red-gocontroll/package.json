@@ -1,6 +1,6 @@
 {
     "name": "node-red-gocontroll",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Node-RED nodes for GOcontroll Moduline III",
     "dependencies": {
         "cron": "1.7.1",
