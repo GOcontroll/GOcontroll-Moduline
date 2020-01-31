@@ -1,6 +1,6 @@
 {
     "name": "node-red-gocontroll",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Node-RED nodes for GOcontroll Moduline III",
     "dependencies": {
         "cron": "1.7.1",
@@ -29,7 +29,6 @@
 		  "input_module_reset": "nodes/input_module_reset.js",
 		  "output_module": "nodes/output_module.js",
 		  "settings": "nodes/settings.js",
-		  "software_version": "nodes/software_version.js",
 		  "gps": "nodes/gps.js",
 		  "can_receive": "nodes/can_receive.js",
 		  "can_send": "nodes/can_send.js",
