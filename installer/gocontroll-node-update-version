@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # url to bash this script:
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update-sudo)
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-node-update-sudo | bash
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/V0.0.3/installer/gocontroll-node-update | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -11,7 +10,7 @@ echo -e "${YELLOW}Update GOcontroll nodes ${NORMAL}"
 # Stop node-red service
 
 echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
-sudo systemctl stop nodered
+systemctl stop nodered
 
 # Go to root folder
 cd 
@@ -19,12 +18,12 @@ cd
 if [ -d GOcontroll ]
 then
 echo -e "${YELLOW} Delete existing GOcontroll folder ${NORMAL}"
-sudo rm -r GOcontroll
+	rm -r GOcontroll
 fi
 
 # Create Folder
 echo -e "${YELLOW} Create new GOcontroll folder ${NORMAL}"
-sudo mkdir GOcontroll
+mkdir GOcontroll
 
 # Jump to folder
 cd GOcontroll
@@ -32,19 +31,13 @@ ls
 
 if ! [ -x "$(command -v git)" ]; then
 echo -e "${YELLOW} Git is not yet installed so let's install first ${NORMAL}"
-sudo apt-get -y install git 
+apt-get -y install git 
 fi
 
 # provide some user information:
 echo -e "${YELLOW} Download new node files ${NORMAL}"
 
-if [ -d GOcontroll-Moduline-III ]
-then
-sudo rm -r GOcontroll-Moduline-III
-fi
-
-sudo git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git
-
+git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git --branch V0.0.3
 
 cd ~ 
 # Before we copy the content of node-red-gocontroll, we first have to delete
@@ -55,14 +48,16 @@ cd /usr
 
 if [ -d node-red-gocontroll ]
 then
-sudo rm -r node-red-gocontroll
+	rm -r node-red-gocontroll
 fi
 
 # jump back to root
 cd ~ 
 
-sudo cp -avr /home/pi/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
+cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
 
+# Add executable rights to bash script
+chmod 777 /usr/node-red-gocontroll/nodes/software_version.sh
 
 echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
 cd ~/.node-red
@@ -73,8 +68,8 @@ echo -e "${YELLOW}Install local node packages ${NORMAL}"
 # the node modules first and then also delete the package.lock.json file!
 # https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
 
-sudo npm install --unsafe-perm /usr/node-red-gocontroll
+npm install --unsafe-perm /usr/node-red-gocontroll
 
 echo -e "${YELLOW}Start Node-RED again ${NORMAL}"
-sudo systemctl start nodered
+systemctl start nodered
 

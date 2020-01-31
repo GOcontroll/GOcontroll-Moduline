@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # url to bash this script:
-# curl is not always installed so second commans is based on wget
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install)
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/V0.0.2/installer/gocontroll-first-install | bash
+# curl is not always installed so second command is based on wget
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install-master)
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install-master | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -37,7 +37,7 @@ fi
 # provide some user information:
 echo -e "${YELLOW} Download files for GOcontroll Moduline III ${NORMAL}"
 
-git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git --branch V0.0.2
+git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git
 
 echo -e "${YELLOW}Update system ${NORMAL}"
 apt-get update
@@ -103,6 +103,7 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd.conf /etc/hostapd
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd /etc/default
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/dnsmasq.conf /etc
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/settings.js /root/.node-red
+cp -avr /root/GOcontroll/GOcontroll-Moduline-III/sshd_config /etc/ssh
 
 # Before we copy the conten tof node-red-gocontroll, we first have to delete
 # the folder if present.
