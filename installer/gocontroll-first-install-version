@@ -2,8 +2,8 @@
 
 # url to bash this script:
 # curl is not always installed so second commans is based on wget
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install)
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/V0.0.3/installer/gocontroll-first-install | bash
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/V0.0.3/installer/gocontroll-first-install-version)
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/V0.0.3/installer/gocontroll-first-install-version | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
