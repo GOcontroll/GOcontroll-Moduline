@@ -32,8 +32,8 @@
 		  "gps": "nodes/gps.js",
 		  "can_receive": "nodes/can_receive.js",
 		  "can_send": "nodes/can_send.js",
-		  "simulink_in": "nodes/simulink_in.js",
-		  "simulink_out": "nodes/simulink_out.js"
+		  "read_memory": "nodes/read_memory.js",
+		  "write_memory": "nodes/write_memory.js"
         }
     },
     "author": {

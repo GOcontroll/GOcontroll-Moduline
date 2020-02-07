@@ -1,22 +1,22 @@
 <script type="text/javascript">
-    RED.nodes.registerType('Simulink-Out',{
-        category: 'Simulink',
+    RED.nodes.registerType('Write-Memory',{
+        category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
             name: {value:""},
-			pipe: {value:"examplePipe"},
+			key: {value:"exampleKey"},
         },
-        inputs:0,
-        outputs:1,
+        inputs:1,
+        outputs:0,
         icon: "arrow-in.png",
         label: function() {
-            return this.name||"Data from simulink pipe: "+ this.pipe;
+            return this.name||"Data to memory with key: "+ this.key;
         },
     });
 </script>
 
 
-<script type="text/x-red" data-template-name="Simulink-Out">
+<script type="text/x-red" data-template-name="Write-Memory">
 
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
@@ -24,13 +24,13 @@
     </div>
 
 	<div class="form-row">
-        <label for="node-input-pipe"><i class="icon-tag"></i> Pipe ID</label>
-        <input type="text" id="node-input-pipe" placeholder="Name">
+        <label for="node-input-key"><i class="icon-tag"></i> Key</label>
+        <input type="text" id="node-input-key" placeholder="Name">
     </div>
 
 </script>
 
-<script type="text/x-red" data-help-name="Simulink-Out">
+<script type="text/x-red" data-help-name="Write-Memory">
 <p>The settings block configures the basic settings of the GOcontroll Moduline 3 controller.</p>
 <p>&nbsp;</p>
 <h2>Wireless LAN Acces Point credentials:</h2>

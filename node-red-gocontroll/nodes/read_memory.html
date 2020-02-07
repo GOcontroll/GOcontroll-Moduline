@@ -1,0 +1,60 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Read-Memory',{
+        category: 'GOcontroll',
+        color: '#f76d11',
+		defaults: {
+			name: {value:""},
+			key: {value:""},
+			interval: {value:"1000"}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "arrow-in.png",
+        label: function() {
+			if(this.key.indexOf(',') > -1)
+			{
+			return this.name || "Data from memory using multiple keys";
+			}
+			else
+			{
+			return this.name||"Data from memory with key: "+ this.key;
+			}
+		},
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Read-Memory">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width:350px">
+    </div>
+	
+	<div class="form-row">
+    <label for="node-input-key"><i class="icon-tag"></i> Key(s)</label>
+	<textarea id="node-input-key" placeholder="exampleKey1,exampleKey2" style="width:350px" cols="200">
+	</textarea>
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-list-ol"></i> Interval</label>
+        <select id="node-input-interval" style="width:350px">
+            <option value="1000">1 s</option>
+            <option value="500">500 ms</option>
+			<option value="100">100 ms</option>
+		    <option value="50">50 ms</option>
+        </select>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="Read-Memory">
+   <p>The status led can be used to give feedback to the end user by controlling the four LED's on top of the GOcontroll Moduline Enclosure.</p>
+<p>The LED's can be switched on and off in three differenet colors, red, green and blue. Select the LED you want to control and choos a color. If a LED is controlled by two nodes which are configured with a different color, both colours will be switched on.</p>
+<p><em>LED:</em></p>
+<p>Choose which LED nneds to be controlled.</p>
+<p><em>Color:</em></p>
+<p>Select the color from de pecified LED.</p>
+<p>&nbsp;</p>
+<p><strong>How to control:</strong></p>
+<p>By simply injecting data into this node, the LED can be switched on and of. A string <strong>on&nbsp;</strong>will turn the LED on while <strong>off</strong> will turn the LED off.</p>
+<p>&nbsp;</p>
+</script>
