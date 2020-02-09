@@ -94,10 +94,24 @@ systemctl daemon-reload
 
 echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
 
+## Her we create folder(s) to stoe new custom files in ##
 
+if [ -d /usr/scripts ]
+then
+echo -e "${YELLOW} Delete existing /usr/scripts folder ${NORMAL}"
+	rm -r /usr/scripts
+fi
+
+# Create Folder
+echo -e "${YELLOW} Create new /usr/scripts folder ${NORMAL}"
+mkdir /usr/scripts
+
+## Store the new folders/files
 
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/lib /
-cp -avr /root/GOcontroll/GOcontroll-Moduline-III/nodered.service /lib/systemd/system
+cp -avr /root/GOcontroll/GOcontroll-Moduline-III/services/nodered.service /lib/systemd/system
+cp -avr /root/GOcontroll/GOcontroll-Moduline-III/services/gocontroll.service /lib/systemd/system
+cp -avr /root/GOcontroll/GOcontroll-Moduline-III/scripts/simulink.sh /usr/scripts/
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/interfaces /etc/network
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd.conf /etc/hostapd
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd /etc/default
@@ -120,6 +134,7 @@ fi
 cd ~ 
 
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-gocontroll/ /usr
+cp -avr /root/GOcontroll/GOcontroll-Moduline-III/node-red-static /usr
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/qmi-network-raw /usr/local/bin
 
 chmod 777 /usr/local/bin/qmi-network-raw
@@ -147,6 +162,9 @@ npm install node-red-dashboard
 
 echo -e "${YELLOW}Start Node-RED service ${NORMAL}"
 systemctl enable nodered.service 
+
+# Make some files executable so Linux can start and execute these files themselve
+chmod 777 /usr/scripts/simulink.sh
 
 echo -e "${YELLOW}Reboot ${NORMAL}"
 reboot
