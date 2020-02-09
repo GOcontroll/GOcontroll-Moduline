@@ -4,6 +4,8 @@
     "description": "Node-RED nodes for GOcontroll Moduline III",
     "dependencies": {
         "cron": "1.7.1",
+        "express": "^4.17.1",
+        "express-fileupload": "^1.1.6",
         "i2c-bus": "^5.1.0",
         "led": "~1.0.0",
         "serialport": "^8.0.5",
@@ -22,18 +24,18 @@
     ],
     "node-red": {
         "nodes": {
-		  "status_led": "nodes/status_led.js",
-		  "contact_relais": "nodes/contact_relais.js",
-		  "controller_supply": "nodes/controller_supply.js",
-		  "input_module": "nodes/input_module.js",
-		  "input_module_reset": "nodes/input_module_reset.js",
-		  "output_module": "nodes/output_module.js",
-		  "settings": "nodes/settings.js",
-		  "gps": "nodes/gps.js",
-		  "can_receive": "nodes/can_receive.js",
-		  "can_send": "nodes/can_send.js",
-		  "read_memory": "nodes/read_memory.js",
-		  "write_memory": "nodes/write_memory.js"
+            "status_led": "nodes/status_led.js",
+            "contact_relais": "nodes/contact_relais.js",
+            "controller_supply": "nodes/controller_supply.js",
+            "input_module": "nodes/input_module.js",
+            "input_module_reset": "nodes/input_module_reset.js",
+            "output_module": "nodes/output_module.js",
+            "settings": "nodes/settings.js",
+            "gps": "nodes/gps.js",
+            "can_receive": "nodes/can_receive.js",
+            "can_send": "nodes/can_send.js",
+            "read_memory": "nodes/read_memory.js",
+            "write_memory": "nodes/write_memory.js"
         }
     },
     "author": {
