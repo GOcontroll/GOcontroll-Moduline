@@ -1,0 +1,25 @@
+### GOcontroll service###
+
+###### Enable the gocontroll service for autoboot at startup 
+#systemctl enable gocontroll.service
+
+###### Start manually gocontroll service
+#systemctl start gocontroll.service
+
+###### Restart manually gocontroll service
+#systemctl restart gocontroll.service
+
+###### Status in case of failure
+#systemctl status gocontroll.service
+
+
+[Unit]
+Description=gocontroll
+After=network.target
+
+[Service]
+ExecStart=/usr/scripts/simulink.sh
+Type=simple
+
+[Install]
+WantedBy=default.target
