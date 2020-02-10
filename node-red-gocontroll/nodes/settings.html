@@ -9,7 +9,10 @@
 			pass: {value:"Moduline3"},
 			speedc1: { value:"250000"},
 			speedc2: { value:"250000"},
-			gps4g: {value: "0"}
+			gps4g: {value: "0"},
+			simulinkstart: {value: "1"},
+			simulinkstop: {value: "0"},
+			//simulinkrestart: {value: "1"}, //future expansion
         },
         inputs:0,
         outputs:0,
@@ -17,22 +20,27 @@
         label: function() {
             return this.name||"Settings";
         },
-    });
+	});
+	
+	
 </script>
+
+
+
 
 
 <script type="text/x-red" data-template-name="Settings">
 
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" placeholder="Name" style="width:350px">
     </div>
 
 <fieldset>
 <legend>WLAN settings</legend> 
 	<div class="form-row">
 		<label for="node-input-wifi"><i class="fa fa-power-off"></i> WiFi</label>
-		<select type="text" id="node-input-wifi">
+		<select type="text" id="node-input-wifi" style="width:350px">
 			<option value="0">WiFi disabled</option>
 			<option value="1">Wifi enabled</option>
 		</select>
@@ -40,12 +48,12 @@
 	 
     <div class="form-row">
         <label for="node-input-ssid"><i class="fa fa-wifi"></i> SSID</label>
-        <input type="text" id="node-input-ssid" placeholder="SSID">
+        <input type="text" id="node-input-ssid" placeholder="SSID" style="width:350px">
     </div>	
 	
 	    <div class="form-row">
         <label for="node-input-pass"><i class="fa fa-key"></i> Password</label>
-        <input type="text" id="node-input-pass" placeholder="Password">
+        <input type="text" id="node-input-pass" placeholder="Password" style="width:350px">
     </div>	
 </fieldset>
 
@@ -54,7 +62,7 @@
 
     <div class="form-row">
     <label for="node-input-speedc1"><i class="fa fa-random"></i> CAN 1 Speed</label>
-	<select type="text" id="node-input-speedc1">
+	<select type="text" id="node-input-speedc1" style="width:350px">
 		<option value="125000">125 kB/s</option>
 		<option value="250000">250 kB/s</option>
 		<option value="500000">500 kB/s</option>
@@ -64,7 +72,7 @@
 	
 	<div class="form-row">
     <label for="node-input-speedc2"><i class="fa fa-random"></i> CAN 2 Speed</label>
-	<select type="text" id="node-input-speedc2">
+	<select type="text" id="node-input-speedc2" style="width:350px">
 		<option value="125000">125 kB/s</option>
 		<option value="250000">250 kB/s</option>
 		<option value="500000">500 kB/s</option>
@@ -79,17 +87,58 @@
 <legend>GPS - 3/4G settings</legend> 
 	<div class="form-row">
 		<label for="node-input-gps4g"><i class="fa fa-power-off"></i> GPS 3/4G</label>
-		<select type="text" id="node-input-gps4g">
+		<select type="text" id="node-input-gps4g" style="width:350px">
 			<option value="0">GPS 3/4G disabled</option>
 			<option value="1">GPS 3/4G enabled</option>
 		</select>
 	 </div>
-</fieldset>	
-	
+</fieldset>
+
+
+<fieldset>
+<legend>Simulink model options</legend> 
+
+	<div class="form-row">
+		<label for="node-input-simulink"><i class="fa fa-compress"></i> Model</label>
+	<!--	<button onclick="location.href='load-simulink.html','_blank'" type="button" style="width:350px"> -->
+	<button onclick="window.open('load-simulink.html')"  type="button" style="width:350px"> 
+         Upload Simulink .elf file</button>
+	</div>	 
+
+	<div class="form-row">
+		<label for="node-input-simulinkstart"><i class="fa fa-play"></i> Start</label>
+		<select type="text" id="node-input-simulinkstart" style="width:350px">
+			<option value="0">Don't start Simulink model</option>
+			<option value="1">Start Simulink model during controller boot</option>
+			<option value="2">Start Simulink model if Node RED is started</option>
+		</select>
+	 </div>
+
+	<div class="form-row">
+		<label for="node-input-simulinkstop"><i class="fa fa-stop"></i> Stop</label>
+		<select type="text" id="node-input-simulinkstop" style="width:350px">
+			<option value="0">Never stop model from running</option>
+			<option value="1">Stop model if Node-RED stops</option>
+		</select>
+	 </div>
+<!--	 
+	 	<div class="form-row">
+		<label for="node-input-simulink-restart"><i class="fa fa-power-off"></i> Restart</label>
+		<select type="text" id="node-input-simulink-restart">
+			<option value="0">Only restart using CLI</option>
+			<option value="1">Restart if new model is uploaded</option>
+			<option value="2">Restart model if flow is restarted</option>
+		</select>
+	 </div>
+	 -->
+</fieldset>
+
 </script>
 
 
 <script type="text/x-red" data-help-name="Settings">
+
+
 <p>The settings block configures the basic settings of the GOcontroll Moduline 3 controller.</p>
 <p>&nbsp;</p>
 <h2>Wireless LAN Acces Point credentials:</h2>

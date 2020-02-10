@@ -70,6 +70,7 @@ function getFileData(myFile){
     document.getElementById("uploadForm").action = 'http://'+ document.location.hostname + ':8001/upload';
    return true;
 }
+
 </script>
 
 </head>
@@ -84,7 +85,7 @@ function getFileData(myFile){
       encType="multipart/form-data">
         <input id = "file" type="file" name="sampleFile" onchange="getFileData(this);"/>
 		<p id = "text">Drag and drop you Simulink .elf file here</p>
-        <button type="submit" >Upload</button>
+        <button type="submit">Upload</button>
     </form>     
   </body>
 </html>
