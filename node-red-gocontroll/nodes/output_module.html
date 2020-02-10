@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('Output-Module',{
+    RED.nodes.registerType('Output-Mod',{
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
@@ -31,7 +31,7 @@
         inputs:1,
         outputs:1,
         icon: "arrow-in.png",
-		paletteLabel: "Output module",
+		paletteLabel: "Output Mod",
         label: function() {
 			if(this.name != "")
 			{
@@ -46,7 +46,7 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="Output-Module">
+<script type="text/x-red" data-template-name="Output-Mod">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -278,7 +278,7 @@
 
 </script>
 
-<script type="text/x-red" data-help-name="Output-Module">
+<script type="text/x-red" data-help-name="Output-Mod">
   <p>The output module can be used to control resistive and inductive loads with a current up to 5 Amp&egrave;re for each channel. The node will also output data with actual information from the module such as the current flow for each channel (only in high side configuration), the temperature of the module and the ground shift of the module (explained later on)</p>
 <h2><strong>Configuration</strong></h2>
 <p><strong><em>Module:</em></strong></p>
