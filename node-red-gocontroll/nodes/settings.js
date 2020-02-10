@@ -42,7 +42,8 @@ module.exports = function(RED) {
 	/* In case the model don't need to start */
 	if(simulinkstart == 0)
 	{
-	Settings_DeactivateModel();	
+	Settings_DeactivateModel();
+	Settings_StopSimulinkModel();
 	}
 	
 	/* In case te model needs to start at controller boot */ 
@@ -55,6 +56,7 @@ module.exports = function(RED) {
 	/* In case te model needs to start after node red is started*/ 
 	if(simulinkstart == 2)
 	{
+	Settings_DeactivateModel();
 	Settings_StartSimulinkModel();
 	}
 		
@@ -278,6 +280,11 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		node.on('close', function(done) {
 		server.close();
+			/* In case te model needs to stop when node red stops */ 
+			if(simulinkstop == 1)
+			{
+			Settings_StopSimulinkModel();	
+			}
 		done();
 		});
 			
