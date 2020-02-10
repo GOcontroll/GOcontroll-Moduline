@@ -29,6 +29,7 @@ module.exports = function(RED) {
 	Settings_Hostapd ();
 	Settings_Interfaces ();
 	Settings_SetSim7000Supply ();
+	Settings_ShowVersionInformation ();
 	
 	/* Create variable for file upload */
 	const app = express();
@@ -127,7 +128,7 @@ module.exports = function(RED) {
 	}
 	
 	
-		/***************************************************************************************
+	/***************************************************************************************
 	** \brief
 	**
 	**
@@ -141,7 +142,7 @@ module.exports = function(RED) {
 	}
 	
 
-		/***************************************************************************************
+	/***************************************************************************************
 	** \brief
 	**
 	**
@@ -155,7 +156,7 @@ module.exports = function(RED) {
 	}
 	
 	
-		/***************************************************************************************
+	/***************************************************************************************
 	** \brief
 	**
 	**
@@ -169,7 +170,7 @@ module.exports = function(RED) {
 	}
 	
 	
-		/***************************************************************************************
+	/***************************************************************************************
 	** \brief
 	**
 	**
@@ -183,6 +184,23 @@ module.exports = function(RED) {
 		Settings_StartSimulinkModel();
 	}
 
+
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
+	function Settings_ShowVersionInformation (){
+		var packageFile = fs.readFileSync("/usr/node-red-gocontroll/package.json")
+		var jsonContent = JSON.parse(packageFile);
+		node.status({fill:"green",shape:"dot",text:"GOcontroll SW version: "+jsonContent.version});
+	}
+	
+	
 	/***************************************************************************************
 	** \brief
 	**
