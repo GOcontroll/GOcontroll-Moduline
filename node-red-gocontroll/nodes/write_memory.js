@@ -10,7 +10,17 @@ module.exports = function(RED) {
 	const key 			= config.key;
 
 	var oldValue ={};
-
+	
+	
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
 	node.on('input', function(msg) {
     
 		/* If no key is given, the function listens to all keys and save them */ 

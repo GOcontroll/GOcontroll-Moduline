@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('Read-Memory',{
+    RED.nodes.registerType('Read-Mem',{
         category: 'GOcontroll',
         color: '#f76d11',
 		defaults: {
@@ -23,7 +23,7 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="Read-Memory">
+<script type="text/x-red" data-template-name="Read-Mem">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name" style="width:350px">
@@ -46,7 +46,7 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="Read-Memory">
+<script type="text/x-red" data-help-name="Read-Mem">
    <p>The status led can be used to give feedback to the end user by controlling the four LED's on top of the GOcontroll Moduline Enclosure.</p>
 <p>The LED's can be switched on and off in three differenet colors, red, green and blue. Select the LED you want to control and choos a color. If a LED is controlled by two nodes which are configured with a different color, both colours will be switched on.</p>
 <p><em>LED:</em></p>
