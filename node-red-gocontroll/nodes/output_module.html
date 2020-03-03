@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('Output-Mod',{
+    RED.nodes.registerType('Output-Module',{
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
@@ -46,10 +46,10 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="Output-Mod">
+<script type="text/x-red" data-template-name="Output-Module">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" placeholder="Name" style="width:300px">
     </div>
 
     <div class="form-row">
@@ -97,7 +97,7 @@
      </div> 
 		<div class="form-row">
         <label for="node-input-key1"><i class="fa fa-id-card"></i> Key</label>
-        <input type="text" id="node-input-key1">
+        <input type="text" id="node-input-key1" style="width:300px">
     </div>
 
     <div class="form-row">
@@ -115,14 +115,14 @@
 	     </div> 
 		<div class="form-row">
         <label for="node-input-current1"><i class="fa fa-line-chart"></i> Max I (mA)</label>
-        <input type="text" id="node-input-current1">
+        <input type="text" id="node-input-current1" style="width:300px">
     </div>
 
 <p><strong>Output 2:</strong></p>
 	     </div> 
 		<div class="form-row">
         <label for="node-input-key2"><i class="fa fa-id-card"></i> Output 2 key</label>
-        <input type="text" id="node-input-key2">
+        <input type="text" id="node-input-key2" style="width:300px">
     </div>
  
      <div class="form-row">
@@ -139,7 +139,7 @@
 	     </div> 
 		<div class="form-row">
         <label for="node-input-current2"><i class="fa fa-line-chart"></i> Max I (mA)</label>
-        <input type="text" id="node-input-current2">
+        <input type="text" id="node-input-current2" style="width:300px">
     </div>
 </fieldset>
 
@@ -164,7 +164,7 @@
      </div> 
 		<div class="form-row">
         <label for="node-input-key3"><i class="fa fa-id-card"></i> Output 3 key</label>
-        <input type="text" id="node-input-key3">
+        <input type="text" id="node-input-key3" style="width:300px">
     </div>
 
     <div class="form-row">
@@ -181,13 +181,13 @@
 		     </div> 
 		<div class="form-row">
         <label for="node-input-current3"><i class="fa fa-line-chart"></i> Max I (mA)</label>
-        <input type="text" id="node-input-current3">
+        <input type="text" id="node-input-current3" style="width:300px">
     </div>
 	<p><strong>Output 4:</strong></p>
       </div> 
 		<div class="form-row">
         <label for="node-input-key4"><i class="fa fa-id-card"></i> Output 4 key</label>
-        <input type="text" id="node-input-key4">
+        <input type="text" id="node-input-key4" style="width:300px">
     </div>
  
      <div class="form-row">
@@ -204,7 +204,7 @@
 		     </div> 
 		<div class="form-row">
         <label for="node-input-current4"><i class="fa fa-line-chart"></i> Max I (mA)</label>
-        <input type="text" id="node-input-current4">
+        <input type="text" id="node-input-current4" style="width:300px">
     </div>
 
 </fieldset>
@@ -213,7 +213,7 @@
 
 <fieldset>
 
-<legend>Output channel 5 and 6</legend> 
+<legend>Output 5 and 6</legend> 
 
     <div class="form-row">
         <label for="node-input-freq56"><i class="fa fa-signal"></i> Frequency </label>
@@ -232,7 +232,7 @@
      </div> 
 		<div class="form-row">
         <label for="node-input-key5"><i class="fa fa-id-card"></i> Output 5 key</label>
-        <input type="text" id="node-input-key5">
+        <input type="text" id="node-input-key5" style="width:300px">
     </div>
 
     <div class="form-row">
@@ -249,13 +249,13 @@
 		     </div> 
 		<div class="form-row">
         <label for="node-input-current5"><i class="fa fa-line-chart"></i> Max I (mA)</label>
-        <input type="text" id="node-input-current5">
+        <input type="text" id="node-input-current5" style="width:300px">
     </div>
 	<p><strong>Output 6:</strong></p>
      </div> 
 		<div class="form-row">
         <label for="node-input-key6"><i class="fa fa-id-card"></i> Output 6 key</label>
-        <input type="text" id="node-input-key6">
+        <input type="text" id="node-input-key6" style="width:300px">
     </div>
 
     <div class="form-row">
@@ -272,13 +272,13 @@
 		     </div> 
 		<div class="form-row">
         <label for="node-input-current6"><i class="fa fa-line-chart"></i> Max I (mA)</label>
-        <input type="text" id="node-input-current6">
+        <input type="text" id="node-input-current6" style="width:300px">
     </div>
 </fieldset>
 
 </script>
 
-<script type="text/x-red" data-help-name="Output-Mod">
+<script type="text/x-red" data-help-name="Output-Module">
   <p>The output module can be used to control resistive and inductive loads with a current up to 5 Amp&egrave;re for each channel. The node will also output data with actual information from the module such as the current flow for each channel (only in high side configuration), the temperature of the module and the ground shift of the module (explained later on)</p>
 <h2><strong>Configuration</strong></h2>
 <p><strong><em>Module:</em></strong></p>
