@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('Input-Mod',{
+    RED.nodes.registerType('Input-Module',{
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
@@ -55,7 +55,7 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="Input-Mod">
+<script type="text/x-red" data-template-name="Input-Module">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -405,7 +405,7 @@
 
 </script>
 
-<script type="text/x-red" data-help-name="Input-Mod">
+<script type="text/x-red" data-help-name="Input-Module">
 <p>The input module is used to read in a wide range of input signals. During initialization, the settings for each input channel are send to the module. The signal will be converted inside the module according the given settings.</p>
 <h2>Configuration</h2>
 <p><strong><em>Module:</em></strong></p>
