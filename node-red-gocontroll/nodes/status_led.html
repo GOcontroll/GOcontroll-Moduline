@@ -38,13 +38,9 @@
 
 <script type="text/x-red" data-help-name="Status-Led">
    <p>The status led can be used to give feedback to the end user by controlling the four LED's on top of the GOcontroll Moduline Enclosure.</p>
-<p>The LED's can be switched on and off in three differenet colors, red, green and blue. Select the LED you want to control and choos a color. If a LED is controlled by two nodes which are configured with a different color, both colours will be switched on.</p>
-<p><em>LED:</em></p>
-<p>Choose which LED nneds to be controlled.</p>
-<p><em>Color:</em></p>
-<p>Select the color from de pecified LED.</p>
-<p>&nbsp;</p>
-<p><strong>How to control:</strong></p>
-<p>By simply injecting data into this node, the LED can be switched on and of. A string <strong>on&nbsp;</strong>will turn the LED on while <strong>off</strong> will turn the LED off.</p>
+<p>The LED's can be switched on and off in three different colors, red, green and blue. Select the LED you want to control. If a LED is controlled by two nodes which control different colors, both colors will be switched on.</p>
+<p>Switch a LED on and off with the injection of a JSON object. { "<strong>color&nbsp;</strong>" : <strong>state&nbsp;</strong> }</p>
+<p><strong>Example:</strong></p>
+<p>Switch on the green led of the specified status LED:  <strong>{"green":1}&nbsp;</strong> </p>
 <p>&nbsp;</p>
 </script>
