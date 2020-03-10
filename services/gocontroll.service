@@ -19,7 +19,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/scripts/simulink.sh
-Type=simple
+Type=forking
 
 [Install]
 WantedBy=default.target
