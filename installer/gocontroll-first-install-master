@@ -29,6 +29,11 @@ mkdir GOcontroll
 cd GOcontroll
 ls
 
+# Stop node-red service
+
+echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
+systemctl stop nodered
+
 if ! [ -x "$(command -v git)" ]; then
 echo -e "${YELLOW} Git is not yet installed so let's install first ${NORMAL}"
 apt-get -y install git 
@@ -116,6 +121,9 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline-III/lib /
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/services/nodered.service /lib/systemd/system
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/services/gocontroll.service /lib/systemd/system
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/scripts/simulink.sh /usr/scripts/
+## Assign executable rights to file
+chmod 777 /usr/scripts/simulink.sh
+
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/interfaces /etc/network
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd.conf /etc/hostapd
 cp -avr /root/GOcontroll/GOcontroll-Moduline-III/hostapd /etc/default
