@@ -2,50 +2,48 @@
 
 # url to bash this script:
 # curl is not always installed so second command is based on wget
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install-master)
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline-III/master/installer/gocontroll-first-install-master | bash
+# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-first-install-master)
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-first-install-master | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
+# starting with updating the repositories
 echo -e "${YELLOW} Update repositories before we do a system update ${NORMAL}"
 apt-get update
 
-# Go to root folder
+# Jump to root folder
 cd 
 
-
+# check if the GOcontroll folder on root already exists. If existing, delete
 if [ -d GOcontroll ]
 then
 echo -e "${YELLOW} Delete existing GOcontroll folder ${NORMAL}"
 	rm -r GOcontroll
 fi
 
-# Create Folder
+# Create ne empty GOcontroll folder
 echo -e "${YELLOW} Create new GOcontroll folder ${NORMAL}"
 mkdir GOcontroll
 
-# Jump to folder
+# Jump to GOcontroll folder
 cd GOcontroll
 ls
 
-# Stop node-red service
-
+# Stop node-red service before going further
 echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
 systemctl stop nodered
 
+# Check if git is already installed on the system
 if ! [ -x "$(command -v git)" ]; then
 echo -e "${YELLOW} Git is not yet installed so let's install first ${NORMAL}"
 apt-get -y install git 
 fi
 
-# provide some user information:
+# Download the GOcontroll Moduline GIT repository:
 echo -e "${YELLOW} Download files for GOcontroll Moduline III ${NORMAL}"
+git clone https://github.com/Rick-GO/GOcontroll-Moduline.git
 
-git clone https://github.com/Rick-GO/GOcontroll-Moduline-III.git
-
-echo -e "${YELLOW}Update system ${NORMAL}"
-apt-get update
 
 echo -e "${YELLOW}Install hostapd ${NORMAL}"
 apt-get -y install hostapd
@@ -67,6 +65,10 @@ apt-get -y install curl
 
 echo -e "${YELLOW}Install SSHD ${NORMAL}"
 apt-get -y install openssh-client openssh-server
+
+# rng-tools fixes a problem with excessive kernel boot delay
+echo -e "${YELLOW}Install rng-tools ${NORMAL}"
+apt-get -y install rng-tools
 
 cd ~
 
