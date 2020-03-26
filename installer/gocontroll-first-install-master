@@ -66,6 +66,9 @@ apt-get -y install curl
 echo -e "${YELLOW}Install SSHD ${NORMAL}"
 apt-get -y install openssh-client openssh-server
 
+echo -e "${YELLOW}Install openVPN client software ${NORMAL}"
+apt-get -y install openvpn
+
 # rng-tools fixes a problem with excessive kernel boot delay
 echo -e "${YELLOW}Install rng-tools ${NORMAL}"
 apt-get -y install rng-tools
