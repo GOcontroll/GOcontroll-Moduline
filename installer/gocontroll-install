@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # url to bash this script:
-# curl is not always installed so second command is based on wget
-# bash <(curl -sL https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-first-install-master)
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-first-install-master | bash
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-install | bash
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -42,7 +40,7 @@ fi
 
 # Download the GOcontroll Moduline GIT repository:
 echo -e "${YELLOW} Download files for GOcontroll Moduline III ${NORMAL}"
-git clone https://github.com/Rick-GO/GOcontroll-Moduline.git
+git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
 
 echo -e "${YELLOW}Install hostapd ${NORMAL}"
