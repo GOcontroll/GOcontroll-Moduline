@@ -80,6 +80,12 @@ module.exports = function(RED) {
 		/* The input attribute name needs to have the same value as sampleFile! */
 		let sampleFile = req.files.sampleFile;
 
+		/* Check if folder already exists. If not, create one */
+		if (!fs.existsSync('/usr/simulink')){
+		node.warn("get function");
+		fs.mkdirSync('/usr/simulink');
+		}
+
 		/* The MV stores the incomming file to the server */ 
 		sampleFile.mv('/usr/simulink/gocontroll_new.elf', function(err) {
 		if (err) return res.status(500).send(err);
