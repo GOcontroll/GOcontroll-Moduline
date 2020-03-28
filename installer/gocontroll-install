@@ -72,27 +72,31 @@ apt-get -y install rng-tools
 
 cd ~
 
+echo -e "${YELLOW}Install nodesource ${NORMAL}"
 curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
-
 bash nodesource_setup.sh
 
+echo -e "${YELLOW}Install nodeJS ${NORMAL}"
 apt-get -y install nodejs
 
+echo -e "${YELLOW}Install build essentials ${NORMAL}"
 apt-get -y install build-essential
 
+
 npm cache clean -f
-
 npm install -g n
-
 n stable
 
+echo -e "${YELLOW}Install Node RED ${NORMAL}"
 npm install -g --unsafe-perm node-red
 
 echo -e "${YELLOW}Start Node RED to generate root folder ${NORMAL}"
 timeout 20 node-red
 
+echo -e "${YELLOW}Install Node RED admin package ${NORMAL}"
 npm install -g node-red-admin
 
+echo -e "${YELLOW}Install Node RED systemd service ${NORMAL}"
 wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/nodered.service -O /lib/systemd/system/nodered.service
 
 wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/node-red-start -O /usr/bin/node-red-start
@@ -101,6 +105,7 @@ wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/reso
 
 chmod +x /usr/bin/node-red-st*
 
+echo -e "${YELLOW}Reload systemd daemon ${NORMAL}"
 systemctl daemon-reload
 
 echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
@@ -176,14 +181,11 @@ echo -e "${YELLOW}Install local node packages ${NORMAL}"
 
 npm install --unsafe-perm /usr/node-red-gocontroll
 
-echo -e "${YELLOW}Install extra webpackages ${NORMAL}"
+echo -e "${YELLOW}Install Node-RED dashboard ${NORMAL}"
 npm install node-red-dashboard
 
-echo -e "${YELLOW}Start Node-RED service ${NORMAL}"
+echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
 systemctl enable nodered.service 
 
-# Make some files executable so Linux can start and execute these files themselve
-chmod 777 /usr/scripts/simulink.sh
-
-echo -e "${YELLOW}Reboot ${NORMAL}"
+echo -e "${YELLOW}Reboot controller ${NORMAL}"
 reboot
