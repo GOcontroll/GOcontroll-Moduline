@@ -16,7 +16,7 @@ module.exports = function(RED) {
 	   	var interval = null;
 		var node = this;
 		
-		const moduleFirmwareLocation = "/root/GOcontroll/GOcontroll-Moduline-III/module-firmware/";
+		const moduleFirmwareLocation = "/root/GOcontroll/GOcontroll-Moduline/module-firmware/";
 		
 		const moduleSlot = config.moduleSlot; 
 		const sampleTime = config.sampleTime;

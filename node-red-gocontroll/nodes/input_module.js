@@ -15,7 +15,7 @@ function GOcontrollInputModule(config) {
 	var interval = null;
 	var node = this;
 	
-	const moduleFirmwareLocation = "/root/GOcontroll/GOcontroll-Moduline-III/module-firmware/";
+	const moduleFirmwareLocation = "/root/GOcontroll/GOcontroll-Moduline/module-firmware/";
 	
 	/* Get information from the Node configuration */
 	const moduleSlot 		= config.moduleSlot;
