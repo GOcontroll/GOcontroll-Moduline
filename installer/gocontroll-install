@@ -125,12 +125,14 @@ mkdir /usr/scripts
 ## Store the new folders/files
 
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/services/nodered.service /lib/systemd/system
-cp -avr /root/GOcontroll/GOcontroll-Moduline/services/gocontroll.service /lib/systemd/system
-cp -avr /root/GOcontroll/GOcontroll-Moduline/scripts/simulink.sh /usr/scripts/
+cp -avr /root/GOcontroll/GOcontroll-Moduline/system /lib/systemd/
+cp -avr /root/GOcontroll/GOcontroll-Moduline/scripts /usr
+
 ## Assign executable rights to file
 chmod 777 /usr/scripts/simulink.sh
+chmod 777 /usr/scripts/simcomstart.sh
 
+cp -avr /root/GOcontroll/GOcontroll-Moduline/moduline /usr
 cp -avr /root/GOcontroll/GOcontroll-Moduline/interfaces /etc/network
 cp -avr /root/GOcontroll/GOcontroll-Moduline/hostapd.conf /etc/hostapd
 cp -avr /root/GOcontroll/GOcontroll-Moduline/hostapd /etc/default
