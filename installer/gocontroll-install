@@ -110,7 +110,7 @@ systemctl daemon-reload
 
 echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
 
-## Her we create folder(s) to stoe new custom files in ##
+## Here we create folder(s) to store new custom files in ##
 
 if [ -d /usr/scripts ]
 then
@@ -118,19 +118,28 @@ echo -e "${YELLOW} Delete existing /usr/scripts folder ${NORMAL}"
 	rm -r /usr/scripts
 fi
 
-# Create Folder
+# Create scripts Folder
 echo -e "${YELLOW} Create new /usr/scripts folder ${NORMAL}"
 mkdir /usr/scripts
 
-## Store the new folders/files
+if [ -d /usr/scripts ]
+then
+echo -e "${YELLOW} Delete existing /usr/moduline folder ${NORMAL}"
+	rm -r /usr/moduline
+fi
 
+# Create moduline Folder
+echo -e "${YELLOW} Create new /usr/moduline folder ${NORMAL}"
+mkdir /usr/moduline
+
+## Store the new folders/files
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/system /lib/systemd/
 cp -avr /root/GOcontroll/GOcontroll-Moduline/scripts /usr
 
 ## Assign executable rights to file
-chmod 777 /usr/scripts/simulink.sh
-chmod 777 /usr/scripts/simcomstart.sh
+chmod 755 /usr/scripts/simulink.sh
+chmod 755 /usr/scripts/simcomstart.sh
 
 cp -avr /root/GOcontroll/GOcontroll-Moduline/moduline /usr
 cp -avr /root/GOcontroll/GOcontroll-Moduline/interfaces /etc/network
@@ -188,6 +197,9 @@ npm install node-red-dashboard
 
 echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
 systemctl enable nodered.service 
+
+echo -e "${YELLOW}Enable SIMCOM device service ${NORMAL}"
+systemctl enable simcom.service 
 
 echo -e "${YELLOW}Reboot controller ${NORMAL}"
 reboot
