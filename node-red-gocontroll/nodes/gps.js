@@ -6,7 +6,8 @@ module.exports = function(RED) {
 	function GOcontrollGPS(config) { 	 
 	   RED.nodes.createNode(this,config);
 
-		const port = new SerialPort("/dev/ttyUSB2", { baudRate: 115200 , autoOpen: false })
+		/* Serial port used for simcom on Moduline 4 */
+		const port = new SerialPort("/dev/ttymxc1", { baudRate: 115200 , autoOpen: false })
 
 		var interval = null;
 		
