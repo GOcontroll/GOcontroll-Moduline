@@ -21,7 +21,7 @@ module.exports = function(RED) {
 		var satView = 0;
 		var satUse = 0;
 
-
+		var dataString = "";
 
 		var node = this;
 		const sampleTime = 1000;
@@ -55,6 +55,7 @@ module.exports = function(RED) {
 				var errmsg = err.toString().replace("Serialport","Serialport "+node.port.serial.path);
 				node.error(errmsg,msg);
 				}
+				
 			});
 					
 			msgOut["date"] = date;
@@ -72,13 +73,21 @@ module.exports = function(RED) {
 		
 		
 		port.on('readable', function () {
-
+			/* Read serial data from port */
 			var data = port.read(); 
-		
-			if (data != null)
-			{		
-			var gpsData = data.toString('utf8').split(',');
+			/* Glue the seperated string together */
+			dataString += data;
+			
+			/* Check if the string is finalized with an OK */
+			if(!dataString.includes("OK"))
+			{
+				/* If not, return */
+				return;
 			}
+			
+			/* At this point we know there is valid data so split string*/
+			var gpsData = dataString.toString('utf8').split(',');
+		
 					
 			if(gpsData[1] != null)
 			{
@@ -120,7 +129,8 @@ module.exports = function(RED) {
 			{
 			satUse = gpsData[15];
 			}	
-			
+			/* Cleanup the dataSTring for new parsing */
+			dataString = "";
 		});
 		
 		
@@ -134,9 +144,6 @@ module.exports = function(RED) {
 
 	}
 	
-	
-
-
 
 	RED.nodes.registerType("GPS",GOcontrollGPS);
 			
