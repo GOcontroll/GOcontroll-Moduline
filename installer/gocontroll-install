@@ -112,67 +112,59 @@ echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
 
 ## Here we create folder(s) to store new custom files in ##
 
-if [ -d /usr/scripts ]
-then
-echo -e "${YELLOW} Delete existing /usr/scripts folder ${NORMAL}"
-	rm -r /usr/scripts
-fi
+#if [ -d /usr/scripts ]
+#then
+#echo -e "${YELLOW} Delete existing /usr/scripts folder ${NORMAL}"
+#	rm -r /usr/scripts
+#fi
 
 # Create scripts Folder
-echo -e "${YELLOW} Create new /usr/scripts folder ${NORMAL}"
-mkdir /usr/scripts
+#echo -e "${YELLOW} Create new /usr/scripts folder ${NORMAL}"
+#mkdir /usr/scripts
 
-if [ -d /usr/scripts ]
-then
-echo -e "${YELLOW} Delete existing /usr/moduline folder ${NORMAL}"
-	rm -r /usr/moduline
-fi
+#if [ -d /usr/scripts ]
+#then
+#echo -e "${YELLOW} Delete existing /usr/moduline folder ${NORMAL}"
+#	rm -r /usr/moduline
+#fi
 
 # Create moduline Folder
-echo -e "${YELLOW} Create new /usr/moduline folder ${NORMAL}"
-mkdir /usr/moduline
+#echo -e "${YELLOW} Create new /usr/moduline folder ${NORMAL}"
+#mkdir /usr/moduline
 
 ## Store the new folders/files
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/system /lib/systemd/
-cp -avr /root/GOcontroll/GOcontroll-Moduline/scripts /usr
+cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
 
 ## Assign executable rights to file
 chmod 755 /usr/scripts/simulink.sh
 chmod 755 /usr/scripts/simcomstart.sh
+chmod 755 /usr/local/bin/qmi-network-raw
 
-cp -avr /root/GOcontroll/GOcontroll-Moduline/moduline /usr
-cp -avr /root/GOcontroll/GOcontroll-Moduline/interfaces /etc/network
-cp -avr /root/GOcontroll/GOcontroll-Moduline/hostapd.conf /etc/hostapd
-cp -avr /root/GOcontroll/GOcontroll-Moduline/hostapd /etc/default
-cp -avr /root/GOcontroll/GOcontroll-Moduline/dnsmasq.conf /etc
-cp -avr /root/GOcontroll/GOcontroll-Moduline/settings.js /root/.node-red
-cp -avr /root/GOcontroll/GOcontroll-Moduline/sshd_config /etc/ssh
 
 # Before we copy the conten tof node-red-gocontroll, we first have to delete
 # the folder if present.
 
 # Go to usr folder
-cd /usr
+#cd /usr
 
-if [ -d node-red-gocontroll ]
-then
-	rm -r node-red-gocontroll
-fi
+#if [ -d node-red-gocontroll ]
+#then
+#	rm -r node-red-gocontroll
+#fi
 
-if [ -d node-red-static ]
-then
-	rm -r node-red-static
-fi
+#if [ -d node-red-static ]
+#then
+#	rm -r node-red-static
+#fi
 
 # jump back to root
-cd ~ 
+#cd ~ 
 
-cp -avr /root/GOcontroll/GOcontroll-Moduline/node-red-gocontroll/ /usr
-cp -avr /root/GOcontroll/GOcontroll-Moduline/node-red-static /usr
-cp -avr /root/GOcontroll/GOcontroll-Moduline/qmi-network-raw /usr/local/bin
+#cp -avr /root/GOcontroll/GOcontroll-Moduline/qmi-network-raw /usr/local/bin
 
-chmod 777 /usr/local/bin/qmi-network-raw
 
 echo -e "${YELLOW}Activate modules for wifi ${NORMAL}"
 depmod
