@@ -12,6 +12,7 @@
 			gps4g: {value: "0"},
 			simulinkstart: {value: "1"},
 			simulinkstop: {value: "0"},
+			ovpnstart: {value: "0"},
 			//simulinkrestart: {value: "1"}, //future expansion
         },
         inputs:0,
@@ -101,7 +102,7 @@
 	<div class="form-row">
 		<label for="node-input-simulink"><i class="fa fa-compress"></i> Model</label>
 	<!--	<button onclick="location.href='load-simulink.html','_blank'" type="button" style="width:350px"> -->
-	<button onclick="window.open('load-simulink.html')"  type="button" style="width:350px"> 
+	<button onclick="window.open('load-elf.html')"  type="button" style="width:350px"> 
          Upload Simulink .elf file</button>
 	</div>	 
 
@@ -121,18 +122,29 @@
 			<option value="1">Stop model if Node-RED stops</option>
 		</select>
 	 </div>
-<!--	 
-	 	<div class="form-row">
-		<label for="node-input-simulink-restart"><i class="fa fa-power-off"></i> Restart</label>
-		<select type="text" id="node-input-simulink-restart">
-			<option value="0">Only restart using CLI</option>
-			<option value="1">Restart if new model is uploaded</option>
-			<option value="2">Restart model if flow is restarted</option>
-		</select>
-	 </div>
-	 -->
+
 </fieldset>
 
+
+<fieldset>
+<legend>VPN connection settings</legend> 
+
+	<div class="form-row">
+		<label for="node-input-ovpn"><i class="fa fa-compress"></i> VPN</label>
+	<!--	<button onclick="location.href='load-simulink.html','_blank'" type="button" style="width:350px"> -->
+	<button onclick="window.open('load-ovpn.html')"  type="button" style="width:350px"> 
+         Upload VPN .ovpn file</button>
+	</div>	 
+
+	<div class="form-row">
+		<label for="node-input-ovpnstart"><i class="fa fa-play"></i> Start</label>
+		<select type="text" id="node-input-ovpnstart" style="width:350px">
+			<option value="0">Don't start VPN connection</option>
+			<option value="1">Start VPN connection</option>
+		</select>
+	 </div>
+
+</fieldset>
 </script>
 
 

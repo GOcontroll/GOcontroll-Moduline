@@ -18,17 +18,20 @@ module.exports = function(RED) {
 	const pass = config.pass;
 	const speedc1 = config.speedc1;
 	const speedc2 = config.speedc2;
-	const simSupply = config.gps4g;
+	const simcom = config.gps4g;
 	const simulinkstart = parseInt(config.simulinkstart);
 	const simulinkstop = parseInt(config.simulinkstop);
+	const ovpnstart = config.ovpnstart;
+	
 	//const simulink-restart = parseInt(config.simulink-restart); // future music
 	
-	const sim7000 = new supplyControl("SIM7000-supply");
+	//const sim7000 = new supplyControl("SIM7000-supply");
 
 	
 	Settings_Hostapd ();
 	Settings_Interfaces ();
-	Settings_SetSim7000Supply ();
+	Settings_Simcom ();
+	Settings_OpenVpn ();
 	Settings_ShowVersionInformation ();
 	
 	/* Create variable for file upload */
@@ -76,33 +79,75 @@ module.exports = function(RED) {
 		node.warn("no files");
 		return res.status(400).send('No files were uploaded.');
 		}
-
-		/* The input attribute name needs to have the same value as sampleFile! */
-		let sampleFile = req.files.sampleFile;
-
-		/* Check if folder already exists. If not, create one */
-		if (!fs.existsSync('/usr/simulink')){
-		node.warn("get function");
-		fs.mkdirSync('/usr/simulink');
-		}
-
-		/* The MV stores the incomming file to the server */ 
-		sampleFile.mv('/usr/simulink/gocontroll_new.elf', function(err) {
-		if (err) return res.status(500).send(err);
-		res.send('File uploaded! You can now close this tab/window.');
 		
-		/* We first need to stop the current model from running */
-		Settings_StopSimulinkModel ();
-		/* Now we can delete the old model and rename the new one */
-		shell.exec('rm /usr/simulink/gocontroll.elf');
-		/* Now we can rename the file*/
-		shell.exec('mv /usr/simulink/gocontroll_new.elf /usr/simulink/gocontroll.elf');
-		/* Now start the new model if requested */
-		if(simulinkstart == 2 || simulinkstart == 1 )
+		
+		if(req.files.elfFile)
 		{
-		Settings_StartSimulinkModel();
+			var fileExtension = (req.files.elfFile.name).split('.')
+			
+			if(fileExtension[1] != "elf")
+			{
+			node.warn("Wrong file extension detected")
+			return;
+			}
+			
+			/* The input attribute name needs to have the same value as sampleFile! */
+			let elfFile = req.files.elfFile;
+
+			/* Check if folder already exists. If not, create one */
+			if (!fs.existsSync('/usr/simulink')){
+			fs.mkdirSync('/usr/simulink');
+			}
+
+			/* The MV stores the incomming file to the server */ 
+			elfFile.mv('/usr/simulink/gocontroll_new.elf', function(err) {
+			if (err) return res.status(500).send(err);
+			res.send('File uploaded! You can now close this tab/window.');
+			
+			/* We first need to stop the current model from running */
+			Settings_StopSimulinkModel ();
+			/* Now we can delete the old model and rename the new one */
+			shell.exec('rm /usr/simulink/gocontroll.elf');
+			/* Now we can rename the file*/
+			shell.exec('mv /usr/simulink/gocontroll_new.elf /usr/simulink/gocontroll.elf');
+			/* Now start the new model if requested */
+			if(simulinkstart == 2 || simulinkstart == 1 )
+			{
+			Settings_StartSimulinkModel();
+			}
+		  });
 		}
-	  });
+		if(req.files.ovpnFile)
+		{
+			var fileExtension = (req.files.ovpnFile.name).split('.')
+			
+			if(fileExtension[1] != "ovpn")
+			{
+			node.warn("Wrong file extension detected")
+			return;
+			}
+		
+			/* The input attribute name needs to have the same value as sampleFile! */
+			let ovpnFile = req.files.ovpnFile;
+			
+			/* Check if folder already exists. If not, create one */
+			if (!fs.existsSync('/etc/openvpn')){
+			fs.mkdirSync('/etc/openvpn');
+			}
+			
+			/* The MV stores the incomming file to the server */ 
+			ovpnFile.mv('/etc/openvpn/moduline.conf', function(err) {
+			if (err) return res.status(500).send(err);
+			res.send('File uploaded! You can now close this tab/window.');
+			
+			if(ovpnstart == "1")	
+			{
+			shell.exec('systemctl restart openvpn.service');	
+			}
+		
+		});
+		}
+		
 	});
 	
 	/***************************************************************************************
@@ -268,14 +313,38 @@ module.exports = function(RED) {
 	** \return
 	**
 	****************************************************************************************/
-	function Settings_SetSim7000Supply (){
-		if(simSupply == "0")
+	function Settings_Simcom (){
+		if(simcom == "0")
 		{
-		sim7000.off();
+		shell.exec('systemctl disable simcom.service');
+		shell.exec('systemctl stop simcom.service');
 		}
-		else if(simSupply == "1")	
+		else if(simcom == "1")	
 		{
-		sim7000.on();	
+		shell.exec('systemctl enable simcom.service');
+		shell.exec('systemctl start simcom.service');	
+		}
+	}
+	
+		/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
+	function Settings_OpenVpn (){
+		if(ovpnstart == "0")
+		{
+		shell.exec('systemctl disable openvpn.service');
+		shell.exec('systemctl stop openvpn.service');
+		}
+		else if(ovpnstart == "1")	
+		{
+		shell.exec('systemctl enable openvpn.service');
+		shell.exec('systemctl start openvpn.service');	
 		}
 	}
 	
