@@ -7,6 +7,7 @@
 		canidtype: {value:"standard"},
 		canid: {value:""},
 		send: {value: 0},
+		caninterval: {value: "1000"},
 		signals: {value: 8},
 		caninterface: {value: "CAN 1"},
 		key1 : {value : ""},
@@ -47,6 +48,7 @@
 		/* function executed while done is clicked */
 		oneditprepare: function() {
 		$(this.signals).trigger("change");
+		$(this.send).trigger("change");
 		
 		$("#node-input-signals").on("change", function() {
 			var id = $("#node-input-signals").val();
@@ -60,6 +62,11 @@
 			if(id > 6){$("#can-signal-7").show();}else{$("#can-signal-7").hide();}
 			if(id > 7){$("#can-signal-8").show();}else{$("#can-signal-8").hide();}
 		//	$("#node-input-dlc").value("2");}
+          });
+		  
+		$("#node-input-send").on("change", function() {
+			var send = $("#node-input-send").val();
+			if(send == 0){$("#can-interval").hide();}else{$("#can-interval").show();}
           });
 		}
     });
@@ -77,6 +84,8 @@
         <select id="node-input-caninterface" style="width:204px">
             <option value="CAN 1">CAN 1</option>
             <option value="CAN 2">CAN 2</option>
+			<option value="CAN 3">CAN 3</option>
+            <option value="CAN 4">CAN 4</option>
         </select>
  	</div>
 	
@@ -96,11 +105,17 @@
 	<div class="form-row">
         <label for="node-input-send"><i class="fa fa-bolt"></i> Send Trigger</label>
         <select id="node-input-send" style="width:204px">
-			<option value=0>Send on "send" command</option>
-            <option value=1>Send on changing signal</option>
-            <option value=2>Send on changing signal or "send" command</option>
+            <option value=0>Send on changing signal</option>
+            <option value=1>Send with interval</option>
         </select>
     </div>
+	
+	<div class="form-row" id="can-interval">
+        <label for="node-input-caninterval"><i class="fa fa-clock-o"></i> Interval (ms)</label>
+        <input type="text" id="node-input-caninterval" placeholder="100" style="width:204px">
+    </div>
+	
+
 	
 	<div class="form-row">
         <label for="node-input-signals"><i class="fa fa-list-ol"></i> Signals</label>

@@ -18,15 +18,22 @@ module.exports = function(RED) {
 		/* parse the identifier ID type */
 	const canidtype = sendNode.canidtype
 	
+
+	
 	if(canid > 2048 && canidtype =="standard")
 	{
 		node.error("Message Identifier to high for standard identifier (11 bits)");
 	}
 	
+	/* Parse the send method */
 	const sendTrigger = sendNode.send;
+	
+	/* Parse the interval time to send CAN message */
+	const caninterval = parseInt(sendNode.caninterval,10);
 	
 	/* Parse the CAN DLC for the number of bytes */
 	const signals = parseInt(sendNode.signals);
+	
 	var dlc = 0;
 	
 	/* Parse the dkey of the different messages */
@@ -103,6 +110,8 @@ module.exports = function(RED) {
 	var canInterface = "can0";
 	if(canChannel == "CAN 1"){canInterface = "can0";}
 	else if (canChannel == "CAN 2"){canInterface = "can1";}
+	else if (canChannel == "CAN 3"){canInterface = "can2";}
+	else if (canChannel == "CAN 4"){canInterface = "can3";}
 	
 	/* extract type of CAN identifier */
 	var extendedid;
@@ -129,12 +138,23 @@ module.exports = function(RED) {
 	/* Create new data flag */
 	var newData = 0;
 
+
+	var interval;
+	/* Basic initialisations are done her so we can start the send interval if required */
+	if(sendTrigger == 1)
+	{
+	/* Start interval to send CAN data*/
+	interval = setInterval(SendCan_DataOut, caninterval);
+	}
+	
+	
 	if(channel)
 	{	
 	channel.start();
 		   
 	   this.on('input', function (msg) {
-		   
+		 
+			node.warn("data in")
 		if(dlc > 8){
 			node.error("Calculated DLC to high check data alignment!");		
 			return;}
@@ -142,19 +162,19 @@ module.exports = function(RED) {
 			for(var s=0; s<signals; s++)
 			{
 				/* check if property is available in JSON string */
-				if(msg.payload[key[s]])
+				if(msg[key[s]])
 				{
 					/* Exit if signal value is not changed */
-					if(value[s] == msg.payload[key[s]]){return;}
+					if(value[s] == msg[key[s]]){continue;}
 					
-					value[s] = msg.payload[key[s]];
+					value[s] = msg[key[s]];
 					
 					/* Check if message uses single byte */
 					if((sb[s]-eb[s]) == 0)
 					{
-					if(msg.payload[key[s]] >  255){msg.payload[key[s]] = 255;}
-					if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-					frame.data.writeUInt8(msg.payload[key[s]],sb[s]-1);	
+					if(msg[key[s]] >  255){msg[key[s]] = 255;}
+					if(msg[key[s]] <  0){msg[key[s]] = 0;}
+					frame.data.writeUInt8(msg[key[s]],sb[s]-1);	
 					}
 					else
 					{
@@ -164,15 +184,15 @@ module.exports = function(RED) {
 						{
 							if((eb[s]-sb[s]) == 1)
 							{
-							if(msg.payload[key[s]] >  65535){msg.payload[key[s]] = 65535;}
-							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-							frame.data.writeUInt16BE(msg.payload[key[s]],sb[s]-1);
+							if(msg[key[s]] >  65535){msg[key[s]] = 65535;}
+							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							frame.data.writeUInt16BE(msg[key[s]],sb[s]-1);
 							}
 							if((eb[s]-sb[s]) == 3)
 							{
-							if(msg.payload[key[s]] >  4294967295){msg.payload[key[s]] = 4294967295;}
-							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-							frame.data.writeUInt32BE(msg.payload[key[s]],sb[s]-1);	
+							if(msg[key[s]] >  4294967295){msg[key[s]] = 4294967295;}
+							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							frame.data.writeUInt32BE(msg[key[s]],sb[s]-1);	
 							}
 						}
 						/* In case little endian */
@@ -180,15 +200,15 @@ module.exports = function(RED) {
 						{
 							if((sb[s]-eb[s]) == 1)
 							{
-							if(msg.payload[key[s]] >  65535){msg.payload[key[s]] = 65535;}
-							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-							frame.data.writeUInt16LE(msg.payload[key[s]],eb[s]-1);
+							if(msg[key[s]] >  65535){msg[key[s]] = 65535;}
+							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							frame.data.writeUInt16LE(msg[key[s]],eb[s]-1);
 							}
 							if((sb[s]-eb[s]) == 3)
 							{
-							if(msg.payload[key[s]] >  4294967295){msg.payload[key[s]] = 4294967295;}
-							if(msg.payload[key[s]] <  0){msg.payload[key[s]] = 0;}
-							frame.data.writeUInt32LE(msg.payload[key[s]],eb[s]-1);	
+							if(msg[key[s]] >  4294967295){msg[key[s]] = 4294967295;}
+							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							frame.data.writeUInt32LE(msg[key[s]],eb[s]-1);	
 							}	
 						}
 					}
@@ -197,39 +217,38 @@ module.exports = function(RED) {
 				}
 			}	
 		
-		
-		if((msg.payload == "send" && (sendTrigger == 0 || sendTrigger == 2))||((sendTrigger == 1 || sendTrigger == 2) && newData == 1))
+		/* Send only if data is new */
+		if( newData == 1 && sendTrigger == 0)
 		{
+		SendCan_DataOut();
 		newData = 0;
-		channel.send({ id: frame.canid,
-		ext: extendedid,
-		data: frame.data });
+		node.warn("send data")
 		return;
 		}
 			   
 	   });
-	   
-	   
+	   	   
 	this.on("close", function() {
+	clearInterval(interval);
 	channel.stop();
 	});  
-	}   
-	   
-	   
+	} 
+
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
+	function SendCan_DataOut (){
+		channel.send({ id: frame.canid,
+		ext: extendedid,
+		data: frame.data });  
+	} 
 }
 
-
 	RED.nodes.registerType("CAN-Send",GOcontrollCanSend);
-/*
-	    GOcontrollCanReceive.prototype.close = function() {
-        if (this.interval_id != null) {
-            clearInterval(this.interval_id);
-            if (RED.settings.verbose) { this.log(RED._("inject.stopped")); }
-        } else if (this.cronjob != null) {
-            this.cronjob.stop();
-            if (RED.settings.verbose) { this.log(RED._("inject.stopped")); }
-            delete this.cronjob;
-        }
-    };
-	*/
 }
