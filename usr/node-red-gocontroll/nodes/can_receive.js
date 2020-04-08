@@ -58,6 +58,8 @@ module.exports = function(RED) {
   	var canInterface = "can0";
 	if(canChannel == "CAN 1"){canInterface = "can0";}
 	else if (canChannel == "CAN 2"){canInterface = "can1";}
+	else if (canChannel == "CAN 3"){canInterface = "can2";}
+	else if (canChannel == "CAN 4"){canInterface = "can3";}
   
 	/* Create channel to communicate on */
 	var channel;
