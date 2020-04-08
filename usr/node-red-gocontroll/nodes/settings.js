@@ -18,8 +18,8 @@ module.exports = function(RED) {
 	const pass = config.pass;
 	const speedc1 = config.speedc1;
 	const speedc2 = config.speedc2;
-	const speedc1 = config.speedc3;
-	const speedc2 = config.speedc4;
+	const speedc3 = config.speedc3;
+	const speedc4 = config.speedc4;
 	const simcom = config.gps4g;
 	const simulinkstart = parseInt(config.simulinkstart);
 	const simulinkstop = parseInt(config.simulinkstop);
@@ -297,9 +297,9 @@ module.exports = function(RED) {
 
 			
 		var canFormatted = 	data.replace(can0, 'pre-up /sbin/ip link set $IFACE type can bitrate '+ speedc1 + ' triple-sampling on loopback off #can0')
-								.replace(can1, 'pre-up /sbin/ip link set $IFACE type can bitrate '+ speedc2 + ' triple-sampling on loopback off #can1');
-								.replace(can1, 'pre-up /sbin/ip link set $IFACE type can bitrate '+ speedc3 + ' triple-sampling on loopback off #can2');
-								.replace(can1, 'pre-up /sbin/ip link set $IFACE type can bitrate '+ speedc4 + ' triple-sampling on loopback off #can3');
+								.replace(can1, 'pre-up /sbin/ip link set $IFACE type can bitrate '+ speedc2 + ' triple-sampling on loopback off #can1')
+								.replace(can2, 'pre-up /sbin/ip link set $IFACE type can bitrate '+ speedc3 + ' triple-sampling on loopback off #can2')
+								.replace(can3, 'pre-up /sbin/ip link set $IFACE type can bitrate '+ speedc4 + ' triple-sampling on loopback off #can3');
 		
 		fs.writeFile('/etc/network/interfaces', canFormatted, 'utf8', function (err) {
 			if (err) throw err;
