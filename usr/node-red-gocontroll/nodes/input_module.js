@@ -25,6 +25,11 @@ function GOcontrollInputModule(config) {
 	const moduleHwId2		= 10;
 	const moduleHwId3		= 1;
 	
+	var supply	={};
+	supply[0] = config.supply1;
+	supply[1] = config.supply2;
+	supply[2] = config.supply3;
+	
 	var input	={};
 	input[0] = config.input1;
 	input[1] = config.input2;
@@ -294,6 +299,10 @@ function GOcontrollInputModule(config) {
 	sendBuffer[(messagePointer+1)*6] = input[messagePointer];
 	sendBuffer[((messagePointer+1)*6)+1] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2)|((voltageRange[messagePointer]&3)<<6);
 	}
+	
+	sendBuffer[42] = supply[0]; 
+	sendBuffer[43] = supply[1]; 
+	sendBuffer[44] = supply[2]; 
 	
 	sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 
