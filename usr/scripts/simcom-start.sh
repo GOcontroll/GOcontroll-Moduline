@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # be shure the binary has execution acces 
-chmod 777 /usr/moduline/simcomstart.hex
+chmod 777 /usr/moduline/simcom-start.hex
 
 # start the program
-/usr/moduline/simcomstart.hex &
+/usr/moduline/simcom-start.hex &

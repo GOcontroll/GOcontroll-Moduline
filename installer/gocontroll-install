@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # url to bash this script:
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-install | bash -s <branch>
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-install | bash -s master
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -145,7 +145,7 @@ chmod 755 /usr/local/bin/qmi-network-raw
 chmod 755 /usr/moduline/simcom-start.hex
 chmod 755 /usr/moduline/simcom-stop.hex
 chmod 755 /usr/moduline/poweroff-control.hex
-chmod 755 /lib/systemd/system-shutdown/poweroff.hex
+chmod 755 /lib/systemd/system-shutdown/power-off.hex
 
 
 # Before we copy the conten tof node-red-gocontroll, we first have to delete
