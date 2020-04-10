@@ -3,6 +3,7 @@
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
+			shutdown: {value:"3"},
 			wifi: {value:"1"},
             name: {value:"GOcontroll Settings"},
 			ssid: {value:"GOcontroll-AP"},
@@ -28,16 +29,21 @@
 	
 </script>
 
-
-
-
-
 <script type="text/x-red" data-template-name="Settings">
 
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name" style="width:350px">
     </div>
+	
+	<fieldset>
+<legend>Controller shut down delay</legend> 
+    <div class="form-row">
+        <label for="node-input-shutdown"><i class="fa fa-clock-o"></i> Delay (s)</label>
+        <input type="text" id="node-input-shutdown" placeholder="3" style="width:350px">
+    </div>	
+	
+</fieldset>
 
 <fieldset>
 <legend>WLAN settings</legend> 
