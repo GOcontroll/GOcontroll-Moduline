@@ -1,0 +1,12 @@
+[Unit]
+Description=supply control
+After=network.target
+
+[Service]
+Type=simple
+#RemainAfterExit=yes
+
+ExecStart=/usr/moduline/supplycontrol.hex
+
+[Install]
+WantedBy=multi-user.target

@@ -144,6 +144,7 @@ chmod 755 /usr/scripts/simcomstart.sh
 chmod 755 /usr/local/bin/qmi-network-raw
 chmod 755 /usr/moduline/simcomstart.hex
 chmod 755 /usr/moduline/simcomstop.hex
+chmod 755 /lib/systemd/system-shutdown/switchoffpoweractive.hex
 
 
 # Before we copy the conten tof node-red-gocontroll, we first have to delete
