@@ -161,8 +161,8 @@ module.exports = function(RED) {
 		var active1Voltage = ((receiveBufferSignal2[0]<<4) | ((receiveBufferSignal2[1] & 0xf0)>>4));
 		
 		/* Check if the value is not negative (see datasheet from ADC)*/
-		if(batteryVoltage > 2047){
-		batteryVoltage = 0;
+		if(active1Voltage > 2047){
+		active1Voltage = 0;
 		}
 		
 		/* Set multiplexer for channel 2*/
@@ -178,8 +178,8 @@ module.exports = function(RED) {
 		
 		var active2Voltage = ((receiveBufferSignal3[0]<<4) | ((receiveBufferSignal3[1] & 0xf0)>>4));
 		/* Check if the value is not negative (see datasheet from ADC)*/
-		if(batteryVoltage > 2047){
-		batteryVoltage = 0;
+		if(active2Voltage > 2047){
+		active2Voltage = 0;
 		}
 		
 		/* Set multiplexer for channel 3*/
@@ -195,8 +195,8 @@ module.exports = function(RED) {
 		
 		var active3Voltage = ((receiveBufferSignal4[0]<<4) | ((receiveBufferSignal4[1] & 0xf0)>>4));
 		/* Check if the value is not negative (see datasheet from ADC)*/
-		if(batteryVoltage > 2047){
-		batteryVoltage = 0;
+		if(active3Voltage > 2047){
+		active3Voltage = 0;
 		}
 		i2c1.closeSync();		
 		
