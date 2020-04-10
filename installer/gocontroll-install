@@ -140,11 +140,12 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
 
 ## Assign executable rights to file
 chmod 755 /usr/scripts/simulink.sh
-chmod 755 /usr/scripts/simcomstart.sh
+chmod 755 /usr/scripts/simcom-start.sh
 chmod 755 /usr/local/bin/qmi-network-raw
-chmod 755 /usr/moduline/simcomstart.hex
-chmod 755 /usr/moduline/simcomstop.hex
-chmod 755 /lib/systemd/system-shutdown/switchoffpoweractive.hex
+chmod 755 /usr/moduline/simcom-start.hex
+chmod 755 /usr/moduline/simcom-stop.hex
+chmod 755 /usr/moduline/poweroff-control.hex
+chmod 755 /lib/systemd/system-shutdown/poweroff.hex
 
 
 # Before we copy the conten tof node-red-gocontroll, we first have to delete
@@ -195,6 +196,9 @@ systemctl enable nodered.service
 
 echo -e "${YELLOW}Enable SIMCOM device service ${NORMAL}"
 systemctl enable simcom.service 
+
+echo -e "${YELLOW}Enable poweroff control service ${NORMAL}"
+systemctl enable poweroff-control.service 
 
 echo -e "${YELLOW}Reboot controller ${NORMAL}"
 reboot
