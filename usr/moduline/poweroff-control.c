@@ -14,11 +14,16 @@
 #define LOW 0
 #define MS *1000
 
+#define MODULINE 4
+
+
 typedef struct{
 	uint16_t BatteryVoltage;
 	uint16_t Active1Voltage;
+	#if (MODULINE != 3)
 	uint16_t Active2Voltage;
 	uint16_t Active3Voltage;
+	#endif
 } _supplyVoltage;
 
 
@@ -36,8 +41,11 @@ void main (void)
 	while(1)
     {
 	GocontrollModuline_GetSupplyVoltage(&supplyVoltage);
-	
+	#if (MODULINE != 3)
 	if((supplyVoltage.Active1Voltage < 100) && (supplyVoltage.Active2Voltage < 100) && (supplyVoltage.Active3Voltage < 100))
+	#else
+	if(supplyVoltage.Active1Voltage < 100)	
+	#endif
 	{
 		if(timer++ >= timeout)
 		{
@@ -66,6 +74,7 @@ static uint16_t GocontrollModuline_GetSupplyVoltage(_supplyVoltage *supplyVoltag
 	
 	static uint16_t batteryTemp = 0;
 	static uint16_t active1Temp = 0;
+	#if (MODULINE != 3)
 	static uint16_t active2Temp = 0;
 	static uint16_t active3Temp = 0;
 
@@ -80,6 +89,16 @@ static uint16_t GocontrollModuline_GetSupplyVoltage(_supplyVoltage *supplyVoltag
 	const int convert2 		= 0xE3; /* active 2 voltage */
 	const int convert3 		= 0xF3; /* active 3 voltage */
 	const int convertGen 	= 0x83;
+	#else
+	static int i2cDevice = 0;
+	static float decimalFactor = 3.34 / 4095;
+
+    const int addr 			= 0x36;       
+	const int setup 		= 0xA2;
+	const int convert1 		= 0x61; /* contact voltage */
+	const int convert0 		= 0x63; /* battery voltage */
+
+	#endif
 
 	/* first setup of the I2C bus and device */  
 	if(i2cDevice == 0)
@@ -87,8 +106,13 @@ static uint16_t GocontrollModuline_GetSupplyVoltage(_supplyVoltage *supplyVoltag
 		static char dataTx[3] ={0};
 		
 		/* Open I2C device */
+		#if (MODULINE != 3)
 		if ((i2cDevice = open("/dev/i2c-2",O_RDWR)) < 0) {
-        printf("Failed to open the bus.");
+        #else
+		if ((i2cDevice = open("/dev/i2c-1",O_RDWR)) < 0) {	
+		#endif
+		
+		printf("Failed to open the bus.");
 		}
 		
 		/* Aquire bus acces */
@@ -96,6 +120,10 @@ static uint16_t GocontrollModuline_GetSupplyVoltage(_supplyVoltage *supplyVoltag
         printf("Failed to acquire bus access and/or talk to slave.\n");
 		}
 	}
+	
+	
+	
+	#if (MODULINE != 3)
 	
 		/* Configure the ADC device */ 
 		dataTx[0] = setup;
@@ -209,6 +237,36 @@ static uint16_t GocontrollModuline_GetSupplyVoltage(_supplyVoltage *supplyVoltag
 		/* Convert data to actual value */
 		supplyVoltage->Active3Voltage = (uint16_t) ((float)(((active3Temp * decimalFactor)/1.5)*11700));
 		
+	#else
+
+		dataTx[0] = convert0;
+		dataTx[1] = 0xff;
+
+		write(i2cDevice,dataTx,1);
+		
+		if (read(i2cDevice,dataRx,2) != 2) {
+			printf("Failed to read from the i2c bus.\n");
+		}
+		
+		batteryTemp = (dataRx[1] | ((dataRx[0] & 0x0f)<<8));
+		supplyVoltage->BatteryVoltage = (uint16_t)((float)((batteryTemp * decimalFactor)/1.5)*11700);
+		
+
+
+		dataTx[0] = convert1;
+		dataTx[1] = 0xff;
+
+		write(i2cDevice,dataTx,1);
+		
+		if (read(i2cDevice,dataRx,2) != 2) {
+			printf("Failed to read from the i2c bus.\n");
+		}
+		
+		active1Temp = (dataRx[1] | ((dataRx[0] & 0x0f)<<8));
+		supplyVoltage->Active1Voltage = (uint16_t)((float)((active1Temp * decimalFactor)/1.5)*11700);
+
+
+	#endif
 		
 	//	printf("Battery is: %d\n", supplyVoltage->BatteryVoltage);
 	//	printf("Active 1 is: %d\n", supplyVoltage->Active1Voltage);
