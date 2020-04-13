@@ -1,0 +1,6 @@
+### 64 bit (i.MX8)
+aarch64-none-linux-gnu-gcc.exe -o power-off.hex power-off.c
+
+
+### 32 bit (i.MX6)
+armv8l-linux-gnueabihf-gcc.exe -o power-off.hex power-off.c

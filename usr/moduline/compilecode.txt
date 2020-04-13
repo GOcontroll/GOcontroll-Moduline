@@ -1,0 +1,14 @@
+### 64 bit (i.MX8)
+aarch64-none-linux-gnu-gcc.exe -o simcom-start.hex simcom-start.c
+
+aarch64-none-linux-gnu-gcc.exe -o simcom-stop.hex simcom-stop.c
+
+aarch64-none-linux-gnu-gcc.exe -o poweroff-control.hex poweroff-control.c
+
+
+### 32 bit (i.MX6)
+armv8l-linux-gnueabihf-gcc.exe -o simcom-start.hex simcom-start.c
+
+armv8l-linux-gnueabihf-gcc.exe -o simcom-stop.hex simcom-stop.c
+
+armv8l-linux-gnueabihf-gcc.exe -o poweroff-control.hex poweroff-control.c
