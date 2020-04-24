@@ -199,8 +199,9 @@ systemctl enable nodered.service
 echo -e "${YELLOW}Enable SIMCOM device service ${NORMAL}"
 systemctl enable simcom.service 
 
-echo -e "${YELLOW}Enable poweroff control service ${NORMAL}"
-systemctl enable poweroff-control.service 
+#This can be a buggy feature so don't switch off controller by this feature
+#echo -e "${YELLOW}Enable poweroff control service ${NORMAL}"
+#systemctl enable poweroff-control.service 
 
 echo -e "${YELLOW}Reboot controller ${NORMAL}"
 reboot
