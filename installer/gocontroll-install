@@ -147,6 +147,8 @@ chmod 755 /usr/moduline/simcom-stop.hex
 chmod 755 /usr/moduline/poweroff-control.hex
 chmod 755 /lib/systemd/system-shutdown/power-off.hex
 
+# Make resolv.conf immutable
+chattr +i /etc/resolv.conf
 
 # Before we copy the conten tof node-red-gocontroll, we first have to delete
 # the folder if present.
