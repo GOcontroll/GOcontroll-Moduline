@@ -27,6 +27,11 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		function ReadMemory_GetData(){
 	
+			/* First check if folder is present if not, create one*/
+			if (!fs.existsSync('/usr/mem-sim')) {
+			fs.mkdirSync('/usr/mem-sim');
+			}
+	
 			/* Check if there are multiple keys used in the block */
 			var splittedKeys = key.split(',');
 					
@@ -40,7 +45,8 @@ module.exports = function(RED) {
 				try {
 				fileContents = fs.readFileSync('/usr/mem-sim/'+String(splittedKeys[k]));
 				} catch (err) {
-				node.warn("Error during key search");	
+				/* For debugging purposes otherwise to much noise on debug window */
+				//node.warn("Error during key search");	
 				  // Here you get the error when the file was not found,
 				  // but you also get any other error
 				}
@@ -63,7 +69,8 @@ module.exports = function(RED) {
 			
 			if (err)
 			{
-			node.warn("Problem reading from memory key: "+key);
+			/* For debugging purposes otherwise to much noise on debug window */
+			//node.warn("Problem reading from memory key: "+key);
 			clearInterval(intervalGetData);
 			return;
 			}
