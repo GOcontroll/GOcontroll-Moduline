@@ -150,6 +150,18 @@ chmod 755 /lib/systemd/system-shutdown/power-off.hex
 # Make resolv.conf immutable
 chattr +i /etc/resolv.conf
 
+
+
+# check if the mem-sim folder exists, if so, delete
+if [ -d /usr/mem-sim ]
+then
+echo -e "${YELLOW} Delete existing mem-sim folder ${NORMAL}"
+	rm -r /usr/mem-sim
+fi
+
+# Create folder to store all shared values in
+mkdir /usr/mem-sim
+
 # Before we copy the conten tof node-red-gocontroll, we first have to delete
 # the folder if present.
 
