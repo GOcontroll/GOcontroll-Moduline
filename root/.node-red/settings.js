@@ -124,7 +124,7 @@ module.exports = {
         type: "credentials",
         users: [{
             username: "GOcontroll",
-            password: "$2a$08$uyHj9iNHFnVFgY7kYfktZ.fBW7n8kiXnUPYgz6xzgz84Yp8/LUS9O",
+            password: "$2a$08$aGOjfQSlb9wAwVmn96Rqn.Np36fL9eL5K9Ge1B8vr0xX9nWUU/KK2",
             permissions: "*"
         }]
     },
@@ -133,7 +133,7 @@ module.exports = {
     // the static content (httpStatic), the following properties can be used.
     // The pass field is a bcrypt hash of the password.
     // See http://nodered.org/docs/security.html#generating-the-password-hash
-    httpNodeAuth: {user:"GOcontroll",pass:"$2a$08$uyHj9iNHFnVFgY7kYfktZ.fBW7n8kiXnUPYgz6xzgz84Yp8/LUS9O"},
+    httpNodeAuth: {user:"GOcontroll",pass:"$2a$08$aGOjfQSlb9wAwVmn96Rqn.Np36fL9eL5K9Ge1B8vr0xX9nWUU/KK2"},
     //httpStaticAuth: {user:"user",pass:"$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN."},
 
     // The following property can be used to enable HTTPS
