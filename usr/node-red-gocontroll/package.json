@@ -29,6 +29,7 @@
             "input_module": "nodes/input_module.js",
             "input_module_reset": "nodes/input_module_reset.js",
             "output_module": "nodes/output_module.js",
+			"bridge_module": "nodes/bridge_module.js",
             "settings": "nodes/settings.js",
             "gps": "nodes/gps.js",
             "can_receive": "nodes/can_receive.js",
