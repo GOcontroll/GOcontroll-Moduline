@@ -154,7 +154,6 @@ module.exports = function(RED) {
 		   
 	   this.on('input', function (msg) {
 		 
-			node.warn("data in")
 		if(dlc > 8){
 			node.error("Calculated DLC to high check data alignment!");		
 			return;}
@@ -222,7 +221,6 @@ module.exports = function(RED) {
 		{
 		SendCan_DataOut();
 		newData = 0;
-		node.warn("send data")
 		return;
 		}
 			   
