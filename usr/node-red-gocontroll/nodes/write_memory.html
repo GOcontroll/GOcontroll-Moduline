@@ -32,14 +32,8 @@
 </script>
 
 <script type="text/x-red" data-help-name="Write-Memory">
-<p>The settings block configures the basic settings of the GOcontroll Moduline 3 controller.</p>
+<p>The memory blocks can be used to exchange data between a running Simulink model and Node-RED.&nbsp;</p>
 <p>&nbsp;</p>
-<h2>Wireless LAN Acces Point credentials:</h2>
-<p><em>SSID:</em></p>
-<p>The name of the wireless LAN acces point network.</p>
-<p><em>Password:</em></p>
-<p>The credentials of the wireless LAN acces point network.</p>
-<p>&nbsp;</p>
-<h2>CAN speed settings:</h2>
-<p>Here you can select the speed of CAN 1 and CAN 2. Changing these parameters, needs a reboot of the controller after deployment of the new parameters.</p>
-</script>
+<p><strong>Function:</strong></p>
+<p>The write block needs to be configured with a key value. When JSON objects are pushed into the node, it will search for the provided key. If the key is available in the JSON object, the corresponding value will be stored in memory.</p>
+<p>&nbsp;</p></script>

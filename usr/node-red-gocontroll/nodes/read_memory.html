@@ -48,14 +48,9 @@
 </script>
 
 <script type="text/x-red" data-help-name="Read-Memory">
-   <p>The status led can be used to give feedback to the end user by controlling the four LED's on top of the GOcontroll Moduline Enclosure.</p>
-<p>The LED's can be switched on and off in three differenet colors, red, green and blue. Select the LED you want to control and choos a color. If a LED is controlled by two nodes which are configured with a different color, both colours will be switched on.</p>
-<p><em>LED:</em></p>
-<p>Choose which LED nneds to be controlled.</p>
-<p><em>Color:</em></p>
-<p>Select the color from de pecified LED.</p>
+<p>The memory blocks can be used to exchange data between a running Simulink model and Node-RED.&nbsp;</p>
 <p>&nbsp;</p>
-<p><strong>How to control:</strong></p>
-<p>By simply injecting data into this node, the LED can be switched on and of. A string <strong>on&nbsp;</strong>will turn the LED on while <strong>off</strong> will turn the LED off.</p>
+<p><strong>Function:</strong></p>
+<p>The read block needs to be configured with minimal one key value. If more key's need to be retrieved from memory, separate each key with a comma (,). When the block finds the provided key(s) in memory, the corresponding value for each key are pushed out the node in JSON object format with an interval povided in the interval drop down list.</p>
 <p>&nbsp;</p>
 </script>

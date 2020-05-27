@@ -116,12 +116,12 @@
 </script>
 
 <script type="text/x-red" data-help-name="Bridge-Module">
-  <p>The output module can be used to control resistive and inductive loads with a current up to 5 Amp&egrave;re for each channel. The node will also output data with actual information from the module such as the current flow for each channel (only in high side configuration), the temperature of the module and the ground shift of the module (explained later on)</p>
+<p>The bridge module can be used to control resistive and inductive loads with a current up to 7,5 Amp&egrave;re for each channel. The node will also output data with actual information from the module such as temperature and groundshift.</p>
 <h2><strong>Configuration</strong></h2>
 <p><strong><em>Module:</em></strong></p>
-<p>Select the module slot on which the output module is installed to.</p>
+<p>Select the module slot on which the bridge module is installed to.</p>
 <h3><strong>Output channel n</strong></h3>
-<p>Each channel (1 to 6) can be configured according user demands. Each Output channel has the same options.</p>
+<p>Each channel (1 -2) can be configured according user demands. Each Output channel has the same options.</p>
 <p><strong><em>Output type:</em></strong></p>
 <p>Here, the user can select the type of output depending on the actuator that is connected.</p>
 <ul>
@@ -154,7 +154,7 @@
 <p><em>&hellip;&hellip; }</em></p>
 <p><em>&nbsp;</em></p>
 <p><em><strong>Read data from module</strong></em></p>
-<p>The data coming from the module is pushed out of the node in a JSON string format. This data is only pushed out of the node when an injection took place. If no output update is required but the status of the module is needed, a random message can be injected to the node to retrieve the information. The JSON string holds 8 key&rsquo;s and 8 values. Two general keys holding the groundshift and the temperature. The other 6 key&rsquo;s hold the current for each channel.</p>
+<p>The data coming from the module is pushed out of the node in a JSON object format. This data is only pushed out of the node when an injection took place. If no output update is required but the status of the module is needed, a random message can be injected to the node to retrieve the information. The JSON string holds 2 key&rsquo;s with 2 values. Two general keys holding the groundshift and the temperature.</p>
 <p><em><strong>Groundshift</strong></em></p>
 <p>To prevent the module from influencing the controller ground, the module continuously checks if the ground from the module is ok. If the ground shift due to bad ground connections, this value will start to rise. At a certain threshold, the module will switch of the channels until a module reset takes place.</p>
 <h2><strong>Example</strong></h2>
@@ -162,13 +162,7 @@
 <p>{&ldquo;outputChannel1&rdquo; : 688}</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<p>This example shows the data coming from an output node during operation.</p>
+<p>This example shows the data coming from an bridge node during operation.</p>
 <p>{&ldquo;moduleTemperature&rdquo; : 28,</p>
-<p>&ldquo;moduleGroundShift&rdquo; : 0,</p>
-<p>&ldquo;currentChannel1&rdquo; : 135,</p>
-<p>&ldquo;currentChannel2&rdquo; : 122,</p>
-<p>&ldquo;currentChannel3&rdquo; : 254,</p>
-<p>&ldquo;currentChannel4&rdquo; : 126,</p>
-<p>&ldquo;currentChannel5&rdquo; : 450,</p>
-<p>&ldquo;currentChannel6&rdquo; : 655}</p>
+<p>&ldquo;moduleGroundShift&rdquo; : 0}</p>
 </script>

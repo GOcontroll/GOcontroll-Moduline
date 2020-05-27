@@ -36,7 +36,17 @@
 </script>
 
 <script type="text/x-red" data-help-name="GPS">
-<p>The onboard GPS receiver can be read out with this node. If the GPS receiver has a fix, the output will be none zero. The output is in JSON format.</p>
-
+<p>The onboard GPS receiver provide several GPS related values. These values are pushed out of the node in JSON object format.</p>
+<p>NOTE: To use GPS, be sure to ENABLE the GPS and 3/4G in the settings node. A SIM card with data plan is not required.&nbsp;</p>
+<p><strong>JSON object example:</strong></p>
+<p>{"date":"2020-05-27",</p>
+<p>"time":"09:13:40",</p>
+<p>"gpsFix":"1",</p>
+<p>"latitude":"52.914778",</p>
+<p>"longitude":"6.895206",</p>
+<p>"altitude":"20.300",</p>
+<p>"groundSpeed":"0.00",</p>
+<p>"satView":"10",</p>
+<p>"satUse":"5"}</p>
 </script>
 
