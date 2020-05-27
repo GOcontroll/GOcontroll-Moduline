@@ -171,7 +171,7 @@ module.exports = function(RED) {
 	**
 	****************************************************************************************/
 	function Settings_StartSimulinkModel (){
-		shell.exec('systemctl start gocontroll.service');
+		shell.exec('systemctl start simulink.service');
 	}
 	
 	
@@ -185,7 +185,7 @@ module.exports = function(RED) {
 	**
 	****************************************************************************************/
 	function Settings_StopSimulinkModel (){
-		shell.exec('systemctl stop gocontroll.service');
+		shell.exec('systemctl stop simulink.service');
 	}
 	
 
@@ -199,7 +199,7 @@ module.exports = function(RED) {
 	**
 	****************************************************************************************/
 	function Settings_ActivateModel (){
-		shell.exec('systemctl enable gocontroll.service');
+		shell.exec('systemctl enable simulink.service');
 	}
 	
 	
@@ -213,7 +213,7 @@ module.exports = function(RED) {
 	**
 	****************************************************************************************/
 	function Settings_DeactivateModel (){
-		shell.exec('systemctl disable gocontroll.service');
+		shell.exec('systemctl disable simulink.service');
 	}
 	
 	
