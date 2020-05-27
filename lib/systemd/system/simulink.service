@@ -1,0 +1,25 @@
+### Simulink service###
+
+###### Enable the simulink service for autoboot at startup 
+#systemctl enable simulink.service
+
+###### Start manually simulink service
+#systemctl start simulink.service
+
+###### Restart manually simulink service
+#systemctl restart simulink.service
+
+###### Status in case of failure
+#systemctl status simulink.service
+
+
+[Unit]
+Description=simulink
+After=network.target
+
+[Service]
+ExecStart=/usr/scripts/simulink.sh
+Type=forking
+
+[Install]
+WantedBy=default.target
