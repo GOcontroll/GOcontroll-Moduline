@@ -3,11 +3,10 @@
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
-			shutdown: {value:"3"},
 			wifi: {value:"1"},
             name: {value:"GOcontroll Settings"},
 			ssid: {value:"GOcontroll-AP"},
-			pass: {value:"Moduline3"},
+			pass: {value:"Moduline"},
 			speedc1: { value:"250000"},
 			speedc2: { value:"250000"},
 			speedc3: { value:"250000"},
@@ -36,15 +35,6 @@
         <input type="text" id="node-input-name" placeholder="Name" style="width:350px">
     </div>
 	
-	<fieldset>
-<legend>Controller shut down delay</legend> 
-    <div class="form-row">
-        <label for="node-input-shutdown"><i class="fa fa-clock-o"></i> Delay (s)</label>
-        <input type="text" id="node-input-shutdown" placeholder="3" style="width:350px">
-    </div>	
-	
-</fieldset>
-
 <fieldset>
 <legend>WLAN settings</legend> 
 	<div class="form-row">
@@ -177,8 +167,8 @@
 
 <script type="text/x-red" data-help-name="Settings">
 
-
-<p>The settings block configures the basic settings of the GOcontroll Moduline 3 controller.</p>
+<p>The settings block configures the basic settings of the GOcontroll Moduline controller.</p>
+<p>NOTE: It is recommended to disable the node once all settings are set properly. Otherwise, the node will set all the properties each boot. This will decrease the boottime.</p>
 <p>&nbsp;</p>
 <h2>Wireless LAN Acces Point credentials:</h2>
 <p><em>SSID:</em></p>
@@ -187,5 +177,22 @@
 <p>The credentials of the wireless LAN acces point network.</p>
 <p>&nbsp;</p>
 <h2>CAN speed settings:</h2>
-<p>Here you can select the speed of CAN 1 and CAN 2. Changing these parameters, needs a reboot of the controller after deployment of the new parameters.</p>
-</script>
+<p>The speed of each CAN interface can be changed using the settings node. Changing these parameters, needs a reboot of the controller after deployment of the new parameters.</p>
+<p>CAN1 - Connector C pin 14 (L) and pin 15 (H)</p>
+<p>CAN2 - Connector C pin 20 (L) and pin 21 (H)</p>
+<p>CAN3 - Connector C pin 19 (L) and pin 18 (H)</p>
+<p>CAN4 - Connector C pin 13 (L) and pin 12 (H)</p>
+<p>&nbsp;</p>
+<h2>GPS - 3/4G settings:</h2>
+<p>Enable or disable the onboard GPS or 3/4G. Keep in mind that for using 3/4G, SIM card with dataplan is required.</p>
+<p>&nbsp;</p>
+<h2>Simulink model options:</h2>
+<p>Compiled Simulink models can be uploaded and started from within the Node-RED environment. Simply click the upload button and drag and drop your .elf file into the opload window.&nbsp;</p>
+<p>NOTE: The settings block needs to be deployed BEFORE uploading files!</p>
+<p>Start: Choose when the model needs to start running.</p>
+<p>Stop: Choose when the model needs to stop running.</p>
+<p>&nbsp;</p>
+<h2>VPN connection settings:</h2>
+<p>The settings node can be used to upload VPN certificates to start a so called secure tunnel connection.&nbsp;</p>
+<p>NOTE: The settings block needs to be deployed BEFORE uploading files!</p>
+<p>Start: Choos when the VPN connection needs to be established.</p></script>

@@ -12,7 +12,6 @@ module.exports = function(RED) {
 
 	var node = this;
 	
-	const shutdown = config.shutdown;
 	const ssid = config.ssid;
 	const pass = config.pass;
 	const speedc1 = config.speedc1;
@@ -24,11 +23,7 @@ module.exports = function(RED) {
 	const simulinkstop = parseInt(config.simulinkstop);
 	const ovpnstart = config.ovpnstart;
 	
-	//const simulink-restart = parseInt(config.simulink-restart); // future music
-	
-	//const sim7000 = new supplyControl("SIM7000-supply");
 
-	Settings_Shutdown();
 	Settings_Hostapd ();
 	Settings_Interfaces ();
 	Settings_Simcom ();
@@ -251,35 +246,7 @@ module.exports = function(RED) {
 		var jsonContent = JSON.parse(packageFile);
 		node.status({fill:"green",shape:"dot",text:"GOcontroll SW version: "+jsonContent.version});
 	}
-	
-	
-	/***************************************************************************************
-	** \brief
-	**
-	**
-	** \param
-	** \param
-	** \return
-	**
-	****************************************************************************************/
-	function Settings_Shutdown (){
-		
-		if(!shutdown){
-		shutdown = "3";
-		}
-		
-		fs.readFile('/usr/moduline/poweroff.timeout', 'utf8', function (err,data) {
 
-			fs.writeFile('/usr/moduline/poweroff.timeout', shutdown, 'utf8', function (err) {
-					if (err) throw err;
-
-					node.warn('Power off timeout saved');
-				});
-		});
-		
-		shell.exec('systemctl restart gocontroll.service');
-	}
-	
 	
 	/***************************************************************************************
 	** \brief
