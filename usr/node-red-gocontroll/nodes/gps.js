@@ -102,32 +102,32 @@ module.exports = function(RED) {
 			
 			if(gpsData[3] != null)
 			{
-			latitude = gpsData[3];
+			latitude = parseFloat(gpsData[3]);
 			}
 			
 			if(gpsData[4] != null)
 			{
-			longitude = gpsData[4];
+			longitude = parseFloat(gpsData[4]);
 			}
 			
 			if(gpsData[5] != null)
 			{
-			altitude = gpsData[5];
+			altitude = parseFloat(gpsData[5]);
 			}
 			
 			if(gpsData[6] != null)
 			{
-			groundSpeed = gpsData[6];
+			groundSpeed = parseFloat(gpsData[6]);
 			}
 
 			if(gpsData[14] != null)
 			{
-			satView = gpsData[14];
+			satView = parseInt(gpsData[14]);
 			}		
 			
 			if(gpsData[15] != null)
 			{
-			satUse = gpsData[15];
+			satUse = parseInt(gpsData[15]);
 			}	
 			/* Cleanup the dataSTring for new parsing */
 			dataString = "";
