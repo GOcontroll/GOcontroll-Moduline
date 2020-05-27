@@ -201,12 +201,12 @@
 <p>The CAN send node send a CAN message from on of the two onboard CAN busses. The node wil convert the incoming JSON object to a corresponding CAN message</p>
 <h2><strong>How to configure:</strong></h2>
 <p><strong>Config:</strong></p>
-<p>Here you select the onboard CAN bus from the controller. If used the first time, also the speed of the CAN bus needs to be set.</p>
+<p>Here you select the onboard CAN bus from the controller. If used the first time, also the speed of the CAN bus needs to be set in the settings node.</p>
 <p>The two CAN busses are connected to the C connecter (middle).</p>
-<p>CAN 1 Low: pin 14&nbsp;</p>
-<p>CAN 1 High: pin 15&nbsp;</p>
-<p>CAN 2 Low: pin 20&nbsp;</p>
-<p>CAN 2 High: pin 21&nbsp;&nbsp;</p>
+<p>CAN1 - Connector C pin 14 (L) and pin 15 (H)</p>
+<p>CAN2 - Connector C pin 20 (L) and pin 21 (H)</p>
+<p>CAN3 - Connector C pin 19 (L) and pin 18 (H)</p>
+<p>CAN4 - Connector C pin 13 (L) and pin 12 (H)</p>
 <p>&nbsp;</p>
 <p><strong>ID type:&nbsp;</strong></p>
 <p>The node needs to know what type of CAN message to send. Here you specify the standard identifier (11 bits) or an extended identifier (29 bits).</p>
@@ -232,6 +232,6 @@ Start byte: <input   style="width: 25px;" type="text" value="3" />
 End byte: <input style="width: 25px;" type="text" value="3" />
 </div>
 <div class="form-row">&nbsp;</div>
-<div class="form-row">The node will extract these two key's from the JSON object and put it into the first three bytes of the CAN message. Depending on the Send Trigger setting, the message will be send on the send command or if at least one value from a key is changed.&nbsp;</div>
+<div class="form-row">The node will extract these two key's from the JSON object and put it into the first three bytes of the CAN message. Depending on the Send Trigger setting, the message will be send periodic or if at least one value from a key is changed.&nbsp;</div>
 <p>&nbsp;</p>
 </script>

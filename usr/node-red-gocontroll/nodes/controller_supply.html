@@ -37,19 +37,19 @@
 </script>
 
 <script type="text/x-red" data-help-name="Controller-Supply">
-<p>The controller supply node measures the battery voltage and the activate pin(s) voltage from the system connector (C). These voltages can be used to monitor battery state or to detect a shutdown action.</p>
+<p>The controller supply node measures the battery voltage and the K15 pin(s) voltage from the system connector (C). These voltages can be used to monitor battery state or to detect a shutdown action.</p>
 <p>The battery voltage is measured from pin 5 - 7</p>
-<p>The ativate pin on the <strong>Moduline III</strong> is: pin 3</p>
-<p>The activate pins on the M<strong>oduline IV</strong> are: pin 2-3-4</p>
+<p>The K15 pin on the <strong>Moduline III</strong> is: pin 3</p>
+<p>The K15 pins on the <strong>Moduline IV</strong> are: pin 2-3-4</p>
 <p>&nbsp;</p>
 <p><strong>Data format</strong></p>
 <p>The supply information is pushed out of the node in a JSON object.</p>
 <p>The <strong>Moduline III</strong> has 2 key - value pairs:</p>
-<p><em>{"batteryVoltage" : U , "active1Voltage" : U}&nbsp;&nbsp;</em></p>
+<p><em>{"batteryVoltage" : U , "K15-1" : U}&nbsp;&nbsp;</em></p>
 <p>&nbsp;</p>
 <p>The <strong>Moduline IV</strong> has 4 key - value pairs:</p>
-<p><em>{"batteryVoltage" : U , "active1Voltage" : U,</em></p>
-<p><em>"active2Voltage" : U , "active3Voltage" : U}&nbsp;</em></p>
+<p><em>{"batteryVoltage" : U , "K15-1" : U,</em></p>
+<p><em>"K15-2" : U , "K15-3" : U}&nbsp;</em></p>
 <p>&nbsp;</p>
 <p>The values represent the&nbsp;measured voltages given in mV.</p>
 </script>
