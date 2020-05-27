@@ -36,33 +36,33 @@ module.exports = function(RED) {
 		
 		
 	/* Control Red LED */
-	if(msg.payload["red"] == 1)
+	if(msg["red"] == 1)
 	{
 		ledRed.on();
 	}
-	else if (msg.payload["red"] == 0)
+	else if (msg["red"] == 0)
 	{
 		ledRed.off();
 	}
 
 
 	/* Control Green LED */
-	if(msg.payload["green"] == 1)
+	if(msg["green"] == 1)
 	{
 		ledGreen.on();
 	}
-	else if(msg.payload["green"] == 0)
+	else if(msg["green"] == 0)
 	{
 		ledGreen.off();
 	}
 	
 	
 	/* Control Blue LED */
-	if(msg.payload["blue"] == 1)
+	if(msg["blue"] == 1)
 	{
 		ledBlue.on();
 	}
-	else if(msg.payload["blue"] == 0)
+	else if(msg["blue"] == 0)
 	{
 		ledBlue.off();
 	}
