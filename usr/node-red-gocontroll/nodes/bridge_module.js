@@ -251,9 +251,9 @@ module.exports = function(RED) {
 									node.warn("New firmware available for Bridge Module on slot: "+ moduleSlot +". Firmware version: "+ swVersionAvailable[0] + "." + swVersionAvailable[1] + "." + swVersionAvailable[2] +" will be installed");
 									node.status({fill:"blue",shape:"dot",text:"Installing new firmware"});
 									/* In this case, new firmware is available so tell the module there is new software */
-									//BridgeModule_AnnounceFirmwareUpload();
+									BridgeModule_AnnounceFirmwareUpload();
 									/* FOR DEBUG PURPOSE */
-									BridgeModule_CancelFirmwareUpload();
+									//BridgeModule_CancelFirmwareUpload();
 									}
 									else{
 									/* In this case, the latest firmware is installed so show on node status*/
@@ -362,12 +362,6 @@ module.exports = function(RED) {
 						{	
 							msgOut["moduleTemperature"] = receiveBuffer.readInt16LE(6),
 							msgOut["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
-							msgOut[key[0]+"Current"]= receiveBuffer.readInt16LE(10),
-							msgOut[key[1]+"Current"]= receiveBuffer.readInt16LE(12),
-							msgOut[key[2]+"Current"]= receiveBuffer.readInt16LE(14),
-							msgOut[key[3]+"Current"]= receiveBuffer.readInt16LE(16),
-							msgOut[key[4]+"Current"]= receiveBuffer.readInt16LE(18),
-							msgOut[key[5]+"Current"]= receiveBuffer.readInt16LE(20)
 								
 						node.send(msgOut);	
 						}
