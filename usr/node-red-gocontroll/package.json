@@ -25,6 +25,7 @@
     "node-red": {
         "nodes": {
             "status_led": "nodes/status_led.js",
+			"controller_active": "nodes/controller_active.js",
             "controller_supply": "nodes/controller_supply.js",
             "input_module": "nodes/input_module.js",
             "input_module_reset": "nodes/input_module_reset.js",
