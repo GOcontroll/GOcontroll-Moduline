@@ -110,28 +110,6 @@ systemctl daemon-reload
 
 echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
 
-## Here we create folder(s) to store new custom files in ##
-
-#if [ -d /usr/scripts ]
-#then
-#echo -e "${YELLOW} Delete existing /usr/scripts folder ${NORMAL}"
-#	rm -r /usr/scripts
-#fi
-
-# Create scripts Folder
-#echo -e "${YELLOW} Create new /usr/scripts folder ${NORMAL}"
-#mkdir /usr/scripts
-
-#if [ -d /usr/scripts ]
-#then
-#echo -e "${YELLOW} Delete existing /usr/moduline folder ${NORMAL}"
-#	rm -r /usr/moduline
-#fi
-
-# Create moduline Folder
-#echo -e "${YELLOW} Create new /usr/moduline folder ${NORMAL}"
-#mkdir /usr/moduline
-
 ## Store the new folders/files
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
@@ -144,8 +122,7 @@ chmod 755 /usr/scripts/simcom-start.sh
 chmod 755 /usr/local/bin/qmi-network-raw
 chmod 755 /usr/moduline/simcom-start.hex
 chmod 755 /usr/moduline/simcom-stop.hex
-chmod 755 /usr/moduline/poweroff-control.hex
-chmod 755 /lib/systemd/system-shutdown/power-off.hex
+
 
 # Make resolv.conf immutable
 chattr +i /etc/resolv.conf
@@ -162,7 +139,7 @@ fi
 # Create folder to store all shared values in
 mkdir /usr/mem-sim
 
-# Before we copy the conten tof node-red-gocontroll, we first have to delete
+# Before we copy the conten to node-red-gocontroll, we first have to delete
 # the folder if present.
 
 # Go to usr folder
@@ -211,9 +188,6 @@ systemctl enable nodered.service
 echo -e "${YELLOW}Enable SIMCOM device service ${NORMAL}"
 systemctl enable simcom.service 
 
-#This can be a buggy feature so don't switch off controller by this feature
-#echo -e "${YELLOW}Enable poweroff control service ${NORMAL}"
-#systemctl enable poweroff-control.service 
 
 echo -e "${YELLOW}Reboot controller ${NORMAL}"
 reboot
