@@ -71,6 +71,15 @@ module.exports = function(RED) {
 			node.send(msgOut)	
 		}
 		
+		if(msgOut["gpsFix"] == null)
+		{
+			port.write("AT+CGNSPWR=1\r",function(err,res) {
+				if (err) {
+
+				}
+			});
+		}
+		
 		
 		port.on('readable', function () {
 			/* Read serial data from port */
@@ -91,7 +100,7 @@ module.exports = function(RED) {
 					
 			if(gpsData[1] != null)
 			{
-			gpsFix = gpsData[1];
+			gpsFix = parseInt(gpsData[1]);
 			}
 			
 			if(gpsData[2] != null)
