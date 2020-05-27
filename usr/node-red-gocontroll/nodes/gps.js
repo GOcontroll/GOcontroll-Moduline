@@ -71,7 +71,7 @@ module.exports = function(RED) {
 			node.send(msgOut)	
 		}
 		
-		if(msgOut["gpsFix"] == null)
+		if(msgOut["gpsFix"] == NaN)
 		{
 			port.write("AT+CGNSPWR=1\r",function(err,res) {
 				if (err) {
