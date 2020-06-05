@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# url to bash this script:
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-node-update | bash -s master
+
+YELLOW='\033[33m'
+NORMAL='\033[0m'
+
+# Jump to root folder
+cd 
+
+# check if the GOcontroll folder on root already exists. If existing, delete
+if [ -d GOcontroll ]
+then
+echo -e "${YELLOW} Delete existing GOcontroll folder ${NORMAL}"
+	rm -r GOcontroll
+fi
+
+# Create ne empty GOcontroll folder
+echo -e "${YELLOW} Create new GOcontroll folder ${NORMAL}"
+mkdir GOcontroll
+
+# Jump to GOcontroll folder
+cd GOcontroll
+ls
+
+# Stop node-red service before going further
+echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
+systemctl stop nodered
+
+# Check if git is already installed on the system
+if ! [ -x "$(command -v git)" ]; then
+echo -e "${YELLOW} Git is not yet installed so let's install first ${NORMAL}"
+apt-get -y install git 
+fi
+
+# Download the GOcontroll Moduline GIT repository:
+echo -e "${YELLOW} Download files for GOcontroll Moduline ${NORMAL}"
+git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
+
+cd ~
+
+echo -e "${YELLOW}Copy new nodes to platform ${NORMAL}"
+
+## Store the new folders/files
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/node-red-gocontroll/nodes /usr/node-red-gocontroll/
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/node-red-gocontroll/package.json /usr/node-red-gocontroll/
+
+echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
+systemctl start nodered.service 
+
+echo -e "${YELLOW}Update complete ${NORMAL}"
+
