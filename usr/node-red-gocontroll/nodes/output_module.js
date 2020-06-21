@@ -621,7 +621,7 @@ module.exports = function(RED) {
 							
 							else
 							{
-							getFirmwareStatusTimeout = setTimeout(OutputModule_GetFirmwareStatus, 1);
+							getFirmwareStatusTimeout = setTimeout(OutputModule_GetFirmwareStatus, 3);
 							}
 						}
 						
@@ -659,7 +659,7 @@ module.exports = function(RED) {
 									}
 									else
 									{
-									node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
+									//node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
 										if(firmwareLineCheck != lineNumber)
 										{
 										firmwareLineCheck = lineNumber;

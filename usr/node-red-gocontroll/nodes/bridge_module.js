@@ -602,7 +602,7 @@ module.exports = function(RED) {
 							
 							else
 							{
-							getFirmwareStatusTimeout = setTimeout(BridgeModule_GetFirmwareStatus, 1);
+							getFirmwareStatusTimeout = setTimeout(BridgeModule_GetFirmwareStatus, 3);
 							}
 						}
 						
@@ -640,7 +640,7 @@ module.exports = function(RED) {
 									}
 									else
 									{
-									node.warn("Firmware checksum for bridge module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
+									//node.warn("Firmware checksum for bridge module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
 										if(firmwareLineCheck != lineNumber)
 										{
 										firmwareLineCheck = lineNumber;

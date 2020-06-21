@@ -571,7 +571,7 @@ function GOcontrollInputModule(config) {
 						}
 						else
 						{
-						getFirmwareStatusTimeout = setTimeout(InputModule_GetFirmwareStatus, 2);
+						getFirmwareStatusTimeout = setTimeout(InputModule_GetFirmwareStatus, 3);
 						}
 				}
 					
@@ -610,7 +610,7 @@ function GOcontrollInputModule(config) {
 							}
 							else
 							{
-							node.warn("Firmware checksum for input module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
+							//node.warn("Firmware checksum for input module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
 								if(firmwareLineCheck != lineNumber)
 								{
 								firmwareLineCheck = lineNumber;
