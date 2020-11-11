@@ -7,7 +7,6 @@
         "express": "^4.17.1",
         "express-fileupload": "^1.1.6",
         "i2c-bus": "^5.1.0",
-        "led": "~1.0.0",
         "serialport": "^8.0.5",
         "shelljs": "^0.8.3",
         "socketcan": "^2.6.0",
