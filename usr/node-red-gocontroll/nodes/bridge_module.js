@@ -2,7 +2,6 @@ module.exports = function(RED) {
     "use strict"
 
 	const spi = require('spi-device');
-	const ModuleReset = require('led');
 	const fs = require('fs');
 	
 	const BOOTMESSAGELENGTH = 46
@@ -94,9 +93,7 @@ module.exports = function(RED) {
 		
 		var msgOut={};
 		
-		/* Define the right module reset pin depending on the module location */
-		const moduleReset = new ModuleReset("ResetM-" + String(moduleSlot));
-		
+
 		/*Execute initialisation steps */
 		/*Define the SPI port according the chosen module */
 		switch(moduleSlot)
@@ -162,8 +159,7 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		function BridgeModule_StartReset (){
 		/*Start module reset */
-		moduleReset.on();
-
+		BridgeModule_Reset(1);
 		/*Give a certain timeout so module is reset properly*/
 		/*The stop of the reset is now called after the dummy is properly send */
 		resetTimeout = setTimeout(BridgeModule_StopReset, 200);
@@ -180,7 +176,7 @@ module.exports = function(RED) {
 		**
 		****************************************************************************************/
 		function BridgeModule_StopReset (){
-		moduleReset.off();
+		BridgeModule_Reset(0);
 		/*After reset, give the module some time to boot */
 		/*Next step is to check for new available firmware */
 		checkFirmwareTimeout = setTimeout(BridgeModule_CheckFirmwareVersion, 100);
@@ -673,6 +669,25 @@ module.exports = function(RED) {
 				});
 
 			});	
+		}
+		
+		/***************************************************************************************
+		** \brief	Function that controls the low level reset of the modules
+		**
+		** \param	State of the reset action
+		** \return	None
+		**
+		****************************************************************************************/
+		function BridgeModule_Reset(state){
+			if(state === 1)
+			{
+				fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','255');
+			}
+			else
+			{
+				fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
+			}
+		
 		}
 	}
 RED.nodes.registerType("Bridge-Module",GOcontrollBridgeModule);

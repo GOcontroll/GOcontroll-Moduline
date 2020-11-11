@@ -1,21 +1,28 @@
 module.exports = function(RED) {
     "use strict"
 
+	const fs = require('fs');
+
 	function GOcontrollControllerActive(config) {
 	   RED.nodes.createNode(this,config);
 	 
-	var Active = require('led');
-	const active = new Active("power-active");
-	
+
+	/***************************************************************************************
+	** \brief	Funtion called on message injection
+	**
+	** \param	msg
+	** \return	none
+	**
+	****************************************************************************************/
 	this.on('input', function(msg) {
 
 			if(msg["controllerActive"] == 1)
 			{
-			active.on();	
+			fs.writeFileSync('/sys/class/leds/power-active/brightness','255');
 			}
 			else
 			{
-			active.off();	
+			fs.writeFileSync('/sys/class/leds/power-active/brightness','0');	
 			}
 
         });
