@@ -6,7 +6,6 @@ module.exports = function(RED) {
 	
 	const shell = require('shelljs');	
 	const fs = require('fs');
-	const supplyControl = require('led');
 	const express = require('express');
 	const fileUpload = require('express-fileupload');
 
