@@ -66,10 +66,12 @@ apt-get -y install openssh-client openssh-server
 echo -e "${YELLOW}Install openVPN client software ${NORMAL}"
 apt-get -y install openvpn
 
-# rng-tools fixes a problem with excessive kernel boot delay
+# rng-tools only needs to be installed for kernel version 4.98
+# needs to be changed to equil kernel version
+if [ "5.4.47-2.2.0+g5ec03d0" != "$(command uname -r)" ]; then
 echo -e "${YELLOW}Install rng-tools ${NORMAL}"
 apt-get -y install rng-tools
-
+fi
 cd ~
 
 echo -e "${YELLOW}Install nodesource ${NORMAL}"
