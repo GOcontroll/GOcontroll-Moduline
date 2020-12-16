@@ -14,8 +14,14 @@ module.exports = function(RED) {
 		var intervalGetData;
 		var msgOut = {};
 
-		intervalGetData = setInterval(ReadMemory_GetData,interval);
 
+		if(interval != 0){
+		intervalGetData = setInterval(ReadMemory_GetData,interval);
+		}
+		/* In case the value needs to be retrieved once */
+		else{
+		ReadMemory_GetData()	
+		}
 		/***************************************************************************************
 		** \brief	Function that received data from the pipe (stream call back)
 		**
