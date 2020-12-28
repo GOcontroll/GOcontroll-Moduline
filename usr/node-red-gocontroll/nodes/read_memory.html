@@ -5,6 +5,7 @@
 		defaults: {
 			name: {value:""},
 			key: {value:""},
+			outputtype: {value:"object"},
 			interval: {value:"1000"}
         },
         inputs:0,
@@ -31,13 +32,21 @@
     </div>
 	
 	<div class="form-row">
-    <label for="node-input-key"><i class="icon-tag"></i> Key(s)</label>
+    <label for="node-input-key"><i class="fa fa-id-badge"></i> Key(s)</label>
 	<textarea id="node-input-key" placeholder="exampleKey1,exampleKey2" style="width:350px" cols="200">
 	</textarea>
     </div>
 	
 	<div class="form-row">
-        <label for="node-input-interval"><i class="fa fa-list-ol"></i> Interval</label>
+        <label for="node-input-outputtype"><i class="fa fa-list-ul"></i> Type</label>
+        <select id="node-input-outputtype" style="width:350px">
+			<option value="object">Output as object with key-value pair </option>
+            <option value="payload">Output as numeric payload</option>
+        </select>
+    </div>
+	
+		<div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-refresh"></i> Interval</label>
         <select id="node-input-interval" style="width:350px">
 			<option value="0">Only on startup </option>
             <option value="1000">1 s</option>

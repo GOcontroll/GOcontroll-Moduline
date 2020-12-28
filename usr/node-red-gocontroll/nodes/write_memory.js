@@ -8,6 +8,7 @@ module.exports = function(RED) {
 
 	var node = this;
 	const key 			= config.key;
+	const inputType		= config.inputtype
 
 	var oldValue ={};
 	
@@ -31,6 +32,12 @@ module.exports = function(RED) {
 		/* If no key is given, the function listens to all keys and save them */ 
 		if(key == "")
 		{
+			if(inputType === "payload")
+			{
+				node.warn("When the input is a payload, a key to store the value is manditory");
+				return;
+			}
+			
 			for(var prop in msg) {
 				if (msg.hasOwnProperty(prop)) {
 					
@@ -47,7 +54,7 @@ module.exports = function(RED) {
 		}
 		
 		/* If key is provided, use the specific key to send data */
-		else if(msg[key] != NaN)
+		else if(msg[key] != NaN && inputType === "object")
 		{
 			if(msg[key] != oldValue[key])
 			{
@@ -58,6 +65,18 @@ module.exports = function(RED) {
 				});
 			}
 		}
+		else if (msg.payload != NaN)
+		{
+			if(msg.payload != oldValue[key])
+			{
+				oldValue[key] = msg.payload;
+				fs.writeFile('/usr/mem-sim/'+key, String(msg.payload), (err) => {
+				if (err) throw err;
+				//console.log('The file has been saved!');
+				});
+			}
+		}
+			
     });
 	
 	/***************************************************************************************

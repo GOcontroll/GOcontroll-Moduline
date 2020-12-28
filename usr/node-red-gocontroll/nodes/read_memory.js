@@ -10,6 +10,7 @@ module.exports = function(RED) {
 
 		var key 		= config.key;
 		const interval 	= parseInt(config.interval,10);
+		const outputType		= config.outputtype;
 		
 		var intervalGetData;
 		var msgOut = {};
@@ -40,25 +41,31 @@ module.exports = function(RED) {
 	
 			/* Check if there are multiple keys used in the block */
 			var splittedKeys = key.split(',');
-					
+			
 			if(splittedKeys.length > 1)
 			{
+				if(outputType === "payload")
+				{
+					node.warn("Multiple keys found. Not able to provide one, numeric playload")
+					return;
+				}
+				
 				for(let k = 0; k < splittedKeys.length; k ++)
 				{
 			
-
-				var fileContents;
-				try {
-				fileContents = fs.readFileSync('/usr/mem-sim/'+String(splittedKeys[k]));
-				} catch (err) {
-				/* For debugging purposes otherwise to much noise on debug window */
-				//node.warn("Error during key search");	
-				  // Here you get the error when the file was not found,
-				  // but you also get any other error
-				}
+					var fileContents;
+					try {
+					fileContents = fs.readFileSync('/usr/mem-sim/'+String(splittedKeys[k]));
+					} catch (err) {
+					/* For debugging purposes otherwise to much noise on debug window */
+					//node.warn("Error during key search");	
+					  // Here you get the error when the file was not found,
+					  // but you also get any other error
+					}
 								
 				msgOut[String(splittedKeys[k])] =  parseInt(fileContents);
 				}
+			
 				
 				node.send(msgOut);
 				return;
@@ -69,7 +76,16 @@ module.exports = function(RED) {
 			
 			if(data != NaN)
 			{
-			msgOut[key]= parseInt(data);
+				
+				if(outputType === "payload")
+				{
+					msgOut.payload = parseFloat(data);
+				}
+				else
+				{
+					msgOut[key]= parseFloat(data);
+				}
+				
 			node.send(msgOut);
 			}
 			
