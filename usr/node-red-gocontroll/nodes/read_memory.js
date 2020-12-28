@@ -63,7 +63,7 @@ module.exports = function(RED) {
 					  // but you also get any other error
 					}
 								
-				msgOut[String(splittedKeys[k])] =  parseInt(fileContents);
+				msgOut[String(splittedKeys[k])] =  parseFloat(fileContents);
 				}
 			
 				
