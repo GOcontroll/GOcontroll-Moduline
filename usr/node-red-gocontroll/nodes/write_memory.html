@@ -5,7 +5,8 @@
         defaults: {
             name: {value:""},
 			key: {value:"exampleKey"},
-			inputtype: {value:"object"}
+			inputtype: {value:"object"},
+			decimal: {value:"0"}
         },
         inputs:1,
         outputs:0,
@@ -35,6 +36,17 @@
         <select id="node-input-inputtype" style="width:350px">
 			<option value="object">Input as object with key-value pair </option>
             <option value="payload">Input as numeric payload</option>
+        </select>
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-decimal"><i class="fa fa-sort-numeric-asc"></i> Decimals</label>
+        <select id="node-input-decimal" style="width:350px">
+			<option value="0">0 decimals </option>
+			<option value="1">1 decimals </option>
+			<option value="2">2 decimals </option>
+			<option value="3">3 decimals </option>		
+			<option value="4">4 decimals </option>
         </select>
     </div>
 
