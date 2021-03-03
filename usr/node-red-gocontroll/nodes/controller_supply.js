@@ -23,12 +23,12 @@ module.exports = function(RED) {
 		var moduline = 0;
 		
 		var ADDR;
-		var SETUP;
-		var CONVERT;
-		var CONVERT0;
-		var CONVERT1;
-		var CONVERT2;
-		var CONVERT3;
+		var CONFIGREGISTER;
+		var CONVERSIONREGISTER;
+		var CONVERTBATTERY;
+		var CONVERTCONTACT1;
+		var CONVERTCONTACT2;
+		var CONVERTCONTACT3;
 		var CONVERTGEN;
 		
 		var i2c1;
@@ -62,14 +62,14 @@ module.exports = function(RED) {
 		/* Configure I2C ADC convertor */
 		ADDR = 0x36;
 		/* MSB is 1 */
-		SETUP = 0xA2;
+		CONFIGREGISTER = 0xA2;
 		/* MSB is 0 */
-		CONVERT0 = 0x63;
-		CONVERT1 = 0x61;
+		CONVERTBATTERY = 0x63;
+		CONVERTCONTACT1 = 0x61;
 		
 		/* MAXIM ADC needs to be configured once */
 		i2c1 = i2c.openSync(1);
-		sendBuffer[0] = SETUP;
+		sendBuffer[0] = CONFIGREGISTER;
 		i2c1.i2cWriteSync(ADDR, 1, sendBuffer);
 		i2c1.closeSync();
 		
@@ -81,13 +81,13 @@ module.exports = function(RED) {
 		/* ADS1015 */
 		/* Address of ADC convertor */
 		ADDR = 0x48;
-		SETUP = 0x01;
-		CONVERT = 0x00;
-		CONVERT0 = 0xC3;
-		CONVERT1 = 0xD3;
-		CONVERT2 = 0xE3;
-		CONVERT3 = 0xF3;
-		CONVERTGEN = 0x83;
+		CONFIGREGISTER 		= 0x01;
+		CONVERSIONREGISTER 	= 0x00;
+		CONVERTCONTACT1 	= 0xC3;
+		CONVERTCONTACT2 	= 0xD3;
+		CONVERTCONTACT3 	= 0xE3;
+		CONVERTBATTERY 		= 0xF3;
+		CONVERTGEN 			= 0xE3;
 		}
 
 		
@@ -104,16 +104,16 @@ module.exports = function(RED) {
 		i2c1 = i2c.openSync(1);
 		
 		/* Read channel 0 */
-		sendBuffer[0] = SETUP;
+		sendBuffer[0] = CONFIGREGISTER;
 		//sendBuffer[1] = CONVERT0;
 		//sendBuffer[2] = CONVERTGEN;
 		i2c1.i2cWriteSync(ADDR, 3, sendBuffer);	
 		
-		sendBuffer[0] = CONVERT0;
+		sendBuffer[0] = CONVERTBATTERY;
 		i2c1.i2cWriteSync(ADDR, 1, sendBuffer);
 		i2c1.i2cReadSync(ADDR, 2, receiveBufferSignal1);
 		
-		sendBuffer[0] = CONVERT1;
+		sendBuffer[0] = CONVERTCONTACT1;
 		i2c1.i2cWriteSync(ADDR, 1, sendBuffer);
  		i2c1.i2cReadSync(ADDR, 2, receiveBufferSignal2); 
 		
@@ -131,12 +131,12 @@ module.exports = function(RED) {
 		i2c1 = i2c.openSync(2);
 		
 		/* Set multiplexer for channel 0*/
-		sendBuffer[0] = SETUP;
-		sendBuffer[1] = CONVERT0;
+		sendBuffer[0] = CONFIGREGISTER;
+		sendBuffer[1] = CONVERTBATTERY;
 		sendBuffer[2] = CONVERTGEN;
 		i2c1.i2cWriteSync(ADDR, 3, sendBuffer);		
 		/* Set read channel to send converted value */
-		sendBuffer[0] = CONVERT;
+		sendBuffer[0] = CONVERSIONREGISTER;
 		i2c1.i2cWriteSync(ADDR, 1, sendBuffer);
 		/* Read actual value. Since this is the former conversion. Battery voltage is measured*/
 		i2c1.i2cReadSync(ADDR, 2, receiveBufferSignal1);
@@ -147,14 +147,13 @@ module.exports = function(RED) {
 		batteryVoltage = 0;
 		}
 			
-		
-		/* Set multiplexer for channel 1*/
-		sendBuffer[0] = SETUP;
-		sendBuffer[1] = CONVERT1;
+			/* Set multiplexer for channel 1*/
+		sendBuffer[0] = CONFIGREGISTER;
+		sendBuffer[1] = CONVERTCONTACT1;
 		sendBuffer[2] = CONVERTGEN;
 		i2c1.i2cWriteSync(ADDR, 3, sendBuffer);		
 		/* Set read channel to send converted value */
-		sendBuffer[0] = CONVERT;
+		sendBuffer[0] = CONVERSIONREGISTER;
 		i2c1.i2cWriteSync(ADDR, 1, sendBuffer);
 		/* Read actual value. Since this is the former conversion. Activate 1 is measured*/
 		i2c1.i2cReadSync(ADDR, 2, receiveBufferSignal2);
@@ -166,12 +165,12 @@ module.exports = function(RED) {
 		}
 		
 		/* Set multiplexer for channel 2*/
-		sendBuffer[0] = SETUP;
-		sendBuffer[1] = CONVERT2;
+		sendBuffer[0] = CONFIGREGISTER;
+		sendBuffer[1] = CONVERTCONTACT2;
 		sendBuffer[2] = CONVERTGEN;
 		i2c1.i2cWriteSync(ADDR, 3, sendBuffer);		
 		/* Set read channel to send converted value */
-		sendBuffer[0] = CONVERT;
+		sendBuffer[0] = CONVERSIONREGISTER;
 		i2c1.i2cWriteSync(ADDR, 1, sendBuffer);
 		/* Read actual value. Since this is the former conversion. Activate 2 is measured*/
 		i2c1.i2cReadSync(ADDR, 2, receiveBufferSignal3);
@@ -183,12 +182,12 @@ module.exports = function(RED) {
 		}
 		
 		/* Set multiplexer for channel 3*/
-		sendBuffer[0] = SETUP;
-		sendBuffer[1] = CONVERT3;
+		sendBuffer[0] = CONFIGREGISTER;
+		sendBuffer[1] = CONVERTCONTACT3;
 		sendBuffer[2] = CONVERTGEN;
 		i2c1.i2cWriteSync(ADDR, 3, sendBuffer);		
 		/* Set read channel to send converted value */
-		sendBuffer[0] = CONVERT;
+		sendBuffer[0] = CONVERSIONREGISTER;
 		i2c1.i2cWriteSync(ADDR, 1, sendBuffer);
 		/* Read actual value. Since this is the former conversion. Activate 3 is measured*/
 		i2c1.i2cReadSync(ADDR, 2, receiveBufferSignal4);
@@ -198,6 +197,7 @@ module.exports = function(RED) {
 		if(active3Voltage > 2047){
 		active3Voltage = 0;
 		}
+		
 		i2c1.closeSync();		
 		
 		msgOut["batteryVoltage"] = (((batteryVoltage * decimalFactor)/1.5)*11700).toFixed(0);
