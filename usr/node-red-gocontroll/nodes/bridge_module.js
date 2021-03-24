@@ -578,7 +578,7 @@ module.exports = function(RED) {
 
 							if(checksumCalculated[0] != checksum)
 							{
-							node.warn("Wrong file checksum: "+ checksumCalculated[0]);
+							//node.warn("Wrong file checksum: "+ checksumCalculated[0]);
 							}
 
 						/* calculate checksum */
