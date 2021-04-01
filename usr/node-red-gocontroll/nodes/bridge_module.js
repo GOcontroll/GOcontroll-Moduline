@@ -358,6 +358,8 @@ module.exports = function(RED) {
 						{	
 							msgOut["moduleTemperature"] = receiveBuffer.readInt16LE(6),
 							msgOut["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
+							msgOut[key[0]+"Current"]= receiveBuffer.readInt16LE(10),
+							msgOut[key[1]+"Current"]= receiveBuffer.readInt16LE(12),
 								
 						node.send(msgOut);	
 						}
@@ -578,6 +580,7 @@ module.exports = function(RED) {
 
 							if(checksumCalculated[0] != checksum)
 							{
+							/* For debugging purposes */
 							//node.warn("Wrong file checksum: "+ checksumCalculated[0]);
 							}
 
