@@ -43,10 +43,13 @@ cd ~
 echo -e "${YELLOW}Copy new nodes to platform ${NORMAL}"
 
 ## Store the new folders/files
-cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/node-red-gocontroll/nodes /usr/node-red-gocontroll/
-cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/node-red-gocontroll/package.json /usr/node-red-gocontroll/
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/module-firmware /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/moduline /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/node-red-gocontroll /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/node-red-static /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/scripts /
 
-echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
+echo -e "${YELLOW}Start Node-RED service ${NORMAL}"
 systemctl start nodered.service 
 
 echo -e "${YELLOW}Update complete ${NORMAL}"
