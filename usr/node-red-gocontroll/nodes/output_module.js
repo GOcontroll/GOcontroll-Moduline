@@ -48,6 +48,22 @@ module.exports = function(RED) {
 		outputCurrent[4] = config.current5;
 		outputCurrent[5] = config.current6;
 		
+		var outputDuty = {};
+		outputDuty[0] = config.duty1;
+		outputDuty[1] = config.duty2;
+		outputDuty[2] = config.duty3;
+		outputDuty[3] = config.duty4;
+		outputDuty[4] = config.duty5;
+		outputDuty[5] = config.duty6;
+		
+		var outputTime = {};
+		outputTime[0] = config.time1;
+		outputTime[1] = config.time2;
+		outputTime[2] = config.time3;
+		outputTime[3] = config.time4;
+		outputTime[4] = config.time5;
+		outputTime[5] = config.time6;
+		
 		var key={};
 		key[0] = config.key1;
 		key[1] = config.key2;
@@ -72,7 +88,7 @@ module.exports = function(RED) {
 		var getFirmwareStatusTimeout;
 		var checkFirmwareTimeout;
 		var firmwareUploadTimeout;
-		var clearBufferTimeout;
+		var initializeSecondTimeout;
 		
 		var sL, sB;
 		
@@ -260,9 +276,9 @@ module.exports = function(RED) {
 									node.warn("New firmware available for Output Module on slot: "+ moduleSlot +". Firmware version: "+ swVersionAvailable[0] + "." + swVersionAvailable[1] + "." + swVersionAvailable[2] +" will be installed");
 									node.status({fill:"blue",shape:"dot",text:"Installing new firmware"});
 									/* In this case, new firmware is available so tell the module there is new software */
-									OutputModule_AnnounceFirmwareUpload();
+									//OutputModule_AnnounceFirmwareUpload();
 									/* FOR DEBUG PURPOSE */
-									//OutputModule_CancelFirmwareUpload();
+									OutputModule_CancelFirmwareUpload();
 									}
 									else{
 									/* In this case, the latest firmware is installed so show on node status*/
@@ -286,10 +302,7 @@ module.exports = function(RED) {
 
 
 		/***************************************************************************************
-		** \brief 	Cleanup sendbuffer for next messages otherwise it may be possible that the output
-		**			values are directly set
-		**
-		**
+		** \brief 	First initialisation message that is send to the output module
 		** \param
 		** \param
 		** \return
@@ -309,16 +322,47 @@ module.exports = function(RED) {
 						
 		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 			
+			
+			const outputModule = spi.open(sL,sB, (err) => {
+
+				/* Only in this scope, receive buffer is available */
+				outputModule.transfer(normalMessage, (err, normalMessage) => {
+				initializeSecondTimeout = setTimeout(OutputModule_Initialize_Second, 100);	
+				});
+			});
+		
+		}
+		
+		
+		/***************************************************************************************
+		** \brief 	Second initialisation message that is send to the output module
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function OutputModule_Initialize_Second(){
+
+		sendBuffer[0] = 1;
+		sendBuffer[1] = MESSAGELENGTH-1;
+		sendBuffer[2] = 111;
+			
+		for(var s =0; s <6; s++)
+		{
+		sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
+		sendBuffer.writeUInt16LE(outputTime[s], 18+(s*2));
+		}
+						
+		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
+			
 			const outputModule = spi.open(sL,sB, (err) => {
 
 				/* Only in this scope, receive buffer is available */
 				outputModule.transfer(normalMessage, (err, normalMessage) => {
 				OutputModule_clearBuffer();
 				});
-			});
-	//		clearBufferTimeout = setTimeout(OutputModule_clearBuffer, 100);	
+			});	
 		}
-		
 		
 		/***************************************************************************************
 		** \brief 	Cleanup sendbuffer for next messages otherwise it may be possible that the output
@@ -433,7 +477,7 @@ module.exports = function(RED) {
 		clearTimeout(getFirmwareStatusTimeout);
 		clearTimeout(checkFirmwareTimeout);
 		clearTimeout(firmwareUploadTimeout);
-		clearTimeout(clearBufferTimeout);
+		clearTimeout(initializeSecondTimeout);
 		done();
 		});		
 		

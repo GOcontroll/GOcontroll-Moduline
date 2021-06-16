@@ -27,6 +27,18 @@
 			current4 : {value: "4000"},
 			current5 : {value: "4000"},
 			current6 : {value: "4000"},
+			duty1 : {value: "800"},
+			duty2 : {value: "800"},
+			duty3 : {value: "800"},
+			duty4 : {value: "800"},
+			duty5 : {value: "800"},
+			duty6 : {value: "800"},
+			time1 : {value: "500"},
+			time2 : {value: "500"},
+			time3 : {value: "500"},
+			time4 : {value: "500"},
+			time5 : {value: "500"},
+			time6 : {value: "500"},
         },
         inputs:1,
         outputs:1,
@@ -42,7 +54,41 @@
             return "Choose output module location";
 			}
 		return "Output module on slot " + this.moduleSlot;
-        }
+        },
+		/* function executed while done is clicked */
+		oneditprepare: function() {
+		$(this.output1).trigger("change");
+		$(this.output2).trigger("change");
+		$(this.output3).trigger("change");
+		$(this.output4).trigger("change");
+		$(this.output5).trigger("change");
+		$(this.output6).trigger("change");
+		
+			$("#node-input-output1").on("change", function() {
+			var id = $("#node-input-output1").val();
+			if(id > 6){$("#peak-hold-1").show();}else{$("#peak-hold-1").hide();}
+          });
+		  	$("#node-input-output2").on("change", function() {
+			var id = $("#node-input-output2").val();
+			if(id > 6){$("#peak-hold-2").show();}else{$("#peak-hold-2").hide();}
+          });
+		  	$("#node-input-output3").on("change", function() {
+			var id = $("#node-input-output3").val();
+			if(id > 6){$("#peak-hold-3").show();}else{$("#peak-hold-3").hide();}
+          });
+		  	$("#node-input-output4").on("change", function() {
+			var id = $("#node-input-output4").val();
+			if(id > 6){$("#peak-hold-4").show();}else{$("#peak-hold-4").hide();}
+          });
+		  	$("#node-input-output5").on("change", function() {
+			var id = $("#node-input-output5").val();
+			if(id > 6){$("#peak-hold-5").show();}else{$("#peak-hold-5").hide();}
+          });
+		  	$("#node-input-output6").on("change", function() {
+			var id = $("#node-input-output6").val();
+			if(id > 6){$("#peak-hold-6").show();}else{$("#peak-hold-6").hide();}
+          });
+		}
     });
 </script>
 
@@ -55,14 +101,14 @@
     <div class="form-row">
         <label for="node-input-moduleSlot"><i class="fa fa-microchip"></i> Module</label>
         <select id="node-input-moduleSlot" style="width:300px">
-            <option value="1">Module on slot 1</option>
-            <option value="2">Module on slot 2</option>
-            <option value="3">Module on slot 3</option>
-            <option value="4">Module on slot 4</option>
-            <option value="5">Module on slot 5</option>
-            <option value="6">Module on slot 6</option>
-            <option value="7">Module on slot 7</option>
-            <option value="8">Module on slot 8</option>
+            <option value=1>Module on slot 1</option>
+            <option value=2>Module on slot 2</option>
+            <option value=3>Module on slot 3</option>
+            <option value=4>Module on slot 4</option>
+            <option value=5>Module on slot 5</option>
+            <option value=6>Module on slot 6</option>
+            <option value=7>Module on slot 7</option>
+            <option value=8>Module on slot 8</option>
         </select>
     </div>
 		<div class="form-row">
@@ -73,7 +119,7 @@
 			<option value="50">50 ms</option>
         </select>
     </div>
-	
+
 <fieldset>
 
 
@@ -101,12 +147,14 @@
     <div class="form-row">
         <label for="node-input-output1"><i class="fa fa-sign-out"></i> Config</label>
         <select id="node-input-output1" style="width:300px">
-		    <option value="1">Output channel disabled</option>
-            <option value="2">Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
-            <option value="3">Low side switch duty cycle controlled 0 – 100% (0-1000) </option>
-            <option value="4">High side switch duty cycle controlled 0 – 100% (0-1000)</option>
-            <option value="5">Low side switch on – off</option>
-            <option value="6">High side switch on – off</option>
+		    <option value=1>Output channel disabled</option>
+            <option value=2>Half bridge duty cycle controlled 0 – 100% (0-1000)</option>
+            <option value=3>Low side switch duty cycle controlled 0 – 100% (0-1000) </option>
+            <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option>
+            <option value=5>Low side switch on – off</option>
+            <option value=6>High side switch on – off</option>
+			<option value=7>Low side peak and hold 0 – 100% (0-1000)</option>
+            <option value=8>High side peak and hold 0 – 100% (0-1000)</option>
         </select>
     </div>
 	
@@ -115,7 +163,18 @@
         <label for="node-input-current1"><i class="fa fa-line-chart"></i> Max I (mA)</label>
         <input type="text" id="node-input-current1" style="width:300px">
     </div>
-
+	<div class="form-row"  id="peak-hold-1">
+	<p><I>Peak parameters channel 1:</I></p>
+		<div class="form-row">
+			<label for="node-input-duty1"><i class="fa fa-percent"></i> Duty-Cycle</label>
+			<input type="text" id="node-input-duty1" style="width:300px">
+		</div>
+		
+		<div class="form-row">
+			<label for="node-input-time1"><i class="fa fa-clock-o"></i> Time</label>
+			<input type="text" id="node-input-time1" style="width:300px">
+		</div>
+	</div>
 <p><strong>Output 2:</strong></p>
 	     </div> 
 		<div class="form-row">
@@ -132,6 +191,8 @@
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option>
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
+			<option value=7>Low side peak and hold 0 – 100% (0-1000)</option>
+            <option value=8>High side peak and hold 0 – 100% (0-1000)</option>
         </select>
     </div>
 	     </div> 
@@ -139,6 +200,18 @@
         <label for="node-input-current2"><i class="fa fa-line-chart"></i> Max I (mA)</label>
         <input type="text" id="node-input-current2" style="width:300px">
     </div>
+	<div class="form-row"  id="peak-hold-2">
+	<p><I>Peak parameters channel 2:</I></p>
+		<div class="form-row">
+			<label for="node-input-duty2"><i class="fa fa-percent"></i> Duty-Cycle</label>
+			<input type="text" id="node-input-duty2" style="width:300px">
+		</div>
+		
+		<div class="form-row">
+			<label for="node-input-time2"><i class="fa fa-clock-o"></i> Time</label>
+			<input type="text" id="node-input-time2" style="width:300px">
+		</div>
+	</div>
 </fieldset>
 
 
@@ -173,6 +246,8 @@
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option>
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
+			<option value=7>Low side peak and hold 0 – 100% (0-1000)</option>
+            <option value=8>High side peak and hold 0 – 100% (0-1000)</option>
         </select>
     </div>
 		     </div> 
@@ -180,6 +255,18 @@
         <label for="node-input-current3"><i class="fa fa-line-chart"></i> Max I (mA)</label>
         <input type="text" id="node-input-current3" style="width:300px">
     </div>
+	<div class="form-row"  id="peak-hold-3">
+	<p><I>Peak parameters channel 3:</I></p>
+		<div class="form-row">
+			<label for="node-input-duty3"><i class="fa fa-percent"></i> Duty-Cycle</label>
+			<input type="text" id="node-input-duty3" style="width:300px">
+		</div>
+		
+		<div class="form-row">
+			<label for="node-input-time3"><i class="fa fa-clock-o"></i> Time</label>
+			<input type="text" id="node-input-time3" style="width:300px">
+		</div>
+	</div>
 	<p><strong>Output 4:</strong></p>
       </div> 
 		<div class="form-row">
@@ -196,6 +283,8 @@
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option>
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
+			<option value=7>Low side peak and hold 0 – 100% (0-1000)</option>
+            <option value=8>High side peak and hold 0 – 100% (0-1000)</option>
         </select>
     </div>
 		     </div> 
@@ -203,7 +292,18 @@
         <label for="node-input-current4"><i class="fa fa-line-chart"></i> Max I (mA)</label>
         <input type="text" id="node-input-current4" style="width:300px">
     </div>
-
+	<div class="form-row"  id="peak-hold-4">
+	<p><I>Peak parameters channel 4:</I></p>
+		<div class="form-row">
+			<label for="node-input-duty4"><i class="fa fa-percent"></i> Duty-Cycle</label>
+			<input type="text" id="node-input-duty4" style="width:300px">
+		</div>
+		
+		<div class="form-row">
+			<label for="node-input-time4"><i class="fa fa-clock-o"></i> Time</label>
+			<input type="text" id="node-input-time4" style="width:300px">
+		</div>
+	</div>
 </fieldset>
 
 
@@ -240,6 +340,8 @@
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option>
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
+			<option value=7>Low side peak and hold 0 – 100% (0-1000)</option>
+            <option value=8>High side peak and hold 0 – 100% (0-1000)</option>
         </select>
     </div>
 		     </div> 
@@ -247,6 +349,18 @@
         <label for="node-input-current5"><i class="fa fa-line-chart"></i> Max I (mA)</label>
         <input type="text" id="node-input-current5" style="width:300px">
     </div>
+	<div class="form-row"  id="peak-hold-5">
+	<p><I>Peak parameters channel 5:</I></p>
+		<div class="form-row">
+			<label for="node-input-duty5"><i class="fa fa-percent"></i> Duty-Cycle</label>
+			<input type="text" id="node-input-duty5" style="width:300px">
+		</div>
+		
+		<div class="form-row">
+			<label for="node-input-time5"><i class="fa fa-clock-o"></i> Time</label>
+			<input type="text" id="node-input-time5" style="width:300px">
+		</div>
+	</div>
 	<p><strong>Output 6:</strong></p>
      </div> 
 		<div class="form-row">
@@ -263,6 +377,8 @@
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option>
             <option value=5>Low side switch on – off</option>
             <option value=6>High side switch on – off</option>
+			<option value=7>Low side peak and hold 0 – 100% (0-1000)</option>
+            <option value=8>High side peak and hold 0 – 100% (0-1000)</option>
         </select>
     </div>
 		     </div> 
@@ -270,6 +386,18 @@
         <label for="node-input-current6"><i class="fa fa-line-chart"></i> Max I (mA)</label>
         <input type="text" id="node-input-current6" style="width:300px">
     </div>
+	<div class="form-row"  id="peak-hold-6">
+	<p><I>Peak parameters channel 6:</I></p>
+		<div class="form-row">
+			<label for="node-input-duty6"><i class="fa fa-percent"></i> Duty-Cycle</label>
+			<input type="text" id="node-input-duty6" style="width:300px">
+		</div>
+		
+		<div class="form-row">
+			<label for="node-input-time6"><i class="fa fa-clock-o"></i> Time</label>
+			<input type="text" id="node-input-time6" style="width:300px">
+		</div>
+	</div>
 </fieldset>
 
 </script>
@@ -303,6 +431,14 @@
 <li>High side switch on &ndash; off</li>
 </ul>
 <p>In case of switching actuators on or off by switching to the rail supply, you can select the high side switch. By sending a 1 or higher, the switch will be switched on. 0 will switch off the actuator.</p>
+<ul>
+<li>Low side peak and hold</li>
+</ul>
+<p>Peak and hold is used to energize an actuator with a higher duty cycle during a short period. After this period, a lower duty-cycle is able to keep the actuator energized without dissipating a lot of energy. This function implements peak and hold to high side (module supply).</p>
+<ul>
+<li>High side peak and hold</li>
+</ul>
+<p>Peak and hold is used to energize an actuator with a higher duty cycle during a short period. After this period, a lower duty-cycle is able to keep the actuator energized without dissipating a lot of energy. This function implements peak and hold to low side (module ground).</p>
 <h2><strong>Data format</strong></h2>
 <p><em><strong>Control the module</strong></em></p>
 <p>The data to control the module can be send is as one JSON string for all channels or separate strings with key-value pairs for each channel independent. If channels are updated individually, the other outputs remain unchanged.</p>
