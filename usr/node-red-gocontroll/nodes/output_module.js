@@ -276,9 +276,9 @@ module.exports = function(RED) {
 									node.warn("New firmware available for Output Module on slot: "+ moduleSlot +". Firmware version: "+ swVersionAvailable[0] + "." + swVersionAvailable[1] + "." + swVersionAvailable[2] +" will be installed");
 									node.status({fill:"blue",shape:"dot",text:"Installing new firmware"});
 									/* In this case, new firmware is available so tell the module there is new software */
-									//OutputModule_AnnounceFirmwareUpload();
+									OutputModule_AnnounceFirmwareUpload();
 									/* FOR DEBUG PURPOSE */
-									OutputModule_CancelFirmwareUpload();
+									//OutputModule_CancelFirmwareUpload();
 									}
 									else{
 									/* In this case, the latest firmware is installed so show on node status*/
