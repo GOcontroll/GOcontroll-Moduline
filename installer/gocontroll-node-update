@@ -43,9 +43,9 @@ cd ~
 ## Delete old folders
 rm -r /usr/module-firmware
 rm -r /usr/moduline
-rm -r /usr/node-red-gocontroll
 rm -r /usr/node-red-static
 rm -r /usr/scripts
+
 echo -e "${YELLOW}Copy new nodes to platform ${NORMAL}"
 ## Store the new folders/files
 cp -avr /root/GOcontroll/GOcontroll-Moduline/usr/module-firmware /usr/
