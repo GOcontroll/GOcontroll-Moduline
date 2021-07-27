@@ -76,7 +76,7 @@ fi
 cd ~
 
 echo -e "${YELLOW}Install nodesource ${NORMAL}"
-curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh
 bash nodesource_setup.sh
 
 echo -e "${YELLOW}Install nodeJS ${NORMAL}"
