@@ -1,16 +1,10 @@
 #!/bin/bash
 
 # url to bash this script:
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-first-install | bash -s master
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-install | bash -s master
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
-
-echo -e "${YELLOW}stop Node-RED service ${NORMAL}"
-systemctl stop nodered.service 
-
-echo -e "${YELLOW}stop Simulink service ${NORMAL}"
-systemctl stop simulink
 
 # starting with updating the repositories
 echo -e "${YELLOW} Update repositories before we do a system update ${NORMAL}"
@@ -34,6 +28,10 @@ mkdir GOcontroll
 cd GOcontroll
 ls
 
+# Stop node-red service before going further
+echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
+systemctl stop nodered
+
 # Check if git is already installed on the system
 if ! [ -x "$(command -v git)" ]; then
 echo -e "${YELLOW} Git is not yet installed so let's install first ${NORMAL}"
@@ -44,11 +42,37 @@ fi
 echo -e "${YELLOW} Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
+echo -e "${YELLOW}Install hostapd ${NORMAL}"
+apt-get -y install hostapd
+
+echo -e "${YELLOW}Delete dnsmasq.conf if present ${NORMAL}"
+rm /etc/dnsmasq.conf
+
+echo -e "${YELLOW}Install dnsmasq ${NORMAL}"
+apt-get -y install dnsmasq
+
+echo -e "${YELLOW}Install libqmi tools ${NORMAL}"
+apt-get -y install libqmi-utils
+
+echo -e "${YELLOW}Install udhcpc ${NORMAL}"
+apt-get -y install udhcpc
+
+echo -e "${YELLOW}Install curl ${NORMAL}"
+apt-get -y install curl
+
+echo -e "${YELLOW}Install SSHD ${NORMAL}"
+apt-get -y install openssh-client openssh-server
+
+echo -e "${YELLOW}Install openVPN client software ${NORMAL}"
+apt-get -y install openvpn
+
+echo -e "${YELLOW}Install build essentials ${NORMAL}"
+apt-get -y install build-essential
+
 echo -e "${YELLOW}Reload systemd daemon ${NORMAL}"
 systemctl daemon-reload
 
 echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
-
 ## Store the new folders/files
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
@@ -83,6 +107,26 @@ depmod
 echo -e "${YELLOW}Activate Services for wifi ${NORMAL}"
 service hostapd start
 service dnsmasq start
+
+echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
+cd ~/.node-red
+
+echo -e "${YELLOW}Install local node packages ${NORMAL}"
+
+# It seems that NPM not always installs AND builds the dependencies again. It is important to delete
+# the node modules first and then also delete the package.lock.json file!
+# https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
+
+npm install --unsafe-perm /usr/node-red-gocontroll
+
+echo -e "${YELLOW}Install Node-RED dashboard ${NORMAL}"
+npm install node-red-dashboard
+
+# echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
+# systemctl enable nodered.service 
+
+# echo -e "${YELLOW}Enable SIMCOM device service ${NORMAL}"
+# systemctl enable simcom.service 
 
 echo -e "${YELLOW}Reboot controller ${NORMAL}"
 reboot
