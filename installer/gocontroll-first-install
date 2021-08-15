@@ -7,7 +7,7 @@ YELLOW='\033[33m'
 NORMAL='\033[0m'
 
 # starting with updating the repositories
-echo -e "${YELLOW} Update repositories before we do a system update ${NORMAL}"
+echo -e "${YELLOW}Update repositories before we do a system update ${NORMAL}"
 apt-get update
 
 # Jump to root folder
@@ -16,61 +16,22 @@ cd
 # check if the GOcontroll folder on root already exists. If existing, delete
 if [ -d GOcontroll ]
 then
-echo -e "${YELLOW} Delete existing GOcontroll folder ${NORMAL}"
+echo -e "${YELLOW}Delete existing GOcontroll folder ${NORMAL}"
 	rm -r GOcontroll
 fi
 
 # Create ne empty GOcontroll folder
-echo -e "${YELLOW} Create new GOcontroll folder ${NORMAL}"
+echo -e "${YELLOW}Create new GOcontroll folder ${NORMAL}"
 mkdir GOcontroll
 
 # Jump to GOcontroll folder
 cd GOcontroll
 ls
 
-# Stop node-red service before going further
-echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
-systemctl stop nodered
-
-# Check if git is already installed on the system
-if ! [ -x "$(command -v git)" ]; then
-echo -e "${YELLOW} Git is not yet installed so let's install first ${NORMAL}"
-apt-get -y install git 
-fi
-
 # Download the GOcontroll Moduline GIT repository:
 echo -e "${YELLOW} Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
-echo -e "${YELLOW}Install hostapd ${NORMAL}"
-apt-get -y install hostapd
-
-echo -e "${YELLOW}Delete dnsmasq.conf if present ${NORMAL}"
-rm /etc/dnsmasq.conf
-
-echo -e "${YELLOW}Install dnsmasq ${NORMAL}"
-apt-get -y install dnsmasq
-
-echo -e "${YELLOW}Install libqmi tools ${NORMAL}"
-apt-get -y install libqmi-utils
-
-echo -e "${YELLOW}Install udhcpc ${NORMAL}"
-apt-get -y install udhcpc
-
-echo -e "${YELLOW}Install curl ${NORMAL}"
-apt-get -y install curl
-
-echo -e "${YELLOW}Install SSHD ${NORMAL}"
-apt-get -y install openssh-client openssh-server
-
-echo -e "${YELLOW}Install openVPN client software ${NORMAL}"
-apt-get -y install openvpn
-
-echo -e "${YELLOW}Install build essentials ${NORMAL}"
-apt-get -y install build-essential
-
-echo -e "${YELLOW}Reload systemd daemon ${NORMAL}"
-systemctl daemon-reload
 
 echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
 ## Store the new folders/files
@@ -85,11 +46,6 @@ chmod 755 /usr/scripts/simcom-start.sh
 chmod 755 /usr/local/bin/qmi-network-raw
 chmod 755 /usr/moduline/simcom-start.hex
 chmod 755 /usr/moduline/simcom-stop.hex
-
-
-# Make resolv.conf immutable
-chattr +i /etc/resolv.conf
-
 
 # check if the mem-sim folder exists, if so, delete
 if [ -d /usr/mem-sim ]
@@ -108,11 +64,14 @@ echo -e "${YELLOW}Activate Services for wifi ${NORMAL}"
 service hostapd start
 service dnsmasq start
 
+# Stop node-red service before going further
+echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
+systemctl stop nodered
+
 echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
 cd ~/.node-red
 
 echo -e "${YELLOW}Install local node packages ${NORMAL}"
-
 # It seems that NPM not always installs AND builds the dependencies again. It is important to delete
 # the node modules first and then also delete the package.lock.json file!
 # https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
