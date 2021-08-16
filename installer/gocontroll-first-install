@@ -29,7 +29,7 @@ cd GOcontroll
 ls
 
 # Download the GOcontroll Moduline GIT repository:
-echo -e "${YELLOW} Download files for GOcontroll Moduline ${NORMAL}"
+echo -e "${YELLOW}Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
 
@@ -38,7 +38,7 @@ echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
+
 
 ## Assign executable rights to file
 chmod 755 /usr/scripts/simulink.sh
@@ -50,7 +50,7 @@ chmod 755 /usr/moduline/simcom-stop.hex
 # check if the mem-sim folder exists, if so, delete
 if [ -d /usr/mem-sim ]
 then
-echo -e "${YELLOW} Delete existing mem-sim folder ${NORMAL}"
+echo -e "${YELLOW}Delete existing mem-sim folder ${NORMAL}"
 	rm -r /usr/mem-sim
 fi
 
