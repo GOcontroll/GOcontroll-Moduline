@@ -32,10 +32,10 @@ void main (void)
 	/* Start PWR command */
 //	printf("Start SIM7000\n");
 	GocontrollModuline_Sim7000Pwr(1);
-	usleep(1500 MS);
+//	usleep(1500 MS);
 	
 	/* End power command */
-	GocontrollModuline_Sim7000Pwr(0);
+//	GocontrollModuline_Sim7000Pwr(0);
 	
 	return;
 }
