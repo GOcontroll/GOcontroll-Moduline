@@ -40,7 +40,7 @@ pre-up /sbin/ip link set $IFACE type can bitrate 250000 triple-sampling on loopb
 #	up /sbin/ifconfig $IFACE up
 #    down /sbin/ifconfig $IFACE down
 
-auto wwan0
-iface wwan0 inet manual
+# auto wwan0
+# iface wwan0 inet manual
 #	 pre-up qmi-network-raw /dev/cdc-wdm0 start
 #     post-down /usr/local/bin/qmi-network-raw /dev/cdc-wdm0 stop
