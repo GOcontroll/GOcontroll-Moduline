@@ -1,16 +1,16 @@
 {
     "name": "node-red-gocontroll",
-    "version": "0.0.4",
+    "version": "1.0.0",
     "description": "Node-RED nodes for GOcontroll Moduline IV",
     "dependencies": {
-        "cron": "1.7.1",
+        "cron": "1.8.2",
         "express": "^4.17.1",
-        "express-fileupload": "^1.1.6",
-        "i2c-bus": "^5.1.0",
-        "serialport": "^8.0.5",
-        "shelljs": "^0.8.3",
-        "socketcan": "^2.6.0",
-        "spi-device": "^3.0.0"
+        "express-fileupload": "^1.2.1",
+        "i2c-bus": "^5.2.2",
+        "serialport": "^9.2.0",
+        "shelljs": "^0.8.4",
+        "socketcan": "^3.0.0",
+        "spi-device": "^3.1.2"
     },
     "repository": {
         "type": "",
