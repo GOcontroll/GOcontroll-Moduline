@@ -7,8 +7,40 @@ YELLOW='\033[33m'
 NORMAL='\033[0m'
 
 
+echo -e "${YELLOW}-Install Node RED 2.0.5 ${NORMAL}"
+bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --skip-pi --nodered-version="2.0.5" --restart
 
-echo -e "${YELLOW}Assign correct execution rights to files ${NORMAL}"
+cd 
+
+if [ -d GOcontroll ]
+then
+echo -e "${YELLOW}-Delete existing GOcontroll folder ${NORMAL}"
+	rm -r GOcontroll
+fi
+
+echo -e "${YELLOW}-Create new GOcontroll folder ${NORMAL}"
+mkdir GOcontroll
+
+cd GOcontroll
+ls
+
+if ! [ -x "$(command -v git)" ]; then
+echo -e "${YELLOW}-Git is not yet installed so let's install first ${NORMAL}"
+apt -y install git 
+fi
+
+echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
+git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
+
+echo -e "${YELLOW}-Copy specific files to Platform ${NORMAL}"
+
+echo -e "${YELLOW}-Copy GOcontroll files to correct location ${NORMAL}"
+cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
+
+echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 755 /usr/scripts/simulink.sh
 chmod 755 /usr/scripts/simcom-start.sh
 chmod 755 /usr/local/bin/qmi-network-raw
@@ -16,44 +48,23 @@ chmod 755 /usr/moduline/simcom-start.hex
 chmod 755 /usr/moduline/simcom-stop.hex
 
 
-echo -e "${YELLOW}Install Node RED 2.0.5 ${NORMAL}"
-npm install -g --unsafe-perm node-red@2.0.5
-
-echo -e "${YELLOW}Start Node RED to generate root folder ${NORMAL}"
-timeout 20 node-red
-
-echo -e "${YELLOW}Install Node RED admin package ${NORMAL}"
-npm install -g node-red-admin
-
-echo -e "${YELLOW}Install Node RED systemd service ${NORMAL}"
-wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/nodered.service -O /lib/systemd/system/nodered.service
-
-wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/node-red-start -O /usr/bin/node-red-start
-
-wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/node-red-stop -O /usr/bin/node-red-stop
-
-chmod +x /usr/bin/node-red-st*
-
-echo -e "${YELLOW}Reload systemd daemon ${NORMAL}"
-systemctl daemon-reload
-
-echo -e "${YELLOW}Make resolv.conf immutable ${NORMAL}"
+echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
 
-echo -e "${YELLOW}Create memory allocation folder ${NORMAL}"
+echo -e "${YELLOW}-Create memory allocation folder ${NORMAL}"
 mkdir /usr/mem-sim
 
-echo -e "${YELLOW}Activate kernel modules ${NORMAL}"
+echo -e "${YELLOW}-Activate kernel modules ${NORMAL}"
 depmod
 
-echo -e "${YELLOW}Activate Services for wifi ${NORMAL}"
+echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
 service hostapd start
 service dnsmasq start
 
-echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
+echo -e "${YELLOW}-Jump node Node RED folder on root ${NORMAL}"
 cd ~/.node-red
 
-echo -e "${YELLOW}Install GOcontroll node packages ${NORMAL}"
+echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
 
 # It seems that NPM not always installs AND builds the dependencies again. It is important to delete
 # the node modules first and then also delete the package.lock.json file!
@@ -61,10 +72,7 @@ echo -e "${YELLOW}Install GOcontroll node packages ${NORMAL}"
 
 npm install --unsafe-perm /usr/node-red-gocontroll
 
-echo -e "${YELLOW}Install Node-RED dashboard ${NORMAL}"
+echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
 npm install node-red-dashboard
 
-echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
-systemctl enable nodered.service
-
-echo -e "${YELLOW}Controller ready ${NORMAL}"
+echo -e "${YELLOW}-Controller ready ${NORMAL}"
