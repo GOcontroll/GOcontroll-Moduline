@@ -6,72 +6,55 @@
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
-# starting with updating the repositories
-echo -e "${YELLOW}Update repositories before we do a system update ${NORMAL}"
-apt-get update
-
-# Jump to root folder
-cd 
-
-# check if the GOcontroll folder on root already exists. If existing, delete
-if [ -d GOcontroll ]
-then
-echo -e "${YELLOW}Delete existing GOcontroll folder ${NORMAL}"
-	rm -r GOcontroll
-fi
-
-# Create ne empty GOcontroll folder
-echo -e "${YELLOW}Create new GOcontroll folder ${NORMAL}"
-mkdir GOcontroll
-
-# Jump to GOcontroll folder
-cd GOcontroll
-ls
-
-# Download the GOcontroll Moduline GIT repository:
-echo -e "${YELLOW}Download files for GOcontroll Moduline ${NORMAL}"
-git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
 
-echo -e "${YELLOW}Copy specific files to Platform ${NORMAL}"
-## Store the new folders/files
-cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
-
-
-## Assign executable rights to file
+echo -e "${YELLOW}Assign correct execution rights to files ${NORMAL}"
 chmod 755 /usr/scripts/simulink.sh
 chmod 755 /usr/scripts/simcom-start.sh
 chmod 755 /usr/local/bin/qmi-network-raw
 chmod 755 /usr/moduline/simcom-start.hex
 chmod 755 /usr/moduline/simcom-stop.hex
 
-# check if the mem-sim folder exists, if so, delete
-if [ -d /usr/mem-sim ]
-then
-echo -e "${YELLOW}Delete existing mem-sim folder ${NORMAL}"
-	rm -r /usr/mem-sim
-fi
 
-# Create folder to store all shared values in
+echo -e "${YELLOW}Install Node RED 2.0.5 ${NORMAL}"
+npm install -g --unsafe-perm node-red@2.0.5
+
+echo -e "${YELLOW}Start Node RED to generate root folder ${NORMAL}"
+timeout 20 node-red
+
+echo -e "${YELLOW}Install Node RED admin package ${NORMAL}"
+npm install -g node-red-admin
+
+echo -e "${YELLOW}Install Node RED systemd service ${NORMAL}"
+wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/nodered.service -O /lib/systemd/system/nodered.service
+
+wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/node-red-start -O /usr/bin/node-red-start
+
+wget https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/node-red-stop -O /usr/bin/node-red-stop
+
+chmod +x /usr/bin/node-red-st*
+
+echo -e "${YELLOW}Reload systemd daemon ${NORMAL}"
+systemctl daemon-reload
+
+echo -e "${YELLOW}Make resolv.conf immutable ${NORMAL}"
+chattr +i /etc/resolv.conf
+
+echo -e "${YELLOW}Create memory allocation folder ${NORMAL}"
 mkdir /usr/mem-sim
 
-echo -e "${YELLOW}Activate modules for wifi ${NORMAL}"
+echo -e "${YELLOW}Activate kernel modules ${NORMAL}"
 depmod
 
 echo -e "${YELLOW}Activate Services for wifi ${NORMAL}"
 service hostapd start
 service dnsmasq start
 
-# Stop node-red service before going further
-echo -e "${YELLOW}Stop Node-RED ${NORMAL}"
-systemctl stop nodered
-
 echo -e "${YELLOW}Jump node Node RED folder on root ${NORMAL}"
 cd ~/.node-red
 
-echo -e "${YELLOW}Install local node packages ${NORMAL}"
+echo -e "${YELLOW}Install GOcontroll node packages ${NORMAL}"
+
 # It seems that NPM not always installs AND builds the dependencies again. It is important to delete
 # the node modules first and then also delete the package.lock.json file!
 # https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
@@ -81,11 +64,7 @@ npm install --unsafe-perm /usr/node-red-gocontroll
 echo -e "${YELLOW}Install Node-RED dashboard ${NORMAL}"
 npm install node-red-dashboard
 
-# echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
-# systemctl enable nodered.service 
+echo -e "${YELLOW}Enable Node-RED service ${NORMAL}"
+systemctl enable nodered.service
 
-# echo -e "${YELLOW}Enable SIMCOM device service ${NORMAL}"
-# systemctl enable simcom.service 
-
-echo -e "${YELLOW}Reboot controller ${NORMAL}"
-reboot
+echo -e "${YELLOW}Controller ready ${NORMAL}"
