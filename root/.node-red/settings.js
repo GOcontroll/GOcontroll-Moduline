@@ -222,7 +222,7 @@ module.exports = {
      * following property can be used to identify a directory of static content
      * that should be served at http://localhost:1880/.
      */
-    //httpStatic: '/home/nol/node-red-static/',
+    httpStatic: '/usr/node-red-static/',
 
 /*******************************************************************************
  * Runtime Settings
@@ -334,7 +334,7 @@ module.exports = {
              * added to the end of the palette.
              * If not set, the following default order is used:
              */
-            //categories: ['subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
+            categories: ['subflows', 'common', 'function', 'GOcontroll', 'dashboard', 'network', 'sequence', 'parser', 'storage'],
         },
         projects: {
             /** To enable the Projects feature, set this value to true */
