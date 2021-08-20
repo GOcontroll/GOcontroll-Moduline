@@ -6,10 +6,6 @@
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
-
-echo -e "${YELLOW}-Install Node RED 2.0.5 ${NORMAL}"
-bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --skip-pi --nodered-version="2.0.5"
-
 cd 
 
 if [ -d GOcontroll ]
