@@ -43,14 +43,13 @@ chmod 755 /usr/local/bin/qmi-network-raw
 chmod 755 /usr/moduline/simcom-start.hex
 chmod 755 /usr/moduline/simcom-stop.hex
 
-
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
 
 echo -e "${YELLOW}-Create memory allocation folder ${NORMAL}"
 mkdir /usr/mem-sim
 
-echo -e "${YELLOW}-Activate kernel modules ${NORMAL}"
+echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
 
 echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
@@ -69,6 +68,9 @@ echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
 npm install --unsafe-perm /usr/node-red-gocontroll
 
 echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
-npm install node-red-dashboard
+npm install node-red-dashboard@2.30.0
+
+echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
+npm install node-red-node-serialport@0.14.1
 
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
