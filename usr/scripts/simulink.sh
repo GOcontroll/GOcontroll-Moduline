@@ -7,4 +7,4 @@ cd
 chmod 777 /usr/simulink/gocontroll.elf
 
 # start the program
-/usr/simulink/gocontroll.elf &
+nice -n -20 /usr/simulink/gocontroll.elf &
