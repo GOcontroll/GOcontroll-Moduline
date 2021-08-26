@@ -73,4 +73,9 @@ npm install node-red-dashboard@2.30.0
 echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
 npm install node-red-node-serialport@0.14.1
 
+echo -e "${YELLOW}-Autostart Node-RED ${NORMAL}"
+systemctl enable nodered
+
+systemctl start nodered
+
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
