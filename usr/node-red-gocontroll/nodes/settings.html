@@ -3,19 +3,8 @@
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
-			wifi: {value:"1"},
             name: {value:"GOcontroll Settings"},
-			ssid: {value:"GOcontroll-AP"},
-			pass: {value:"Moduline"},
-			speedc1: { value:"250000"},
-			speedc2: { value:"250000"},
-			speedc3: { value:"250000"},
-			speedc4: { value:"250000"},
-			gps4g: {value: "0"},
-			simulinkstart: {value: "0"},
-			simulinkstop: {value: "0"},
 			ovpnstart: {value: "0"},
-			//simulinkrestart: {value: "1"}, //future expansion
         },
         inputs:0,
         outputs:0,
@@ -36,84 +25,6 @@
     </div>
 	
 <fieldset>
-<legend>WLAN settings</legend> 
-	<div class="form-row">
-		<label for="node-input-wifi"><i class="fa fa-power-off"></i> WiFi</label>
-		<select type="text" id="node-input-wifi" style="width:350px">
-			<option value="0">WiFi disabled</option>
-			<option value="1">Wifi enabled</option>
-		</select>
-	 </div>	
-	 
-    <div class="form-row">
-        <label for="node-input-ssid"><i class="fa fa-wifi"></i> SSID</label>
-        <input type="text" id="node-input-ssid" placeholder="SSID" style="width:350px">
-    </div>	
-	
-	    <div class="form-row">
-        <label for="node-input-pass"><i class="fa fa-key"></i> Password</label>
-        <input type="text" id="node-input-pass" placeholder="Password" style="width:350px">
-    </div>	
-</fieldset>
-
-<fieldset>
-<legend>CAN communication settings</legend> 
-
-    <div class="form-row">
-    <label for="node-input-speedc1"><i class="fa fa-random"></i> CAN 1 Speed</label>
-	<select type="text" id="node-input-speedc1" style="width:350px">
-		<option value="125000">125 kB/s</option>
-		<option value="250000">250 kB/s</option>
-		<option value="500000">500 kB/s</option>
-		<option value="1000000">1 MB/s</option>
-	</select>
-	  </div>
-	
-	<div class="form-row">
-    <label for="node-input-speedc2"><i class="fa fa-random"></i> CAN 2 Speed</label>
-	<select type="text" id="node-input-speedc2" style="width:350px">
-		<option value="125000">125 kB/s</option>
-		<option value="250000">250 kB/s</option>
-		<option value="500000">500 kB/s</option>
-		<option value="1000000">1 MB/s</option>
-	</select>
-	 </div>
-	
-		<div class="form-row">
-    <label for="node-input-speedc3"><i class="fa fa-random"></i> CAN 3 Speed</label>
-	<select type="text" id="node-input-speedc3" style="width:350px">
-		<option value="125000">125 kB/s</option>
-		<option value="250000">250 kB/s</option>
-		<option value="500000">500 kB/s</option>
-		<option value="1000000">1 MB/s</option>
-	</select>
-	 </div>
-	 
-	 	<div class="form-row">
-    <label for="node-input-speedc4"><i class="fa fa-random"></i> CAN 4 Speed</label>
-	<select type="text" id="node-input-speedc4" style="width:350px">
-		<option value="125000">125 kB/s</option>
-		<option value="250000">250 kB/s</option>
-		<option value="500000">500 kB/s</option>
-		<option value="1000000">1 MB/s</option>
-	</select>
-	 </div>
-
-</fieldset>
-
-<fieldset>
-<legend>GPS - 3/4G settings</legend> 
-	<div class="form-row">
-		<label for="node-input-gps4g"><i class="fa fa-power-off"></i> GPS 3/4G</label>
-		<select type="text" id="node-input-gps4g" style="width:350px">
-			<option value="0">GPS 3/4G disabled</option>
-			<option value="1">GPS 3/4G enabled</option>
-		</select>
-	 </div>
-</fieldset>
-
-
-<fieldset>
 <legend>Simulink model options</legend> 
 
 	<div class="form-row">
@@ -122,23 +33,6 @@
 	<button onclick="window.open('load-elf.html')"  type="button" style="width:350px"> 
          Upload Simulink .elf file</button>
 	</div>	 
-
-	<div class="form-row">
-		<label for="node-input-simulinkstart"><i class="fa fa-play"></i> Start</label>
-		<select type="text" id="node-input-simulinkstart" style="width:350px">
-			<option value="0">Don't start Simulink model</option>
-			<option value="1">Start Simulink model during controller boot</option>
-			<option value="2">Start Simulink model if Node RED is started</option>
-		</select>
-	 </div>
-
-	<div class="form-row">
-		<label for="node-input-simulinkstop"><i class="fa fa-stop"></i> Stop</label>
-		<select type="text" id="node-input-simulinkstop" style="width:350px">
-			<option value="0">Never stop model from running</option>
-			<option value="1">Stop model if Node-RED stops</option>
-		</select>
-	 </div>
 
 </fieldset>
 
@@ -170,29 +64,10 @@
 <p>The settings block configures the basic settings of the GOcontroll Moduline controller.</p>
 <p>NOTE: It is recommended to disable the node once all settings are set properly. Otherwise, the node will set all the properties each boot. This will decrease the boottime.</p>
 <p>&nbsp;</p>
-<h2>Wireless LAN Acces Point credentials:</h2>
-<p><em>SSID:</em></p>
-<p>The name of the wireless LAN acces point network.</p>
-<p><em>Password:</em></p>
-<p>The credentials of the wireless LAN acces point network.</p>
-<p>&nbsp;</p>
-<h2>CAN speed settings:</h2>
-<p>The speed of each CAN interface can be changed using the settings node. Changing these parameters, needs a reboot of the controller after deployment of the new parameters.</p>
-<p>CAN1 - Connector C pin 14 (L) and pin 15 (H)</p>
-<p>CAN2 - Connector C pin 20 (L) and pin 21 (H)</p>
-<p>CAN3 - Connector C pin 19 (L) and pin 18 (H)</p>
-<p>CAN4 - Connector C pin 13 (L) and pin 12 (H)</p>
-<p>&nbsp;</p>
-<h2>GPS - 3/4G settings:</h2>
-<p>Enable or disable the onboard GPS or 3/4G. Keep in mind that for using 3/4G, SIM card with dataplan is required.</p>
-<p>&nbsp;</p>
-<h2>Simulink model options:</h2>
-<p>Compiled Simulink models can be uploaded and started from within the Node-RED environment. Simply click the upload button and drag and drop your .elf file into the opload window.&nbsp;</p>
-<p>NOTE: The settings block needs to be deployed BEFORE uploading files!</p>
-<p>Start: Choose when the model needs to start running.</p>
-<p>Stop: Choose when the model needs to stop running.</p>
+<h2>Simulink model upload:</h2>
+<p>Compiled Simulink models can be uploaded within the Node-RED environment. Simply click the upload button and drag and drop your .elf file into the opload window.&nbsp;</p>
+<p>NOTE: To automate the startup of simulink models, please use the CLI. For example <systemctl enable go-simulink> will enable automatic start when startup</p>
 <p>&nbsp;</p>
 <h2>VPN connection settings:</h2>
 <p>The settings node can be used to upload VPN certificates to start a so called secure tunnel connection.&nbsp;</p>
-<p>NOTE: The settings block needs to be deployed BEFORE uploading files!</p>
-<p>Start: Choos when the VPN connection needs to be established.</p></script>
+<p>Start: Choose when the VPN connection needs to be established.</p></script>
