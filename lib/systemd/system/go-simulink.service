@@ -1,0 +1,13 @@
+### Simulink service###
+
+[Unit]
+Description=Simulink service
+DefaultDependencies=no
+
+[Service]
+ExecStart=/usr/moduline/bash/go-simulink.sh
+Type=fork
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=GOcontroll WWAN Interface
+After=network.target
+
+[Service]
+Type=fork
+RemainAfterExit=yes
+
+ExecStart=/usr/moduline/bash/go-wwan-start.sh
+ExecStop=/usr/moduline/bash/go-wwan-stop.sh
+
+
+[Install]
+WantedBy=multi-user.target

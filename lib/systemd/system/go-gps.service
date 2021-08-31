@@ -1,0 +1,14 @@
+[Unit]
+Description=GOcontroll GPS Interface
+After=network.target
+
+[Service]
+Type=fork
+RemainAfterExit=yes
+
+ExecStart=/usr/moduline/bash/go-gps-start.sh
+ExecStop=/usr/moduline/bash/go-gps-stop.sh
+
+
+[Install]
+WantedBy=multi-user.target

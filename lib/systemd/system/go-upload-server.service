@@ -1,0 +1,13 @@
+
+[Unit]
+Description=File upload server
+After=network.target
+
+
+[Service]
+ExecStart= node /usr/moduline/nodejs/upload-server.js &
+Type=fork
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target
