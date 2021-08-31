@@ -1,0 +1,23 @@
+{
+    "name": "utility_dependencies",
+    "version": "1.0.0",
+    "description": "Dependencies for random moduline functionalitites",
+    "dependencies": {
+        "express": "^4.17.1",
+        "express-fileupload": "^1.2.1",
+        "shelljs": "^0.8.4"
+    },
+    "repository": {
+        "type": "",
+        "url": ""
+    },
+    "license": "MIT",
+    "keywords": [
+        "GOcontroll"
+    ],
+    "author": {
+        "name": "",
+        "email": "",
+        "url": ""
+    }
+}
