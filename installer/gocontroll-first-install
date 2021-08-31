@@ -37,11 +37,13 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
-chmod 755 /usr/scripts/simulink.sh
-chmod 755 /usr/scripts/simcom-start.sh
+chmod 755 /usr/moduline/bash/go-simulink.sh
+chmod 755 /usr/moduline/bash/go-wwan-start.sh
+chmod 755 /usr/moduline/bash/go-wwan-stop.sh
+chmod 755 /usr/moduline/bash/go-gps-start.sh
+chmod 755 /usr/moduline/bash/go-gps-stop.sh
 chmod 755 /usr/local/bin/qmi-network-raw
-chmod 755 /usr/moduline/simcom-start.hex
-chmod 755 /usr/moduline/simcom-stop.hex
+chmod 755 /usr/moduline/nodejs-functions/upload_server.js
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
@@ -51,6 +53,8 @@ mkdir /usr/mem-sim
 
 echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
+insmod /lib/modules/5.10.9-1.0.0+g7f1c87a753d8/kernel/drivers/net/tun.ko
+
 
 echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
 service hostapd start
@@ -73,9 +77,16 @@ npm install node-red-dashboard@2.30.0
 echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
 npm install node-red-node-serialport@0.14.1
 
+cd /usr/moduline/nodejs
+
+npm install
+
 echo -e "${YELLOW}-Autostart Node-RED ${NORMAL}"
 systemctl enable nodered
-
 systemctl start nodered
+
+echo -e "${YELLOW}-Start upload server ${NORMAL}"
+systemctl enable go-upload-server
+systemctl start go-upload-server
 
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
