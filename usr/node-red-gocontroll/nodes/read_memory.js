@@ -8,12 +8,24 @@ module.exports = function(RED) {
 
 		var node 		= this;
 
-		var key 		= config.key;
-		const interval 	= parseInt(config.interval,10);
-		const outputType		= config.outputtype;
+		const key 			= config.key;
+		const memoryType 	= config.type;
+		const interval 		= parseInt(config.interval,10);
+		const outputType	= config.outputtype;
 		
 		var intervalGetData;
 		var msgOut = {};
+
+		var path;
+		
+		if (memoryType === 1)
+		{
+		path = '/usr/mem-sim/';	
+		}
+		else
+		{
+		path = '/dev/shm/';	
+		}
 
 
 		if(interval != 0){
@@ -35,8 +47,8 @@ module.exports = function(RED) {
 		function ReadMemory_GetData(){
 	
 			/* First check if folder is present if not, create one*/
-			if (!fs.existsSync('/usr/mem-sim')) {
-			fs.mkdirSync('/usr/mem-sim');
+			if (!fs.existsSync(path)) {
+			fs.mkdirSync(path);
 			}
 	
 			/* Check if there are multiple keys used in the block */
@@ -55,7 +67,7 @@ module.exports = function(RED) {
 			
 					var fileContents;
 					try {
-					fileContents = fs.readFileSync('/usr/mem-sim/'+String(splittedKeys[k]));
+					fileContents = fs.readFileSync(path+String(splittedKeys[k]));
 					} catch (err) {
 					/* For debugging purposes otherwise to much noise on debug window */
 					//node.warn("Error during key search");	
@@ -72,7 +84,7 @@ module.exports = function(RED) {
 			}
 	
 	
-			fs.readFile('/usr/mem-sim/'+key, (err, data) => {
+			fs.readFile(path+key, (err, data) => {
 			
 			if(data != NaN)
 			{

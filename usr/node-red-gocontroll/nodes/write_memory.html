@@ -5,6 +5,7 @@
         defaults: {
             name: {value:""},
 			key: {value:"exampleKey"},
+			memtype: {value:"2"},
 			inputtype: {value:"object"},
 			decimal: {value:"0"}
         },
@@ -29,6 +30,14 @@
 	<div class="form-row">
         <label for="node-input-key"><i class="fa fa-id-badge"></i> Key</label>
         <input type="text" id="node-input-key" placeholder="ExampleKey" style="width:350px">
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-memtype"><i class="fa fa-hdd-o"></i> Memory</label>
+        <select id="node-input-memtype" style="width:350px">
+			<option value="1">Persistant memory (eMMC)</option>
+            <option value="2">Non-persistant memory (RAM)</option>
+        </select>
     </div>
 	
 	<div class="form-row">

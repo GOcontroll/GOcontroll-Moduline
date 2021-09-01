@@ -8,11 +8,22 @@ module.exports = function(RED) {
 
 	var node = this;
 	const key 			= config.key;
+	const memoryType	= config.type;
 	const inputType		= config.inputtype
 	const decimal		= parseInt(config.decimal)
 
 	var oldValue ={};
 	
+	var path = {};
+	
+	if (memoryType === 1)
+	{
+	path = '/usr/mem-sim/';	
+	}
+	else
+	{
+	path = '/dev/shm/';	
+	}
 	
 	/***************************************************************************************
 	** \brief
@@ -26,8 +37,8 @@ module.exports = function(RED) {
 	node.on('input', function(msg) {
     
 		/* First check if folder is present if not, create one*/
-		if (!fs.existsSync('/usr/mem-sim')) {
-		fs.mkdirSync('/usr/mem-sim');
+		if (!fs.existsSync(path)) {
+		fs.mkdirSync(path);
 		}
 					
 		/* If no key is given, the function listens to all keys and save them */ 
@@ -45,7 +56,7 @@ module.exports = function(RED) {
 					if(msg[prop] != oldValue[prop])
 					{
 					oldValue[prop] = msg[prop];
-					fs.writeFile('/usr/mem-sim/'+prop, String(msg[prop].toFixed(decimal)), (err) => {
+					fs.writeFile(path+prop, String(msg[prop].toFixed(decimal)), (err) => {
 						if (err) throw err;
 						//console.log('The file has been saved!');
 						});
@@ -60,7 +71,7 @@ module.exports = function(RED) {
 			if(msg[key] != oldValue[key])
 			{
 				oldValue[key] = msg[key];
-				fs.writeFile('/usr/mem-sim/'+key, String(msg[key].toFixed(decimal)), (err) => {
+				fs.writeFile(path+key, String(msg[key].toFixed(decimal)), (err) => {
 				if (err) throw err;
 				//console.log('The file has been saved!');
 				});
@@ -71,7 +82,7 @@ module.exports = function(RED) {
 			if(msg.payload != oldValue[key])
 			{
 				oldValue[key] = msg.payload;
-				fs.writeFile('/usr/mem-sim/'+key, String(msg.payload.toFixed(decimal)), (err) => {
+				fs.writeFile(path+key, String(msg.payload.toFixed(decimal)), (err) => {
 				if (err) throw err;
 				//console.log('The file has been saved!');
 				});
