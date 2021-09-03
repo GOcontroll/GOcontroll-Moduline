@@ -37,7 +37,7 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
 
 echo -e "${YELLOW}-Apply hardware specific patches ${NORMAL}"
-patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patches/can_send_html.patch
+patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch
 
 
 
