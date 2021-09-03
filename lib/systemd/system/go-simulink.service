@@ -6,7 +6,7 @@ DefaultDependencies=no
 
 [Service]
 ExecStart=/usr/moduline/bash/go-simulink.sh
-Type=fork
+Type=simple
 RemainAfterExit=yes
 
 [Install]

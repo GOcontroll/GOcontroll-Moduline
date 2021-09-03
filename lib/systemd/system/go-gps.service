@@ -3,7 +3,7 @@ Description=GOcontroll GPS Interface
 After=network.target
 
 [Service]
-Type=fork
+Type=simple
 RemainAfterExit=yes
 
 ExecStart=/usr/moduline/bash/go-gps-start.sh
