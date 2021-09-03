@@ -36,6 +36,11 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
 
+echo -e "${YELLOW}-Apply hardware specific patches ${NORMAL}"
+patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patches/can_send_html.patch
+
+
+
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 755 /usr/moduline/bash/go-simulink.sh
 chmod 755 /usr/moduline/bash/go-wwan-start.sh

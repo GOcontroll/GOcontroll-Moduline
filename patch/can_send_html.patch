@@ -1,0 +1,11 @@
+--- a/usr/node-red-gocontroll/nodes/can_send.html	2021-09-03 13:00:24.457003000 -0400
++++ b/usr/node-red-gocontroll/nodes/can_send.html	2021-09-03 13:01:14.617003294 -0400
+@@ -84,8 +84,6 @@
+         <select id="node-input-caninterface" style="width:204px">
+             <option value="CAN 1">CAN 1</option>
+             <option value="CAN 2">CAN 2</option>
+-			<option value="CAN 3">CAN 3</option>
+-            <option value="CAN 4">CAN 4</option>
+         </select>
+  	</div>
+ 	
