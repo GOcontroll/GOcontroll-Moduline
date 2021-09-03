@@ -93,7 +93,7 @@ npm install
 
 echo -e "${YELLOW}-Autostart Node-RED ${NORMAL}"
 systemctl enable nodered
-systemctl start nodered
+systemctl restart nodered
 
 echo -e "${YELLOW}-Start upload server ${NORMAL}"
 systemctl enable go-upload-server
