@@ -36,7 +36,10 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
 
-echo -e "${YELLOW}-Apply hardware specific patches ${NORMAL}"
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
+[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]; then
+
+echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
 patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch
 patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll-Moduline/patch/output_module_html.patch
 patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_reset_html.patch
@@ -44,7 +47,7 @@ patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll-M
 patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll-Moduline/patch/can_receive_html.patch
 patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch
 
-
+fi
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 755 /usr/moduline/bash/go-simulink.sh
