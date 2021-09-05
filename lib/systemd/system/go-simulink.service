@@ -5,6 +5,7 @@ Description=Simulink service
 DefaultDependencies=no
 
 [Service]
+CPUAffinity=3
 ExecStart=/usr/moduline/bash/go-simulink.sh
 Type=simple
 RemainAfterExit=yes
