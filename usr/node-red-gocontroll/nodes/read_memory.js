@@ -9,7 +9,7 @@ module.exports = function(RED) {
 		var node 		= this;
 
 		const key 			= config.key;
-		const memoryType 	= config.type;
+		const memoryType 	= config.memtype;
 		const interval 		= parseInt(config.interval,10);
 		const outputType	= config.outputtype;
 		
@@ -18,7 +18,7 @@ module.exports = function(RED) {
 
 		var path;
 		
-		if (memoryType === 1)
+		if (memoryType === "emmc")
 		{
 		path = '/usr/mem-sim/';	
 		}

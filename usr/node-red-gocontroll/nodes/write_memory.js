@@ -7,16 +7,17 @@ module.exports = function(RED) {
 	const fs = require('fs');
 
 	var node = this;
+	
 	const key 			= config.key;
-	const memoryType	= config.type;
-	const inputType		= config.inputtype
-	const decimal		= parseInt(config.decimal)
+	const memoryType	= config.memtype;
+	const inputType		= config.inputtype;
+	const decimal		= parseInt(config.decimal);
 
 	var oldValue ={};
 	
 	var path = {};
 	
-	if (memoryType === 1)
+	if (memoryType === "emmc")
 	{
 	path = '/usr/mem-sim/';	
 	}
@@ -24,7 +25,7 @@ module.exports = function(RED) {
 	{
 	path = '/dev/shm/';	
 	}
-	
+
 	/***************************************************************************************
 	** \brief
 	**
