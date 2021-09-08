@@ -122,7 +122,7 @@ module.exports = function(RED) {
 		var contactVoltage = ((((receiveBufferSignal2[1] | ((receiveBufferSignal2[0] & 0x0f)<<8)) * decimalFactor)/1.5)*11700).toFixed(0); 
 		
 		msgOut["batteryVoltage"] = batteryVoltage;
-		msgOut["K15-A"] = contactVoltage;
+		msgOut["K15A"] = contactVoltage;
 		
 		node.send(msgOut);
 		}
@@ -201,9 +201,9 @@ module.exports = function(RED) {
 		i2c1.closeSync();		
 		
 		msgOut["batteryVoltage"] = (((batteryVoltage * decimalFactor)/1.5)*11700).toFixed(0);
-		msgOut["K15-A"] = (((active1Voltage * decimalFactor)/1.5)*11700).toFixed(0);
-		msgOut["K15-B"] = (((active2Voltage * decimalFactor)/1.5)*11700).toFixed(0);
-		msgOut["K15-C"] = (((active3Voltage * decimalFactor)/1.5)*11700).toFixed(0);
+		msgOut["K15A"] = (((active1Voltage * decimalFactor)/1.5)*11700).toFixed(0);
+		msgOut["K15B"] = (((active2Voltage * decimalFactor)/1.5)*11700).toFixed(0);
+		msgOut["K15C"] = (((active3Voltage * decimalFactor)/1.5)*11700).toFixed(0);
 		
 		node.send(msgOut);	
 		}
