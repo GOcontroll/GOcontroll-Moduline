@@ -56,7 +56,7 @@ chmod 755 /usr/moduline/bash/go-wwan-stop.sh
 chmod 755 /usr/moduline/bash/go-gps-start.sh
 chmod 755 /usr/moduline/bash/go-gps-stop.sh
 chmod 755 /usr/local/bin/qmi-network-raw
-chmod 755 /usr/moduline/nodejs-functions/upload_server.js
+chmod 755 /usr/moduline/nodejs/upload_server.js
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
