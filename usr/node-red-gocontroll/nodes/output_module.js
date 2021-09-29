@@ -416,6 +416,7 @@ module.exports = function(RED) {
 							
 							msgOut["moduleTemperature"] = receiveBuffer.readInt16LE(6),
 							msgOut["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
+							msgOut["moduleStatus"] = receiveBuffer.readUInt32LE(22),
 							msgOut[key[0]+"Current"]= receiveBuffer.readInt16LE(10),
 							msgOut[key[1]+"Current"]= receiveBuffer.readInt16LE(12),
 							msgOut[key[2]+"Current"]= receiveBuffer.readInt16LE(14),
