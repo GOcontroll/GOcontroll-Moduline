@@ -2,6 +2,7 @@
 
 # Start with powering the module
 echo 255 > /sys/devices/platform/leds/leds/ldo-sim7000/brightness
+echo 255 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
 
 # WANN functionality is claiming the supply so set propertie
 filename=/usr/moduline/moduline.properties
