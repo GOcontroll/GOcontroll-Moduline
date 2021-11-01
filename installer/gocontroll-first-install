@@ -28,7 +28,37 @@ fi
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
-echo -e "${YELLOW}-Copy specific files to Platform ${NORMAL}"
+echo -e "${YELLOW}-remove old GOcontroll stuff ${NORMAL}"
+
+if [ -d /usr/node-red-gocontroll/nodes ]
+then
+echo -e "${YELLOW}-Delete existing GOcontroll nodes ${NORMAL}"
+	rm -r /usr/node-red-gocontroll/nodes
+fi
+
+if [ -d /usr/node-red-static ]
+then
+echo -e "${YELLOW}-Delete node red static folder ${NORMAL}"
+	rm -r /usr/node-red-static
+fi
+
+if [ -d /usr/module-firmware ]
+then
+echo -e "${YELLOW}-Delete old module firmware ${NORMAL}"
+	rm -r /usr/module-firmware 
+fi
+
+if [ -d /usr/moduline/bash ]
+then
+echo -e "${YELLOW}-Delete bash automation scripts ${NORMAL}"
+	rm -r /usr/moduline/bash 
+fi
+
+if [ -d /usr/moduline/nodejs ]
+then
+echo -e "${YELLOW}-Delete nodejs scripts ${NORMAL}"
+	rm -r /usr/moduline/nodejs 
+fi
 
 echo -e "${YELLOW}-Copy GOcontroll files to correct location ${NORMAL}"
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
