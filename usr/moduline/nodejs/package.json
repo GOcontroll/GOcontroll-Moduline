@@ -5,7 +5,8 @@
     "dependencies": {
         "express": "^4.17.1",
         "express-fileupload": "^1.2.1",
-        "shelljs": "^0.8.4"
+        "shelljs": "^0.8.4",
+        "getmac": "^5.20.0"
     },
     "repository": {
         "type": "",

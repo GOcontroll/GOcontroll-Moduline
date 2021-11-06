@@ -20,6 +20,9 @@
  *
  **/
 
+
+var env_external = require("/usr/moduline/nodejs/get-macaddress.js");
+
 module.exports = {
 
 /*******************************************************************************
