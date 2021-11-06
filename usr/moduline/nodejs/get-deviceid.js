@@ -7,7 +7,7 @@ fs.readFile('/usr/moduline/information/deviceid', 'utf8' , (err, id) => {
   }
 
 	module.exports = {
-	DeviceId: process.env.DEVICEID = id
+	DevId: process.env.DEVID = id
 	};
 })
 
