@@ -21,7 +21,7 @@
  **/
  
  
-var env_external = require("/usr/moduline/nodejs/get-applicationid.js");
+var env_external = require("/usr/moduline/nodejs/get-deviceid.js");
 
 module.exports = {
 
