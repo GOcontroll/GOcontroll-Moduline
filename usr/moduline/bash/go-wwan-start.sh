@@ -40,4 +40,4 @@ nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super
 # Helpfull commands:
 # Get connection status --> nmcli device status
 # Get active Modem numb	--> mmcli --list-modems
-# Get modem information --> mmcli --modem=0 <-- Modem number
+# Get modem information --> mmcli --modem=0
