@@ -1,0 +1,6 @@
+V1.0.1
+
+########
+12-11-2021 V1.0.1
+Changed the memory write node. Values are now always written to memory. Before this changes, only changing values were 
+written again. This mechanism should be implemented manually in case it is desired.
