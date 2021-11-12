@@ -4,7 +4,7 @@
         color: '#f76d11',
         defaults: {
             name: {value:""},
-			key: {value:"exampleKey"},
+			key: {value:""},
 			memtype: {value:"ram"},
 			inputtype: {value:"object"},
 			decimal: {value:"0"}
@@ -14,7 +14,14 @@
         icon: "arrow-in.png",
 		paletteLabel: "Write mem",
         label: function() {
-            return this.name||"Data to memory with key: "+ this.key;
+			if(this.key == "")
+			{
+            return "Write all received key-value pairs";
+			}
+			else
+			{
+			return this.name||"Data to memory with key: "+ this.key;
+			}
         },
     });
 </script>
