@@ -27,7 +27,6 @@ module.exports = function(RED) {
 		path = '/dev/shm/';	
 		}
 
-
 		if(interval != 0){
 		intervalGetData = setInterval(ReadMemory_GetData,interval);
 		}
@@ -86,7 +85,7 @@ module.exports = function(RED) {
 	
 			fs.readFile(path+key, (err, data) => {
 			
-			if(data != NaN)
+			if(!isNaN(data))
 			{
 				
 				if(outputType === "payload")
@@ -105,7 +104,6 @@ module.exports = function(RED) {
 			{
 			/* For debugging purposes otherwise to much noise on debug window */
 			//node.warn("Problem reading from memory key: "+key);
-			clearInterval(intervalGetData);
 			return;
 			}
 			
