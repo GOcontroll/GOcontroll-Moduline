@@ -1,6 +1,15 @@
-V1.0.1
+V1.0.4
 
 ########
+24-11-2021 V1.0.4
+Write memory block from GOcontroll Node-RED cleaned up and changed the way the decimal value is defined from a floating point value.
+
+24-11-2021 V1.0.3
+Version read from settingsblock now only reads one line
+
+24-11-2021 V1.0.2
+Plausablility check on the GOcontroll Node-RED read memory node. If there is a NaN, the key value pair is not send
+
 12-11-2021 V1.0.1
 Changed the memory write node. Values are now always written to memory. Before this changes, only changing values were 
 written again. This mechanism should be implemented manually in case it is desired.
