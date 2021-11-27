@@ -11,14 +11,14 @@ fs.readFile('/usr/moduline/information/deviceid', 'utf8' , (err, id) => {
 	};
 })
 
-fs.readFile('/usr/moduline/information/mqttbroker', 'utf8' , (err, host) => {
+fs.readFile('/usr/moduline/information/mqttserver', 'utf8' , (err, server) => {
   if (err) {
     console.error(err)
     return
   }
 
 	module.exports = {
-	MqttHost: process.env.MQTTHOST = host
+	MqttServer: process.env.MQTTSERVER = server
 	};
 })
 
