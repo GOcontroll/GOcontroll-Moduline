@@ -1,6 +1,9 @@
-V1.0.4
+V1.1.4
 
 ########
+7-12-2021 V1.1.4
+Added new ADC conversion to Node-RED controll supply node. From Moduline IV HW3.06 an Moduline Mini HW1.05, the MCP 3004 is used for conversion.
+
 24-11-2021 V1.0.4
 Write memory block from GOcontroll Node-RED cleaned up and changed the way the decimal value is defined from a floating point value.
 

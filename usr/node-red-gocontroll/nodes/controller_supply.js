@@ -2,6 +2,7 @@ module.exports = function(RED) {
     "use strict"
 	
 	var i2c = require('i2c-bus');
+	var fs 		= require('fs');
 
 	function GOcontrollControllerSupply(config) { 	 
 	   RED.nodes.createNode(this,config);
@@ -20,7 +21,7 @@ module.exports = function(RED) {
 
 		var decimalFactor = 3.34 / 4095;
 		
-		var moduline = 0;
+		var adc = 0;
 		
 		var ADDR;
 		var CONFIGREGISTER;
@@ -36,25 +37,28 @@ module.exports = function(RED) {
 		
 		/* Check for moduline 3 ADC */
 		i2c1 = i2c.openSync(1);
-		
 		adcDevice = i2c1.scanSync(0x36);
 		if(adcDevice[0]==0x36){
-		moduline = 3;
+		adc = 1;
 		}
-		
 		i2c1.closeSync();
 		
 		/* Check for moduline 4 ADC */
 		i2c1 = i2c.openSync(2);
-		
 		adcDevice = i2c1.scanSync(0x48);
 		if(adcDevice[0]==0x48){
-		moduline = 4;
+		adc = 2;
+		}
+		i2c1.closeSync();
+		
+		/* If no I2C devices are detected, default to ADC 3 (MCP3004) */
+		if(adc == 0)
+		{
+		decimalFactor = 3.34 / 1023;
+		adc = 3;
 		}
 		
-		i2c1.closeSync();
-
-		if(moduline == 3){
+		if(adc == 1){
 		/* On moduline 3 the reference voltage is vdd (3.3V and full scale resolution is 4095 (12-bit positive )) */
 		decimalFactor = 3.34 / 4095;
 		/* http://www.farnell.com/datasheets/2000950.pdf?_ga=2.222638424.279214111.1560944243-564480314.1541320539 */
@@ -74,8 +78,8 @@ module.exports = function(RED) {
 		i2c1.closeSync();
 		
 		}
-		else if (moduline == 4){
-		/* On moduline 3 the reference voltage is vdd (3.3V and full scale resolution is 4095 (12-bit positive )) */
+		else if (adc == 2){
+		/* On moduline 4 the reference voltage is vdd (3.3V and full scale resolution is 4095 (12-bit positive )) */
 		decimalFactor = 4.095 / 2047;
 		/* http://www.ti.com/lit/ds/symlink/ads1013.pdf */
 		/* ADS1015 */
@@ -90,6 +94,7 @@ module.exports = function(RED) {
 		CONVERTGEN 			= 0xE3;
 		}
 
+
 		
 		/*Start scheduler */		
 		interval = setInterval(getVoltages, parseInt(sampleTime));
@@ -100,7 +105,7 @@ module.exports = function(RED) {
 	
 	var msgOut={};
 	function getVoltages(){
-		if(moduline == 3){
+		if(adc == 1){
 		i2c1 = i2c.openSync(1);
 		
 		/* Read channel 0 */
@@ -127,7 +132,7 @@ module.exports = function(RED) {
 		node.send(msgOut);
 		}
 		
-		else if (moduline == 4){
+		else if (adc == 2){
 		i2c1 = i2c.openSync(2);
 		
 		/* Set multiplexer for channel 0*/
@@ -206,6 +211,32 @@ module.exports = function(RED) {
 		msgOut["K15C"] = (((active3Voltage * decimalFactor)/1.5)*11700).toFixed(0);
 		
 		node.send(msgOut);	
+		}
+		else if (adc == 3)
+		{
+		
+		/* Try to read the value from KL15-A */
+			try {
+			msgOut["K15A"] = parseInt((((parseInt(fs.readFileSync("/sys/bus/iio/devices/iio\:device0/in_voltage0_raw")))* decimalFactor)/1.5)*11700); //KL15-A
+			} catch (err) {	
+			}
+					
+			try {
+			msgOut["K15B"] = parseInt((((parseInt(fs.readFileSync("/sys/bus/iio/devices/iio\:device0/in_voltage1_raw")))* decimalFactor)/1.5)*11700); //KL15-A
+			} catch (err) {	
+			}
+
+			try {
+			msgOut["K15C"] = parseInt((((parseInt(fs.readFileSync("/sys/bus/iio/devices/iio\:device0/in_voltage2_raw")))* decimalFactor)/1.5)*11700); //KL15-A
+			} catch (err) {	
+			}
+
+			try {
+			msgOut["batteryVoltage"] = parseInt((((parseInt(fs.readFileSync("/sys/bus/iio/devices/iio\:device0/in_voltage3_raw")))* decimalFactor)/1.5)*11700); //KL15-A
+			} catch (err) {	
+			}			
+	
+		node.send(msgOut);		
 		}
 	}
 	
