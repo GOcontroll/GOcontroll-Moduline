@@ -67,7 +67,8 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
 
 if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]; then
+[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]||
+[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.05" ]]; then
 
 echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
 patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch
@@ -115,10 +116,10 @@ echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
 npm install --unsafe-perm /usr/node-red-gocontroll
 
 echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
-npm install node-red-dashboard@2.30.0
+npm install node-red-dashboard@3.1.2
 
 echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
-npm install node-red-node-serialport@0.14.1
+npm install node-red-node-serialport@0.15.0
 
 cd /usr/moduline/nodejs
 
