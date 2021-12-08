@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# This script is tested with: 
+# - SIM7600 PCIe -> Standard LTE
+# - QUECTEL EC25-E PCIe -> Standard LTE
+# - SIM7000 PCIe -> LTE after commands AT+CMNB=1 and AT+CNMP=38
+#
+
+
 # Start with powering the module
 echo 255 > /sys/devices/platform/leds/leds/ldo-sim7000/brightness
 echo 255 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
@@ -17,7 +24,7 @@ else
 fi
 
 # Wait two seconds to get active
-sleep 2
+sleep 5
 # Set serial port to 115200 baudrate 
 stty 115200 < /dev/ttymxc1
 # Send AT command for synchronisation
