@@ -116,10 +116,16 @@ echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
 npm install --unsafe-perm /usr/node-red-gocontroll
 
 echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
-npm install node-red-dashboard@3.1.2
+npm remove --no-audit --no-update-notifier --no-fund --save node-red-dashboard
+npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-dashboard@3.1.2
+# deprecated way of installing node red dashboard.
+# npm install node-red-dashboard@3.1.2
 
 echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
-npm install node-red-node-serialport@0.15.0
+npm remove --no-audit --no-update-notifier --no-fund --save node-red-node-serialport
+npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-node-serialport@0.15.0
+# deprecated way of installing serial port.
+# npm install node-red-node-serialport@0.15.0
 
 cd /usr/moduline/nodejs
 
