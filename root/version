@@ -1,6 +1,15 @@
-V1.1.5
+V1.2.7
 
 ########
+30-12-2021 V1.2.7
+New feature. Frequency outputs (0 to 500 Hz) on output modules are now available
+
+27-12-2021 V1.1.7
+Added levelshifter enable to go-wwan start script for enabling the serial communication with PCIe modem
+
+24-12-2021 V1.1.6
+Added predefined sources list to upload during initial installation
+
 8-12-2021 V1.1.5
 Updated requested installation version of serialport to 0.15.0  and dashboard to 3.1.2 
 
