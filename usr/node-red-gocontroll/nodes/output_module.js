@@ -5,7 +5,9 @@ module.exports = function(RED) {
 	const fs = require('fs');
 	
 	const BOOTMESSAGELENGTH = 46
-	const MESSAGELENGTH = 44;
+	/* Assigned dynamically */
+	var MESSAGELENGTH 	= 0;
+	
 	const SPISPEED = 2000000;
 
 	
@@ -17,12 +19,14 @@ module.exports = function(RED) {
 		
 		const moduleFirmwareLocation = "/usr/module-firmware/";
 		
-		const moduleSlot = config.moduleSlot; 
+		const moduleSlot = config.moduleSlot;
+		const moduleType = config.moduleType; 
 		const sampleTime = config.sampleTime;
 		
-		const moduleHwId1		= 20;
-		const moduleHwId2		= 20;
-		const moduleHwId3		= 2;
+		const moduleHwId1	= 20;
+		const moduleHwId2	= 20;
+		/* Assigned dynamically */
+		var moduleHwId3		= 0;
 	
 		var outputType = {};
 		outputType[0] = config.output1;
@@ -31,6 +35,10 @@ module.exports = function(RED) {
 		outputType[3] = config.output4;
 		outputType[4] = config.output5;
 		outputType[5] = config.output6;
+		outputType[6] = config.output7;
+		outputType[7] = config.output8;
+		outputType[8] = config.output9;
+		outputType[9] = config.output10;
 		
 		var outputFreq = {};
 		outputFreq[0] = config.freq12;
@@ -39,6 +47,10 @@ module.exports = function(RED) {
 		outputFreq[3] = config.freq34;
 		outputFreq[4] = config.freq56;
 		outputFreq[5] = config.freq56;
+		outputFreq[6] = config.freq78;
+		outputFreq[7] = config.freq78;
+		outputFreq[8] = config.freq910;
+		outputFreq[9] = config.freq910;
 		
 		var outputCurrent = {};
 		outputCurrent[0] = config.current1;
@@ -55,6 +67,10 @@ module.exports = function(RED) {
 		outputDuty[3] = config.duty4;
 		outputDuty[4] = config.duty5;
 		outputDuty[5] = config.duty6;
+		outputDuty[6] = config.duty7;
+		outputDuty[7] = config.duty8;
+		outputDuty[8] = config.duty9;
+		outputDuty[9] = config.duty10;
 		
 		var outputTime = {};
 		outputTime[0] = config.time1;
@@ -63,6 +79,10 @@ module.exports = function(RED) {
 		outputTime[3] = config.time4;
 		outputTime[4] = config.time5;
 		outputTime[5] = config.time6;
+		outputTime[6] = config.time7;
+		outputTime[7] = config.time8;
+		outputTime[8] = config.time9;
+		outputTime[9] = config.time10;
 		
 		var key={};
 		key[0] = config.key1;
@@ -71,6 +91,10 @@ module.exports = function(RED) {
 		key[3] = config.key4;
 		key[4] = config.key5;
 		key[5] = config.key6;
+		key[6] = config.key7;
+		key[7] = config.key8;
+		key[8] = config.key9;
+		key[9] = config.key10;
 		
 		var hwVersion = {};
 		var swVersion = {};
@@ -91,6 +115,17 @@ module.exports = function(RED) {
 		var initializeSecondTimeout;
 		
 		var sL, sB;
+
+		/* Assign information according module type */
+		/* In case 6 channel output module is selected */
+		if(moduleType == 1){
+			moduleHwId3 	= 2;
+			MESSAGELENGTH 	= 44;
+		/* In case 10 channel output module is selected */
+		}else{
+			moduleHwId3 	= 3;
+			MESSAGELENGTH 	= 49;
+		}
 		
 		/*Allocate memory for receive and send buffer */
 		var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
@@ -252,7 +287,7 @@ module.exports = function(RED) {
 					hwVersion[1] = receiveBuffer[7];
 					hwVersion[2] = receiveBuffer[8];
 					hwVersion[3] = receiveBuffer[9];
-					
+										
 					swVersion[0] = receiveBuffer[10];
 					swVersion[1] = receiveBuffer[11];
 					swVersion[2] = receiveBuffer[12];
@@ -312,16 +347,42 @@ module.exports = function(RED) {
 
 		sendBuffer[0] = 1;
 		sendBuffer[1] = MESSAGELENGTH-1;
+		
+		/* In case 6 channel output module is selected */
+		if(moduleType == 1){
 		sendBuffer[2] = 101;
-			
-		for(var s =0; s <6; s++)
-		{
-		sendBuffer[6+s] = (outputFreq[s]&15)|((outputType[s]&15)<<4);
-		sendBuffer.writeUInt16LE(outputCurrent[s], 12+(s*2));
+		sendBuffer[3] = 0;
+		sendBuffer[4] = 0;
+		sendBuffer[5] = 0;
+			for(var s =0; s <6; s++)
+			{
+			sendBuffer[6+s] = (outputFreq[s]&15)|((outputType[s]&15)<<4);
+			sendBuffer.writeUInt16LE(outputCurrent[s], 12+(s*2));
+			}
 		}
-						
-		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
+		/* In case 10 channel output module is selected */
+		else{
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 23;
+		sendBuffer[4] = 2;
+		sendBuffer[5] = 1;
+		
+			for(var s =0; s <10; s++)
+			{
+				var outputTypeSend = 0;
+				/* Convert the function options to proper 10 channel options */
+				if 		(outputType[s] === '1'){outputTypeSend  = 1;}
+				else if (outputType[s] === '4'){outputTypeSend  = 2;}
+				else if (outputType[s] === '6'){outputTypeSend  = 3;}
+				else if (outputType[s] === '7'){outputTypeSend  = 4;}
+				else if (outputType[s] === '8'){outputTypeSend  = 5;}
+				
+			sendBuffer[6+s] = (outputFreq[s]&15)|((outputTypeSend&15)<<4);
+			sendBuffer.writeUInt16LE(outputCurrent[s], 12+(s*2));
+			}
+		}
 			
+		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 			
 			const outputModule = spi.open(sL,sB, (err) => {
 
@@ -330,7 +391,6 @@ module.exports = function(RED) {
 				initializeSecondTimeout = setTimeout(OutputModule_Initialize_Second, 100);	
 				});
 			});
-		
 		}
 		
 		
@@ -345,12 +405,27 @@ module.exports = function(RED) {
 
 		sendBuffer[0] = 1;
 		sendBuffer[1] = MESSAGELENGTH-1;
+		var values
+		/* In case 6 channel output module is selected */
+		if(moduleType == 1){
 		sendBuffer[2] = 111;
+		sendBuffer[3] = 0;
+		sendBuffer[4] = 0;
+		sendBuffer[5] = 0;
+		values = 6;
+		/* In case 10 channel output module is selected */
+		}else{
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 23;
+		sendBuffer[4] = 2;
+		sendBuffer[5] = 2;
+		values = 10;
+		}
 			
-		for(var s =0; s <6; s++)
+		for(var s =0; s <values; s++)
 		{
 		sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
-		sendBuffer.writeUInt16LE(outputTime[s], 18+(s*2));
+		sendBuffer.writeUInt16LE(outputTime[s], 26+(s*2));
 		}
 						
 		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
@@ -378,7 +453,20 @@ module.exports = function(RED) {
 		
 		sendBuffer[0] = 1;
 		sendBuffer[1] = MESSAGELENGTH-1;
+		/* In case 6 channel output module is selected */
+		if(moduleType == 1){
 		sendBuffer[2] = 102;
+		sendBuffer[3] = 0;
+		sendBuffer[4] = 0;
+		sendBuffer[5] = 0;
+		/* In case 10 channel output module is selected */
+		}else{
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 23;
+		sendBuffer[4] = 3;
+		sendBuffer[5] = 1;
+		}
+		
 			
 			for(var s = 3; s <MESSAGELENGTH; s++)
 			{
@@ -410,10 +498,10 @@ module.exports = function(RED) {
 					  
 					if(receiveBuffer[MESSAGELENGTH-1] === OutputModule_ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
 					{
+
 						/*In case dat is received that holds module information */
 						if(receiveBuffer.readInt32LE(2) === 103)
 						{
-							
 							msgOut["moduleTemperature"] = receiveBuffer.readInt16LE(6),
 							msgOut["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
 							msgOut["moduleStatus"] = receiveBuffer.readUInt32LE(22),
@@ -422,10 +510,21 @@ module.exports = function(RED) {
 							msgOut[key[2]+"Current"]= receiveBuffer.readInt16LE(14),
 							msgOut[key[3]+"Current"]= receiveBuffer.readInt16LE(16),
 							msgOut[key[4]+"Current"]= receiveBuffer.readInt16LE(18),
-							msgOut[key[5]+"Current"]= receiveBuffer.readInt16LE(20)
-								
-						node.send(msgOut);	
+							msgOut[key[5]+"Current"]= receiveBuffer.readInt16LE(20)	
+							node.send(msgOut);								
 						}
+									
+						else if(	receiveBuffer.readUInt8(2) === 2 	&& 
+									receiveBuffer.readUInt8(3) === 23 	&&
+									receiveBuffer.readUInt8(4) === 4 	&&
+									receiveBuffer.readUInt8(5) === 1){
+										
+							msgOut["moduleTemperature"] = receiveBuffer.readInt16LE(6),
+							msgOut["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
+							msgOut["moduleVoltage"] = receiveBuffer.readInt16LE(10),
+							msgOut["moduleCurrent"] = receiveBuffer.readUInt16LE(12)
+							node.send(msgOut);	
+						}	
 					}
 				});
 		}
@@ -445,14 +544,37 @@ module.exports = function(RED) {
 			
 			sendBuffer[0] = 1;
 			sendBuffer[1] = MESSAGELENGTH-1;
+
+			/* In case 6 channel output module is selected */
+			if(moduleType == 1){
 			sendBuffer[2] = 102;
+			sendBuffer[3] = 0;
+			sendBuffer[4] = 0;
+			sendBuffer[5] = 0;
+			/* In case 10 channel output module is selected */
+			}else{
+			sendBuffer[2] = 1;
+			sendBuffer[3] = 23;
+			sendBuffer[4] = 3;
+			sendBuffer[5] = 1;
+			}
 			
-			for(var s =0; s <6; s++)
-			{
-			   if(msg[key[s]] <= 1000 && msg[key[s]] >= 0)
-			   {
-				sendBuffer.writeUInt16LE(msg[key[s]], (s*6)+6);
-			   }				   	
+			if(moduleType == 1){
+				for(var s =0; s <6; s++)
+				{
+				   if(msg[key[s]] <= 1000 && msg[key[s]] >= 0)
+				   {
+					sendBuffer.writeUInt16LE(msg[key[s]], (s*6)+6);
+				   }				   	
+				}
+			}else{
+				for(var s =0; s <10; s++)
+				{
+				   if(msg[key[s]] <= 1000 && msg[key[s]] >= 0)
+				   {
+					sendBuffer.writeUInt16LE(msg[key[s]], (s*2)+6);
+				   }				   	
+				}	
 			}
 			
 			sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);	
