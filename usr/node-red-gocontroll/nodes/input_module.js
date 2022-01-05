@@ -5,7 +5,8 @@ const spi = require('spi-device');
 const fs = require('fs');
 
 const BOOTMESSAGELENGTH = 46
-const MESSAGELENGTH = 55;
+/* Assigned dynamically */
+var MESSAGELENGTH 	= 0;
 const SPISPEED = 2000000;
 
 function GOcontrollInputModule(config) { 	 
@@ -18,11 +19,13 @@ function GOcontrollInputModule(config) {
 	
 	/* Get information from the Node configuration */
 	const moduleSlot 		= config.moduleSlot;
+	const moduleType = config.moduleType; 
 	const sampleTime 		= config.sampleTime;
 	
 	const moduleHwId1		= 20;
 	const moduleHwId2		= 10;
-	const moduleHwId3		= 1;
+	/* Assigned dynamically */
+	var moduleHwId3			= 0;
 	
 	var supply	={};
 	supply[0] = config.supply1;
@@ -36,6 +39,10 @@ function GOcontrollInputModule(config) {
 	input[3] = config.input4;
 	input[4] = config.input5;
 	input[5] = config.input6;
+	input[6] = config.input7;
+	input[7] = config.input8;
+	input[8] = config.input9;
+	input[9] = config.input10;
 	
 	var voltageRange = {};
 	voltageRange[0] = config.v1;
@@ -45,21 +52,53 @@ function GOcontrollInputModule(config) {
 	voltageRange[4] = config.v5;
 	voltageRange[5] = config.v6;
 	
-	var pullUp = {};	
-	pullUp[0] = config.pu1;
-	pullUp[1] = config.pu2;
-	pullUp[2] = config.pu3;
-	pullUp[3] = config.pu4;
-	pullUp[4] = config.pu5;
-	pullUp[5] = config.pu6;
+	var pullUp = {};
+	/* In case 6 channel input module is selected */
+	if(moduleType == 1){
+	pullUp[0] = config.pua1;
+	pullUp[1] = config.pua2;
+	pullUp[2] = config.pua3;
+	pullUp[3] = config.pua4;
+	pullUp[4] = config.pua5;
+	pullUp[5] = config.pua6;
+	}
+	/* In case 10 channel input module is selected */
+	else{
+	pullUp[0] = config.pub1;
+	pullUp[1] = config.pub2;
+	pullUp[2] = config.pub3;
+	pullUp[3] = config.pub4;
+	pullUp[4] = config.pub5;
+	pullUp[5] = config.pub6;
+	pullUp[6] = config.pub7;
+	pullUp[7] = config.pub8;
+	pullUp[8] = config.pub9;
+	pullUp[9] = config.pub10;
+	}
 	
 	var pullDown = {};
-	pullDown[0] = config.pd1;
-	pullDown[1] = config.pd2;
-	pullDown[2] = config.pd3;
-	pullDown[3] = config.pd4;
-	pullDown[4] = config.pd5;
-	pullDown[5] = config.pd6;
+	/* In case 6 channel input module is selected */
+	if(moduleType == 1){
+	pullDown[0] = config.pda1;
+	pullDown[1] = config.pda2;
+	pullDown[2] = config.pda3;
+	pullDown[3] = config.pda4;
+	pullDown[4] = config.pda5;
+	pullDown[5] = config.pda6;
+	}
+	/* In case 10 channel input module is selected */
+	else{
+	pullDown[0] = config.pdb1;
+	pullDown[1] = config.pdb2;
+	pullDown[2] = config.pdb3;
+	pullDown[3] = config.pdb4;
+	pullDown[4] = config.pdb5;
+	pullDown[5] = config.pdb6;
+	pullDown[6] = config.pdb7;
+	pullDown[7] = config.pdb8;
+	pullDown[8] = config.pdb9;
+	pullDown[9] = config.pdb10;
+	}
 
 	var key	={};
 	key[0] = config.key1;
@@ -68,6 +107,10 @@ function GOcontrollInputModule(config) {
 	key[3] = config.key4;
 	key[4] = config.key5;
 	key[5] = config.key6;
+	key[6] = config.key7;
+	key[7] = config.key8;
+	key[8] = config.key9;
+	key[9] = config.key10;
 
 	var hwVersion = {};
 	var swVersion = {};
@@ -87,6 +130,17 @@ function GOcontrollInputModule(config) {
 	var firmwareUploadTimeout;
 	
 	var sL, sB;
+	
+	/* Assign information according module type */
+	/* In case 6 channel output module is selected */
+	if(moduleType == 1){
+		moduleHwId3 	= 1;
+		MESSAGELENGTH 	= 55;
+	/* In case 10 channel output module is selected */
+	}else{
+		moduleHwId3 	= 2;
+		MESSAGELENGTH 	= 50;
+	}
 	
 	/*Allocate memory for receive and send buffer */
 	var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
@@ -306,28 +360,46 @@ function GOcontrollInputModule(config) {
 	****************************************************************************************/
 	function InputModule_Initialize (){
 
+
 	sendBuffer[0] = 1;
 	sendBuffer[1] = MESSAGELENGTH-1;
-	sendBuffer[2] = 1;
 	
-	for(var messagePointer = 0; messagePointer < 6; messagePointer ++)
-	{
-	sendBuffer[(messagePointer+1)*6] = input[messagePointer];
-	sendBuffer[((messagePointer+1)*6)+1] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2)|((voltageRange[messagePointer]&3)<<6);
+	/* In case 6 channel output module is selected */
+	if(moduleType == 1){
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 0;
+		sendBuffer[4] = 0;
+		sendBuffer[5] = 0;
+	
+		for(var messagePointer = 0; messagePointer < 6; messagePointer ++)
+		{
+		sendBuffer[(messagePointer+1)*6] = input[messagePointer];
+		sendBuffer[((messagePointer+1)*6)+1] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2)|((voltageRange[messagePointer]&3)<<6);
+		}
+		
+		sendBuffer[42] = supply[0]; 
+		sendBuffer[43] = supply[1]; 
+		sendBuffer[44] = supply[2]; 
 	}
-	
-	sendBuffer[42] = supply[0]; 
-	sendBuffer[43] = supply[1]; 
-	sendBuffer[44] = supply[2]; 
-	
+	/* In case 10 channel output module is selected */
+	else{
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 12;
+		sendBuffer[4] = 2;
+		sendBuffer[5] = 1;
+		for(var messagePointer = 0; messagePointer < 10; messagePointer ++)
+		{
+		sendBuffer[(messagePointer*4)+6] = input[messagePointer];
+		sendBuffer[((messagePointer*4)+7)] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2);
+		}
+		sendBuffer[46] = supply[0];
+	}
 	sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 
 		const initialize = spi.open(sL,sB, (err) => {
 
 			/* Only in this scope, receive buffer is available */
 			initialize.transfer(normalMessage, (err, normalMessage) => {
-
-
 				initialize.close(err =>{});
 			});
 		});
@@ -335,6 +407,7 @@ function GOcontrollInputModule(config) {
 	/* Start interval to get module data */
 	interval = setInterval(InputModule_GetData, parseInt(sampleTime));
 	}
+
 
 	/***************************************************************************************
 	** \brief
@@ -352,27 +425,58 @@ function GOcontrollInputModule(config) {
 
 	sendBuffer[0] = 1;
 	sendBuffer[1] = MESSAGELENGTH-1;
-	sendBuffer[2] = 2;
+	
+		/* In case 6 channel output module is selected */
+		if(moduleType == 1){
+		sendBuffer[2] = 2;
+		sendBuffer[3] = 0;
+		sendBuffer[4] = 0;
+		sendBuffer[5] = 0;
 
-	sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
+		sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 
-	getData.transfer(normalMessage, (err, normalMessage) => {
-			if(receiveBuffer[MESSAGELENGTH-1] == InputModule_ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
-			{
-				/*In case dat is received that holds module information */
-				if(receiveBuffer.readInt32LE(2) == 2)
+		getData.transfer(normalMessage, (err, normalMessage) => {
+				if(receiveBuffer[MESSAGELENGTH-1] == InputModule_ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
 				{
-				msgOut[key[0]] = receiveBuffer.readInt32LE(6),
-				msgOut[key[1]] = receiveBuffer.readInt32LE(14),
-				msgOut[key[2]] = receiveBuffer.readInt32LE(22),
-				msgOut[key[3]] = receiveBuffer.readInt32LE(30),
-				msgOut[key[4]] = receiveBuffer.readInt32LE(38),
-				msgOut[key[5]] = receiveBuffer.readInt32LE(46),
+					/*In case dat is received that holds module information */
+					if(receiveBuffer.readInt32LE(2) == 2)
+					{
+						for(var messagePointer = 0; messagePointer < 6; messagePointer ++)
+						{
+						msgOut[key[messagePointer]] = receiveBuffer.readInt32LE((messagePointer*8)+6)
+						}
+					node.send(msgOut);
+					}
+				}					
+			});	
+		}
+		else{
+		sendBuffer[2] = 2;
+		sendBuffer[3] = 12;
+		sendBuffer[4] = 3;
+		sendBuffer[5] = 1;
 
-				node.send(msgOut);
-				}
-			}					
-		});	
+		sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
+
+		getData.transfer(normalMessage, (err, normalMessage) => {
+				if(receiveBuffer[MESSAGELENGTH-1] == InputModule_ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
+				{
+					/*In case dat is received that holds module information */
+					if(	receiveBuffer.readUInt8(2) === 2 	&& 
+						receiveBuffer.readUInt8(3) === 12 	&&
+						receiveBuffer.readUInt8(4) === 3 	&&
+						receiveBuffer.readUInt8(5) === 1){
+											
+						for(var messagePointer = 0; messagePointer < 10; messagePointer ++)
+						{
+						msgOut[key[messagePointer]] = receiveBuffer.readInt32LE((messagePointer*4)+6)
+						}
+					node.send(msgOut);
+					}
+				}					
+			});	
+		}
+	
 	}
 
 

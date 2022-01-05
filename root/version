@@ -1,6 +1,9 @@
-V1.2.7
+V1.3.7
 
 ########
+5-1-2022 V1.3.7
+Added and tested 10 channel input and output module including firmware V0.0.1
+
 30-12-2021 V1.2.7
 New feature. Frequency outputs (0 to 500 Hz) on output modules are now available
 
