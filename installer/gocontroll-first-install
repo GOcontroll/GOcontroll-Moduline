@@ -139,4 +139,7 @@ echo -e "${YELLOW}-Start upload server ${NORMAL}"
 systemctl enable go-upload-server
 systemctl start go-upload-server
 
+echo -e "${YELLOW}-Set time zone ${NORMAL}"
+timedatectl set-timezone Europe/Luxembourg
+ 
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
