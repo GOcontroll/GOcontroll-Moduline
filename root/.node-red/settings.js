@@ -20,9 +20,6 @@
  *
  **/
  
- 
-var env_external = require("/usr/moduline/nodejs/get-information.js");
-
 module.exports = {
 
 /*******************************************************************************
