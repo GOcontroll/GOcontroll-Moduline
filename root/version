@@ -1,6 +1,9 @@
-V1.3.7
+V1.3.8
 
 ########
+3-2-2022 V1.3.8
+Small fix on interfaces. wlan0 has now the manual property added otherwise is diconnected after one hour.
+
 5-1-2022 V1.3.7
 Added and tested 10 channel input and output module including firmware V0.0.1
 
