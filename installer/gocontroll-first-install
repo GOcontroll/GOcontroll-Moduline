@@ -65,6 +65,7 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
 cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
+cp -avr /root/GOcontroll/GOcontroll-Moduline/version.txt /root
 
 if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
 [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]||
