@@ -60,3 +60,12 @@ nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super
 # Get connection status --> nmcli device status
 # Get active Modem numb	--> mmcli --list-modems
 # Get modem information --> mmcli --modem=0
+
+
+# Modem SIMCOM 7600E
+# - LTE CAT1 10 Mbps DL
+# - LTE CAT1 5 Mbps UL
+#
+# Modem SIMCOM 7000E
+# - LTE CAT1 300Kbps DL
+# - LTE CAT1 375Kbps UL
