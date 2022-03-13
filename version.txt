@@ -1,6 +1,9 @@
-V1.3.8
+V1.3.9
 
 ########
+13-3-2022 V1.3.9
+Add moduline mini V 1.06 to start script of LTE modem
+
 3-2-2022 V1.3.8
 Small fix on interfaces. wlan0 has now the manual property added otherwise is diconnected after one hour.
 
