@@ -1,0 +1,12 @@
+[Unit]
+Description=GOcontroll Bluetooth Interface
+After=bluetooth.target
+
+[Service]
+Type=forking
+RemainAfterExit=yes
+
+ExecStart=/usr/moduline/bash/go-bluetooth-start.sh
+
+[Install]
+WantedBy=multi-user.target
