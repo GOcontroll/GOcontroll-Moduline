@@ -18,7 +18,7 @@ from multiprocessing import Process
 import multiprocessing
 import json
 import glob
-from datetime import datetime
+from packaging import version
 
 #calculates the sha1 checksum of a file
 def sha1(fname):
@@ -132,79 +132,68 @@ def request_verification(char):
 #contains the logic for updating the controller
 
 def update_controller(commandnmbr, arg):
-	global file_urls
+	global zip_url
 	level1 = ord(arg[0])
 	arg = arg[1:]
 	if (level1 == commands.CHECK_FOR_UPDATE):
-		file_urls = []
-		with open("/etc/module-firmware-update/lastupdatecheck.txt", "r") as file:
-			sha = file.read()
-		if sha[-1] == "\n":
-			sha = sha[:-1]
-		# last_commit_date = datetime.strptime(sha, "%Y-%m-%d %H:%M:%S")
+		with open("/etc/controller_update/current-release.txt", "r") as file:
+			current_release = file.read()
+		if current_release[-1] == "\n":
+			current_release = current_release[:-1]
 		if (check_connection(1)):
-			# with open("/etc/bluetooth/accesstoken.txt", "r") as file:
-			# 	token = file.read()
-			# try:
-			# 	g = Github(token)
-			# 	r = g.get_repo("Rick-GO/GOcontroll-Moduline")
-			# 	# print(r.get_commit(sha).commit.author.date)
-			# 	# cs = r.get_commits(since=r.get_commit(sha).commit.author.date,path="/usr/module-firmware")
-			# 	cs = r.get_commits(since=last_commit_date,path="/usr/module-firmware")
-			# 	first_run=0
-			# 	global last_commit_sha
-			# 	for c in cs:
-			# 		if first_run==0:
-			# 			last_commit_sha = c.sha
-			# 			first_run += 1
-			# 		if sha == c.sha:
-			# 			break
-			# 		for file in c.files:
-			# 			if "srec" in file.filename:
-			# 				file_urls.append(file.raw_url)
-			# except:
-			# 	send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + sha)
-			if len(file_urls) > 0:
-				#send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE) + chr(commands.CONTROLLER_UPDATE_AVAILABLE))
-				send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + sha)
-			else:
-				# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE))
-				send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + sha)
-		#check_connection == False
+			with open("/etc/bluetooth/accesstoken.txt", "r") as file:
+				token = file.read()
+			try:
+				g = Github(token)
+				r = g.get_repo("Rick-GO/GOcontroll-Moduline")
+				release = r.get_latest_release()
+				latest_release = release.tag_name[1:]
+				if version.parse(latest_release) > version.parse(current_release):
+					zip_url = release.zipball_url
+					# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE) + chr(commands.CONTROLLER_UPDATE_AVAILABLE))
+					send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
+				else:
+					send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE))
+					# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
+			except:
+				send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
 		else:
-			send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + sha)
+			send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
 
 	#update the controller through its own network connection
 	elif (level1==commands.UPDATE_CONTROLLER_LOCAL):
-		for url in file_urls:
-			name = url.split("/")[-1]
-			name = name.split("2F")[-1]
-			file = requests.get(url,stream=True)
-			with open("/etc/module-firmware-update/"+name,"wb") as srec:
-				for chunk in file.iter_content(chunk_size=1024):
-					if chunk:
-						srec.write(chunk)
+		file = requests.get(zip_url, stream=True)
+		with open("/tmp/temporary.zip", "wb") as zip:
+			for chunk in file.iter_content(chunk_size=1024):
+				if chunk:
+					zip.write(chunk)
+		install_update()
 		send(chr(commandnmbr) + chr(commands.UPDATE_LOCAL_SUCCESS))
 
 	#transferred file cleared the checksum test
 	elif (level1 == commands.UPDATE_FILE_APROVED):
-		#print("file was aproved")
-		sha = arg
+		release = arg
 		#TODO fix this when releasing
-		# with open("/etc/module-firmware-update/lastupdatecheck.txt", "w") as file:
-		# 	file.write(sha)
-		# with zipfile.ZipFile("/tmp/temporary.zip", "r") as zip_ref:
-		# 	zip_ref.extractall("/etc/module-firmware-update")
-		# os.remove("/tmp/temporary.zip")	
+		# with open("/etc/controller_update/current-release.txt", "w") as file:
+		# 	file.write(release)
+		install_update()
 		send(chr(commandnmbr) + chr(commands.UPDATE_LOCAL_SUCCESS))
 
 	#transferred file did not clear the checksum test or file transfer was cancelled
 	elif (level1 == commands.UPDATE_FILE_CORRUPTED):
 		print("file was corrupted")
-		# try:
-		# 	os.remove("/tmp/temporary.zip")
-		# except:
-		# 	print("file was not yet created")
+		try:
+			os.remove("/tmp/temporary.zip")
+		except:
+			print("file was not yet created")
+
+			
+def install_update():
+	with zipfile.ZipFile("/tmp/temporary.zip", "r") as zip_ref:
+		zip_ref.extractall("/tmp")
+		os.remove("/tmp/temporary.zip")
+	#TODO install script for update
+	
 
 ###########################################################################################
 

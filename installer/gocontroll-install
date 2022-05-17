@@ -42,9 +42,6 @@ fi
 echo -e "${YELLOW} Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
-echo -e "${YELLOW}Install hostapd ${NORMAL}"
-apt-get -y install hostapd
-
 echo -e "${YELLOW}Delete dnsmasq.conf if present ${NORMAL}"
 rm /etc/dnsmasq.conf
 
