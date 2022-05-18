@@ -133,20 +133,25 @@ def update_controller(commandnmbr, arg):
 			try:
 				g = Github(token)
 				r = g.get_repo("Rick-GO/GOcontroll-Moduline")
-				release = r.get_latest_release()
-				latest_release = release.tag_name[1:]
-				if version.parse(latest_release) > version.parse(current_release):
-					zip_url = release.zipball_url
-					# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE) + chr(commands.CONTROLLER_UPDATE_AVAILABLE))
-					send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
-				else:
-					send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE))
-					# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
+				releases = r.get_releases()
+				for release in releases:
+					latest_release = release.tag_name[1:]
+					print(latest_release + ":" + current_release)
+					if version.parse(latest_release) > version.parse(current_release):
+						zip_url = release.zipball_url
+						send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE) + chr(commands.CONTROLLER_UPDATE_AVAILABLE))
+						# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
+						# bottom line is for testing update over bluetooth while the controller is actually connected to the internet
+						return
+				send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE))
+				# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
+				# bottom line is for testing update over bluetooth while the controller is actually connected to the internet
 			except:
 				send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
 		else:
 			send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
 
+			
 	#update the controller through its own network connection
 	elif (level1==commands.UPDATE_CONTROLLER_LOCAL):
 		file = requests.get(zip_url, stream=True)
@@ -179,6 +184,7 @@ def install_update():
 	with zipfile.ZipFile("/tmp/temporary.zip", "r") as zip_ref:
 		zip_ref.extractall("/tmp")
 		os.remove("/tmp/temporary.zip")
+	subprocess.run(["bash", "/etc/controller_update/controller_update.sh"])
 	#TODO install script for update
 	
 
