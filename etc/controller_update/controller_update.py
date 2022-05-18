@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 from subprocess import run
+from glob import glob
 try:
-    run(["rm", "-r", "/tmp/Rick-GO-GOcontroll*"])
-except FileNotFoundError:
+    run(["rm", "-r", glob("/tmp/Rick-GO-GOcontroll*")[0]])
+except:
     print("file already gone")
 
 with open("/etc/controller_update/backed-up-files.txt" , "r") as backup:
