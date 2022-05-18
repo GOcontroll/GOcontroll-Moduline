@@ -13,4 +13,8 @@ cd /tmp/Rick-GO-GOcontroll*
 
 cp -r -v --force --backup ./ / > "$FILE"
 
+echo 'files moved registering backup'
+
+cd
+
 python3 /etc/controller_update/controller_update.py

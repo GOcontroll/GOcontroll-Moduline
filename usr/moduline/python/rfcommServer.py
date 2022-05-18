@@ -184,7 +184,7 @@ def install_update():
 	with zipfile.ZipFile("/tmp/temporary.zip", "r") as zip_ref:
 		zip_ref.extractall("/tmp")
 		os.remove("/tmp/temporary.zip")
-	subprocess.run(["bash", "/etc/controller_update/controller_update.sh"])
+	subprocess.run(["bash", glob.glob("/tmp/Rick-GO-GOcontroll*/etc/controller_update/controller_update.sh")])
 	#TODO install script for update
 	
 
