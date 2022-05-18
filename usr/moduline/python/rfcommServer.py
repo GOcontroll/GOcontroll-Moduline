@@ -43,28 +43,15 @@ def check_connection(timeout):
 	try:
 		requests.head("https://www.github.com/", timeout=timeout)
 		return True
-	except requests.ConnectionError:
+	except:
 		try:
 			print("could not reach github, trying google.")
 			requests.head("https://www.google.com/", timeout=timeout)
 			return True
-		except requests.ConnectionError:
+		except:
 			print("could not reach google either.")
 			return False
-		except requests.ReadTimeout:
-			print("could not reach google either.")
-			return False
-	except requests.ReadTimeout:
-		try:
-			print("could not reach github, trying google.")
-			requests.head("https://www.google.com/", timeout=timeout)
-			return True
-		except requests.ConnectionError:
-			print("could not reach google either.")
-			return False
-		except requests.ReadTimeout:
-			print("could not reach google either.")
-			return False
+	
 
 #thread that makes a led fade in and out in the colour blue
 def status_led_on():
