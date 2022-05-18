@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 from subprocess import run
 from glob import glob
+from shutil import rmtree
 try:
-    run(["rm", "-r", glob("/tmp/Rick-GO-GOcontroll*")[0]])
+    rmtree(glob("/tmp/Rick-GO-GOcontroll*")[0])
 except:
     print("file already gone")
 
