@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # url to bash this script:
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/branc_bluetooth/installer/gocontroll-first-install | bash -s branch_bluetooth
+# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/branch_bluetooth/installer/gocontroll-first-install | bash -s branch_bluetooth
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -24,6 +24,28 @@ if ! [ -x "$(command -v git)" ]; then
 echo -e "${YELLOW}-Git is not yet installed so let's install first ${NORMAL}"
 apt -y install git 
 fi
+
+apt-get install bluetooth bluez bluez-tools -y
+
+apt install rfkill -y
+
+apt install python3-pip -y
+
+apt-get install libffi-dev
+
+apt remove hostapd -y
+
+pip3 install smbus2
+
+pip3 install requests
+
+pip3 install bluedot
+
+pip3 install PyGithub
+
+pip3 install netifaces
+
+pip3 install pyserial
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1

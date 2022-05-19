@@ -164,10 +164,6 @@ def update_controller(commandnmbr, arg):
 
 	#transferred file cleared the checksum test
 	elif (level1 == commands.UPDATE_FILE_APROVED):
-		release = arg
-		#TODO fix this when releasing
-		# with open("/etc/controller_update/current-release.txt", "w") as file:
-		# 	file.write(release)
 		install_update()
 		send(chr(commandnmbr) + chr(commands.UPDATE_LOCAL_SUCCESS))
 
@@ -183,9 +179,12 @@ def update_controller(commandnmbr, arg):
 def install_update():
 	with zipfile.ZipFile("/tmp/temporary.zip", "r") as zip_ref:
 		zip_ref.extractall("/tmp")
+	try:
 		os.remove("/tmp/temporary.zip")
+	except:
+		print("file was not yet created")
 	subprocess.run(["bash", glob.glob("/tmp/Rick-GO-GOcontroll*/etc/controller_update/controller_update.sh")])
-	#TODO install script for update
+	
 	
 
 ###########################################################################################
