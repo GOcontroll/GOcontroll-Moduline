@@ -54,9 +54,6 @@ sleep 1
 # Use LTE communication technology
 echo -ne 'AT+CNMP=38\r' > /dev/ttymxc1
 
-# Create connection descriptor
-nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
-
 # Helpfull commands:
 # Get connection status --> nmcli device status
 # Get active Modem numb	--> mmcli --list-modems

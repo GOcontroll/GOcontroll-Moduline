@@ -25,27 +25,44 @@ echo -e "${YELLOW}-Git is not yet installed so let's install first ${NORMAL}"
 apt -y install git 
 fi
 
+echo -e "${YELLOW}-Update debian ${NORMAL}"
+apt-get update -y
+
+echo -e "${YELLOW}-Install bluez for the bluetooth functionality${NORMAL}"
 apt-get install bluetooth bluez bluez-tools -y
 
+echo -e "${YELLOW}-Install rfkill for wireless functions${NORMAL}"
 apt install rfkill -y
 
+echo -e "${YELLOW}-Install pip to install python packages${NORMAL}"
 apt install python3-pip -y
 
+echo -e "${YELLOW}-Install libffi-dev${NORMAL}"
 apt-get install libffi-dev
 
+echo -e "${YELLOW}-Remove hostapd if it is installed${NORMAL}"
 apt remove hostapd -y
 
+echo -e "${YELLOW}-Install python smbus api to controll ic2 busses${NORMAL}"
 pip3 install smbus2
 
+echo -e "${YELLOW}-Install python requests api for http(s) requests${NORMAL}"
 pip3 install requests
 
+echo -e "${YELLOW}-Install python bluedot api for bluetooth functionality${NORMAL}"
 pip3 install bluedot
 
+echo -e "${YELLOW}-Install python github api for the update protocol${NORMAL}"
 pip3 install PyGithub
 
+echo -e "${YELLOW}-Install the python netifaces api to easily get IP adresses of the controller${NORMAL}"
 pip3 install netifaces
 
+echo -e "${YELLOW}-Install the python pyserial api to communicate with a modem via the serial bus${NORMAL}"
 pip3 install pyserial
+
+echo -e "${YELLOW}-Install the python packaging api to compare version numbers${NORMAL}"
+pip3 install packaging
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
@@ -163,7 +180,33 @@ echo -e "${YELLOW}-Start upload server ${NORMAL}"
 systemctl enable go-upload-server
 systemctl start go-upload-server
 
+echo -e "${YELLOW}-Start bluetooth service ${NORMAL}"
+systemctl enable go-bluetooth
+systemctl start go-bluetooth
+
 echo -e "${YELLOW}-Set time zone ${NORMAL}"
 timedatectl set-timezone Europe/Luxembourg
+
+echo -e "${YELLOW}-Fix network manager connections ${NORMAL}"
+
+if [ ! -f "/etc/NetworkManage/system-connections/Wired connnection auto.nmconnection"]
+then
+	 nmcli con mod "Wired connection 1" con-name "Wired connection auto"
+fi
+
+if [ ! -f "/etc/NetworkManage/system-connections/Wired connection static.nmconnection"]
+then
+	nmcli con add type ethernet con-name "Wired connection static" ifname eth0 ipv4.addresses 192.168.255.255/16 ipv4.method manual connection.autoconnect no
+fi
+
+if [ ! -f "/etc/NetworkManage/system-connections/GOcontroll-ap.nmconnection"]
+then
+	nmcli con add type wifi con-name "GOcontroll-ap" ifname wlan0 ssid GOcontroll-ap ipv4.addresses 192.168.2.85/16 ipv4.method manual connection.autoconnect no 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk GOcontrolltest 802-11-wireless-security.key-mgmt wpa-psk
+fi
+
+if [ ! -f "/etc/NetworkManage/system-connections/GO-celular.nmconnection"]
+then
+	nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
+fi
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"

@@ -469,15 +469,12 @@ def access_point_settings(commandnmbr, arg):
 		arg = arg.split(":")
 		name = arg[0]
 		psk = arg[1]
-		name_line = get_line("/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection", "ssid=")
-		psk_line = get_line("/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection", "psk=")			
-		with open("/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection", "r") as ap:
-			file = ap.readlines()
-			file[name_line] = "ssid="+name+"\n"
-			file[psk_line] = "psk="+psk+"\n"
-		with open("/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection", "w") as ap:
-			ap.writelines(file)
-		subprocess.run(["systemctl", "restart", "NetworkManager"])
+		subprocess.run(["nmcli", "con", "mod", "GOcontroll-ap", "802-11-wireless.ssid", name])
+		subprocess.run(["nmcli", "con", "mod", "GOcontroll-ap", "wifi-sec.psk", psk])
+		reload = subprocess.run(["nmcli", "con", "down", "GOcontroll-ap"], stdout=subprocess.PIPE, text=True)
+		reload = reload.stdout
+		if "succesfully" in reload:
+			subprocess.run(["nmcli", "con", "up", "GOcontroll-ap"])
 		send(chr(commandnmbr) + chr(commands.SET_AP_SETTINGS) + "done")
 
 
@@ -570,16 +567,21 @@ def wwan_settings(commandnmbr, arg):
 		net_status = [str(check_connection(1))]
 		mmcli_info = ["Info not available"]
 		sim_number = ["Info not available"]
+		pin=["-"]
+		apn=["-"]
 		stdout = subprocess.run(["systemctl", "is-active", "go-wwan"], stdout=subprocess.PIPE, text=True)
 		status = [stdout.stdout[:-1]]
 		path = "/etc/NetworkManager/system-connections/GO-celular.nmconnection"
-		pin_line = get_line(path, "pin=")
-		apn_line = get_line(path, "apn=")
-		with open(path, "r") as con:
-			file = con.readlines()
-			pin = [file[pin_line].split("=")[1][:-1]]
-			apn = [file[apn_line].split("=")[1][:-1]]
 		if status[0] == "active":
+			try:
+				pin_line = get_line(path, "pin=")
+				apn_line = get_line(path, "apn=")
+				with open(path, "r") as con:
+					file = con.readlines()
+					pin = [file[pin_line].split("=")[1][:-1]]
+					apn = [file[apn_line].split("=")[1][:-1]]
+			except FileNotFoundError:
+				print("networkmanager connection file doesn't exist")
 			modem = subprocess.run(["mmcli", "--list-modems"], stdout=subprocess.PIPE, text=True)
 			modem = modem.stdout
 			if "/freedesktop/" in modem:
@@ -623,15 +625,12 @@ def wwan_settings(commandnmbr, arg):
 	elif level1 == commands.SET_WWAN_SETTINGS:
 		arg = arg.split(":")
 		#arg = [pin,apn]
-		path = "/etc/NetworkManager/system-connections/GO-celular.nmconnection"
-		pin_line = get_line(path, "pin=")
-		apn_line = get_line(path, "apn=")
-		with open(path, "r") as con:
-			file = con.readlines()
-			file[pin_line] = "ssid="+arg[0]+"\n"
-			file[apn_line] = "psk="+arg[1]+"\n"
-		with open(path, "w") as con:
-			con.writelines(file)
+		subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.apn", arg[1]])
+		subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.pin", arg[0]])
+		reload = subprocess.run(["nmcli", "con", "down", "GO-celular"], stdout=subprocess.PIPE, text=True)
+		reload = reload.stdout
+		if "succesfully" in reload:
+			subprocess.run(["nmcli", "con", "up", "GO-celular"])
 		send(chr(commandnmbr) + chr(commands.SET_WWAN_SETTINGS))
 
 #to read information from the modem a serial connection is used
