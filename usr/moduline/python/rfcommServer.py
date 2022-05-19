@@ -19,6 +19,7 @@ import multiprocessing
 import json
 import glob
 from packaging import version
+import signal
 
 #calculates the sha1 checksum of a file
 def sha1(fname):
@@ -637,7 +638,6 @@ def wwan_settings(commandnmbr, arg):
 #this function sends the command to the modem and starts a listener for the response
 def sim_at_command(command, timeout=1):
 	recv_end, send_end = multiprocessing.Pipe(False)
-	global ts
 	ts = Process(target=read_serial_CICCID, args=(send_end, timeout))
 	ts.start()
 	time.sleep(1)
@@ -653,7 +653,7 @@ def sim_at_command(command, timeout=1):
 #seperate process that listens for the response from the modem
 def read_serial_CICCID(send_end, timeout):
 	global CICCID_watchdog
-	tf = threading.Thread(target=read_serial_CICCID_watchdog, args=(timeout,))
+	tf = threading.Thread(target=read_serial_CICCID_watchdog, args=(timeout, os.getpid(), send_end))
 	tf.start()
 	while True:
 		CICCID_watchdog = 0
@@ -672,15 +672,15 @@ def read_serial_CICCID(send_end, timeout):
 			break
 
 #monitor the read serial process to make sure it doesn't get stuck
-def read_serial_CICCID_watchdog(timeout):
+def read_serial_CICCID_watchdog(timeout, pid, send_end):
 	global CICCID_watchdog
-	global ts
 	CICCID_watchdog = 0
 	while CICCID_watchdog < timeout:
 		CICCID_watchdog += 0.2
 		time.sleep(0.2)
 	try:
-		ts.terminate()
+		send_end.send("Error")
+		os.kill(pid, signal.SIGTERM)
 	except:
 		print("process was already terminated")
 
