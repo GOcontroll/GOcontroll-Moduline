@@ -137,12 +137,14 @@ def update_controller(commandnmbr, arg):
 				releases = r.get_releases()
 				for release in releases:
 					latest_release = release.tag_name[1:]
-					print(latest_release + ":" + current_release)
-					if version.parse(latest_release) > version.parse(current_release):
-						zip_url = release.zipball_url
-						send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE) + chr(commands.CONTROLLER_UPDATE_AVAILABLE))
-						# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
-						# bottom line is for testing update over bluetooth while the controller is actually connected to the internet
+					if "-" not in latest_release:
+						if version.parse(latest_release) > version.parse(current_release):
+							zip_url = release.zipball_url
+							send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE) + chr(commands.CONTROLLER_UPDATE_AVAILABLE))
+							# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
+							# bottom line is for testing update over bluetooth while the controller is actually connected to the internet
+							return
+						send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE))
 						return
 				send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_TRUE))
 				# send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
@@ -640,7 +642,7 @@ def sim_at_command(command, timeout=1):
 	recv_end, send_end = multiprocessing.Pipe(False)
 	ts = Process(target=read_serial_CICCID, args=(send_end, timeout))
 	ts.start()
-	time.sleep(1)
+	time.sleep(0.1)
 	ser.write(bytes(command, "utf-8"))
 	ts.join()
 	if ts.is_alive():
@@ -661,7 +663,6 @@ def read_serial_CICCID(send_end, timeout):
 			response = ser.readline().decode("utf-8")
 			if "+ICCID:" in response:
 				final_response = response
-			if "OK" in response:
 				send_end.send(final_response)
 				break
 			if "ERR" in response:
@@ -804,7 +805,7 @@ def controller_configuration(commandnmbr, arg):
 	arg = arg[1:]
 
 	if level1 == commands.INIT_CONTROLLER_CONFIGURATION:
-		with open("/etc/module-firmware-update/module-info/modules.json") as j:
+		with open("/etc/modules.json") as j:
 			info = json.load(j)
 		modules = info.values()
 		firmwares = []
@@ -839,9 +840,8 @@ def module_settings(commandnmbr, arg):
 		mod_type = arg.split(":")
 		mod_slot = mod_type[1]
 		mod_type = mod_type[0]
-		available_firmwares = glob.glob("/etc/module-firmware-update/" + mod_type + "*.srec")
-		available_firmwares = available_firmwares + glob.glob("/usr/module-firmware/" + mod_type + "*.srec")
-		with open("/etc/module-firmware-update/module-info/modules.json") as j:
+		available_firmwares = glob.glob("/usr/module-firmware/" + mod_type + "*.srec")
+		with open("/etc/modules.json") as j:
 			info = json.load(j)
 		modules = list(info.values())
 		current_firmware = modules[int(mod_slot)-1][1]
@@ -855,16 +855,8 @@ def module_settings(commandnmbr, arg):
 		
 
 	if level1 == commands.SET_NEW_FIRMWARE:
-		firmwares = arg.split(":")
-		new_firmware = firmwares[0]
-		old_firmware = firmwares[1]
-		try:
-			os.replace("/usr/module-firmware/"+old_firmware, "/etc/module-firmware-update/"+old_firmware)
-			os.replace("/etc/module-firmware-update/"+new_firmware, "/usr/module-firmware/"+new_firmware)
-		except:
-			send(chr(commandnmbr) + chr(level1) + "false")
-			return
-		send(chr(commandnmbr) + chr(level1) + "true")
+		print("function needs to be redone")
+		#TODO new system
 		
 ##########################################################################################
 

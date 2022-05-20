@@ -208,5 +208,20 @@ if [ ! -f "/etc/NetworkManage/system-connections/GO-celular.nmconnection" ]
 then
 	nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
 fi
+
+echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
+
+if [ ! -f "/etc/bluetooth/trusted_devices.txt" ]
+then
+	choose() { echo ${1:RANDOM%${#1}:1} $RANDOM; }
+	pass="$({ for i in $( seq 1 $(( 12 + RANDOM % 4 )) )
+		do
+			choose '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^\&'
+		done
+	} | sort -R | awk '{printf "%s",$1}')"
+	#TODO also send this pass to the label printer
+	echo "$pass" > /etc/bluetooth/trusted_devices.txt
+	echo "\n" >> /etc/bluetooth/trusted_devices.txt
+fi
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
