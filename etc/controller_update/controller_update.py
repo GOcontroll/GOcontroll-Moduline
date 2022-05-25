@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from subprocess import run
 from glob import glob
 from shutil import rmtree
 try:

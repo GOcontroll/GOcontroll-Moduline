@@ -221,7 +221,6 @@ then
 	} | sort -R | awk '{printf "%s",$1}')"
 	#TODO also send this pass to the label printer
 	echo "$pass" > /etc/bluetooth/trusted_devices.txt
-	echo "\n" >> /etc/bluetooth/trusted_devices.txt
 fi
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
