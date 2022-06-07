@@ -1,6 +1,9 @@
-V1.3.9
+V1.3.10
 
 ########
+13-3-2022 V1.3.10
+Fixed small bug with configurations on selecting 6 channel or 10 channel outputs on output module node
+
 13-3-2022 V1.3.9
 Add moduline mini V 1.06 to start script of LTE modem
 
