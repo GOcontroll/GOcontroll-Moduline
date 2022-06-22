@@ -187,8 +187,7 @@ def install_update():
 	except:
 		print("file was not yet created")
 	install_script = glob.glob("/tmp/Rick-GO-GOcontroll*/etc/controller_update/controller_update.sh")
-	print(install_script)
-	subprocess.run(["bash", install_script])
+	subprocess.run(["bash", install_script[0]])
 	
 	
 
