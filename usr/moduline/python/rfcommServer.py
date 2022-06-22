@@ -639,6 +639,7 @@ def wwan_settings(commandnmbr, arg):
 #to read information from the modem a serial connection is used
 #this function sends the command to the modem and starts a listener for the response
 def sim_at_command(command, timeout=1):
+	# print(f"starting the serial read process at {time.time() - message_received_timestamp} seconds after receiving the message.")
 	recv_end, send_end = multiprocessing.Pipe(False)
 	ts = Process(target=read_serial_CICCID, args=(send_end, timeout))
 	ts.start()
@@ -654,6 +655,8 @@ def sim_at_command(command, timeout=1):
 	
 #seperate process that listens for the response from the modem
 def read_serial_CICCID(send_end, timeout):
+	# process_start = time.time()
+	# print(f"serial read proces started at {process_start - message_received_timestamp} seconds after receiving the message")
 	global CICCID_watchdog
 	tf = threading.Thread(target=read_serial_CICCID_watchdog, args=(timeout, os.getpid(), send_end))
 	tf.start()
@@ -662,23 +665,29 @@ def read_serial_CICCID(send_end, timeout):
 		try:
 			response = ser.readline().decode("utf-8")
 			if "+ICCID:" in response:
+				# print(f"serial read process ending at {time.time() - message_received_timestamp} seconds after receiving the message.\ntotal time elapsed by the serial read process: {(time.time() - process_start)}")
 				final_response = response
 				send_end.send(final_response)
 				break
 			if "ERR" in response:
+				# print(f"serial read process ending at {time.time() - message_received_timestamp} seconds after receiving the message.\ntotal time elapsed by the serial read process: {(time.time() - process_start)}")
 				send_end.send("Error")
 				break
 		except UnicodeDecodeError:
+			# print(f"serial read process ending at {time.time() - message_received_timestamp} seconds after receiving the message.\ntotal time elapsed by the serial read process: {(time.time() - process_start)}")
 			send_end.send("Error")
 			break
 
 #monitor the read serial process to make sure it doesn't get stuck
 def read_serial_CICCID_watchdog(timeout, pid, send_end):
+	# thread_start = time.time()
+	# print(f"watchdog thread started {thread_start - message_received_timestamp} seconds after receiving the message.")
 	global CICCID_watchdog
 	CICCID_watchdog = 0
 	while CICCID_watchdog < timeout:
 		CICCID_watchdog += 0.2
 		time.sleep(0.2)
+	# print(f"watchdog thread timer ran out, total time elapsed: {(time.time() - thread_start)}")
 	try:
 		send_end.send("Error")
 		os.kill(pid, signal.SIGTERM)
@@ -956,12 +965,21 @@ def command_list(byte, string):
 
 #slightly expanded s.send function so not every command has to convert the string to bytes
 def send(string):
+	global message_received_timestamp
 	print("out:")
 	print(bytes(string, 'utf-8'))
+	message_out_timestamp = time.time()
+	try:
+		print(f"message out {message_out_timestamp}, total elapsed time: {message_out_timestamp - message_received_timestamp} seconds")
+	except NameError:
+		print("first message, no timer available")
 	s.send(bytes(string, 'utf-8'))
 
 #function that gets called when the controller receives a message
 def data_received(data):
+	global message_received_timestamp
+	message_received_timestamp = time.time()
+	print(f"message received {message_received_timestamp}")
 	global trust_device
 	global transfer_mode
 	first_byte = data[0]
@@ -989,7 +1007,7 @@ def when_client_connects():
 	with SMBus(2) as bus:
 		bus.write_i2c_block_data(address,23,[255])
 		bus.write_i2c_block_data(address,0,[64])
-		tf = threading.Thread(target=status_led_gocontroll)
+		tf = threading.Thread(target=status_led_on)
 		tf.start()
 	global trust_device
 	global transfer_mode
