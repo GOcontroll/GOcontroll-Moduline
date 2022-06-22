@@ -186,7 +186,9 @@ def install_update():
 		os.remove("/tmp/temporary.zip")
 	except:
 		print("file was not yet created")
-	subprocess.run(["bash", glob.glob("/tmp/Rick-GO-GOcontroll*/etc/controller_update/controller_update.sh")])
+	install_script = glob.glob("/tmp/Rick-GO-GOcontroll*/etc/controller_update/controller_update.sh")
+	print(install_script)
+	subprocess.run(["bash", install_script])
 	
 	
 

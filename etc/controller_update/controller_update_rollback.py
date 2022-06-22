@@ -8,3 +8,4 @@ with open("/etc/controller_update/backed-up-files.txt", "r") as backup:
         except:
             print("backup file is missing")
 os.remove("/etc/controller_update/backed-up-files.txt")
+#
