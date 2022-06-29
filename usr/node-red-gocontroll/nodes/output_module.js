@@ -405,28 +405,31 @@ module.exports = function(RED) {
 
 		sendBuffer[0] = 1;
 		sendBuffer[1] = MESSAGELENGTH-1;
-		var values
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
 		sendBuffer[2] = 111;
 		sendBuffer[3] = 0;
 		sendBuffer[4] = 0;
 		sendBuffer[5] = 0;
-		values = 6;
+			for(var s =0; s <6; s++)
+			{
+			sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
+			sendBuffer.writeUInt16LE(outputTime[s], 18+(s*2));
+			}
 		/* In case 10 channel output module is selected */
 		}else{
 		sendBuffer[2] = 1;
 		sendBuffer[3] = 23;
 		sendBuffer[4] = 2;
 		sendBuffer[5] = 2;
-		values = 10;
+			for(var s =0; s <10; s++)
+			{
+			sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
+			sendBuffer.writeUInt16LE(outputTime[s], 26+(s*2));
+			}
 		}
 			
-		for(var s =0; s <values; s++)
-		{
-		sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
-		sendBuffer.writeUInt16LE(outputTime[s], 26+(s*2));
-		}
+
 						
 		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 			
