@@ -94,6 +94,7 @@ SET_CAN_STATE = 3
 
 #controller configuration
 INIT_CONTROLLER_CONFIGURATION = 0
+ACQUIRE_MODULE_INFORMATION = 1
 #
 
 #module settings

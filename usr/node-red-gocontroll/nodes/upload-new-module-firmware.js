@@ -22,6 +22,7 @@ if (hardwareFile.includes("Moduline IV")) {
 
 var newHwVersion = new Array(4)
 var newSwVersion = new Array(3)
+var oldSwVersion = new Array(3)
 
 const newFirmwareArray = newFirmware.split(".")[0].split("-");
 
@@ -148,12 +149,12 @@ function Module_CheckFirmwareVersion(){
         firmware.transfer(bootMessage, (err, bootMessage) => {
 
             if(receiveBuffer[BOOTMESSAGELENGTH-1] != ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1)){
-            console.log("Checksum from bootloader not correct");
+            console.log("error: Checksum from bootloader not correct");
             Module_CancelFirmwareUpload();
             return;
             }
             else if(	receiveBuffer[0] != 9 || receiveBuffer[2] != 9){
-            console.log("Wrong response from bootloader");
+            console.log("error: Wrong response from bootloader");
             Module_CancelFirmwareUpload();
             return;
             }
@@ -168,15 +169,28 @@ function Module_CheckFirmwareVersion(){
             swVersion[1] = String(receiveBuffer[11]);
             swVersion[2] = String(receiveBuffer[12]);
 
-            console.log("on module: " + hwVersion.join("-") + "-" + swVersion.join("-"))
-            console.log("to upload: " + newHwVersion.join("-") + "-" + newSwVersion.join("-"))
-            console.log("hardware matches? " + ArrayEquals(hwVersion, newHwVersion))
-            console.log("firmware is different? " + !ArrayEquals(swVersion, newSwVersion))
             if (ArrayEquals(hwVersion, newHwVersion) && !ArrayEquals(swVersion, newSwVersion)) {
-                console.log("announcing firmware upload to module")
+                oldSwVersion = swVersion;
                 Module_AnnounceFirmwareUpload();
+            } else if (!ArrayEquals(oldSwVersion, swVersion)) {
+                var controllerLayoutFile;
+                try {
+                    controllerLayoutFile = fs.readFileSync("/usr/module-firmware/modules.txt", "utf-8");
+                } catch(err) {
+                console.error(err);
+                }
+                var modules = controllerLayoutFile.split(":");
+                modules[slot-1] = hwVersion.join("-") + "-" + swVersion.join("-");
+
+                fs.writeFileSync("/usr/module-firmware/modules.txt", modules.join(":"), err => {
+                    if (err) {
+                        console.error(err)
+                    }
+                })
+                console.log("firmware update successfull")
+                Module_CancelFirmwareUpload();
             } else {
-                console.log("invalid update detected")
+                console.log("error: invalid update detected")
                 Module_CancelFirmwareUpload();
             }
         });
@@ -339,7 +353,7 @@ function Module_FirmwareUpload(){
                     firmware.close(err =>{});
                     //node.warn("Firmware from input module on slot: "+moduleSlot+" updated! Now restarting module!");
                     /* At this point, the module can be restarted to check if it provides the new installed firmware */
-                    //Module_StartReset();
+                    Module_StartReset();
                     //TODO moet de module hier het initialisatie script aanroepen?
                     return;
                 } else {

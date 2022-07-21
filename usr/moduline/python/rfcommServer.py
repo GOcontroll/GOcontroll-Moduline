@@ -814,8 +814,12 @@ def controller_configuration(commandnmbr, arg):
 	arg = arg[1:]
 
 	if level1 == commands.INIT_CONTROLLER_CONFIGURATION:
-		with open("/usr/module-firmware/modules.txt", "r") as modules:
-			info = modules.readline()
+		try:
+			with open("/usr/module-firmware/modules.txt", "r") as modules:
+				info = modules.readline()
+		except FileNotFoundError:
+			send(chr(commandnmbr) + chr(level1) + "-\n") 
+			return
 		modules = info.split(":")
 		firmwares = []
 		module_types = []
@@ -837,6 +841,21 @@ def controller_configuration(commandnmbr, arg):
 		message_out = "\n".join(message_out)
 		send(chr(commandnmbr) + chr(level1) + message_out)
 
+	if level1 == commands.ACQUIRE_MODULE_INFORMATION:
+		simulink_status = subprocess.run(["systemctl", "is-active", "go-simulink"], stdout=subprocess.PIPE, text=True)
+		nodered_status = subprocess.run(["systemctl", "is-active", "nodered"], stdout=subprocess.PIPE, text=True)
+		simulink_status = simulink_status.stdout
+		nodered_status = nodered_status.stdout
+		subprocess.run(["systemctl", "stop", "go-simulink"])
+		subprocess.run(["systemctl", "stop", "nodered"])
+		subprocess.run(["node", "/usr/node-red-gocontroll/nodes/module-info-gathering.js"])	
+		if simulink_status is "active":
+			subprocess.run(["systemctl", "start", "go-simulink"])
+		if nodered_status is "active":
+			subprocess.run(["systemctl", "start", "nodered"])
+		send(chr(commandnmbr) + chr(level1) + "done")
+
+		
 ##########################################################################################
 
 #module settings
@@ -863,8 +882,25 @@ def module_settings(commandnmbr, arg):
 		
 
 	if level1 == commands.SET_NEW_FIRMWARE:
-		new_firmware = arg.split(":")[0]
-
+		matching_modules = []
+		new_firmware = arg
+		with open("/usr/module-firmware/modules.txt", "r") as modules:
+			info = modules.readline().split(":")
+		module_hw_code = "-".join(new_firmware.split("-")[0:4])
+		new_firmware_version = "-".join(new_firmware.split("-")[-3:]).split(".")[0]
+		for i, mod in enumerate(info):
+			if module_hw_code in mod:
+				if new_firmware_version not in mod:
+					matching_modules.append(i+1)
+		number_of_updates = len(matching_modules)
+		if number_of_updates > 0:
+			for i, slot in enumerate(matching_modules):
+				send(chr(commandnmbr) + chr(level1) + str(i+1) + ":" + str(number_of_updates))
+				stdout = subprocess.run(["node", "/usr/node-red-gocontroll/nodes/upload-new-module-firmware.js", str(slot), new_firmware], stdout=subprocess.PIPE, text=True)
+				print(stdout.stdout)
+			send(chr(commandnmbr) + chr(level1) + "255:255")
+		else:
+			send(chr(commandnmbr) + chr(level1) + "0:0")
 		
 ##########################################################################################
 
