@@ -8,8 +8,20 @@ const moduleFirmwareLocation = "/usr/module-firmware/"
 const BOOTMESSAGELENGTH = 46
 const SPISPEED = 2000000;
 
-var newHwVersion = Buffer.alloc(4)
-var newSwVersion = Buffer.alloc(3)
+var controllerType, hardwareFile;
+try {
+    hardwareFile = fs.readFileSync("/sys/firmware/devicetree/base/hardware", "utf-8");
+} catch(err) {
+console.error(err);
+}
+if (hardwareFile.includes("Moduline IV")) {
+    controllerType = "IV"
+} else if (hardwareFile.includes("Moduline Mini")) {
+    controllerType = "mini"
+}
+
+var newHwVersion = new Array(4)
+var newSwVersion = new Array(3)
 
 const newFirmwareArray = newFirmware.split(".")[0].split("-");
 
@@ -22,8 +34,6 @@ newSwVersion[0] = newFirmwareArray[4]
 newSwVersion[1] = newFirmwareArray[5]
 newSwVersion[2] = newFirmwareArray[6]
 
-
-var controllerType;
 var sendBuffer = Buffer.alloc(BOOTMESSAGELENGTH+5); 
 var	receiveBuffer = Buffer.alloc(BOOTMESSAGELENGTH+5);
 
@@ -91,7 +101,7 @@ switch(controllerType)
 SendDummyByte();
 
 function SendDummyByte(){
-		
+	console.log("sending dummy byte");
     /*Send dummy message to setup the SPI bus properly */
     const dummy = spi.open(sL,sB, (err) => {
         
@@ -115,13 +125,16 @@ function Module_StartReset (){
 }
 
 function Module_StopReset (){
-    InputModule_Reset(0);	
+    Module_Reset(0);	
     /*After reset, give the module some time to boot */
     /*Next step is to check for new available firmware */
     checkFirmwareTimeout = setTimeout(Module_CheckFirmwareVersion, 100);
 }
 
 function Module_CheckFirmwareVersion(){
+    var hwVersion = new Array(4)
+    var swVersion = new Array(3)
+    console.log("checking firmware")
 	/* Construct the firmware check message */ 
 	sendBuffer[0] = 9;
 	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
@@ -135,28 +148,35 @@ function Module_CheckFirmwareVersion(){
         firmware.transfer(bootMessage, (err, bootMessage) => {
 
             if(receiveBuffer[BOOTMESSAGELENGTH-1] != ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1)){
-            node.warn("Checksum from bootloader not correct");
+            console.log("Checksum from bootloader not correct");
             Module_CancelFirmwareUpload();
             return;
             }
             else if(	receiveBuffer[0] != 9 || receiveBuffer[2] != 9){
-            node.warn("Wrong response from bootloader");
+            console.log("Wrong response from bootloader");
             Module_CancelFirmwareUpload();
             return;
             }
             
             /* Still here so extract current firmware*/
-            hwVersion[0] = receiveBuffer[6];
-            hwVersion[1] = receiveBuffer[7];
-            hwVersion[2] = receiveBuffer[8];
-            hwVersion[3] = receiveBuffer[9];
+            hwVersion[0] = String(receiveBuffer[6]);
+            hwVersion[1] = String(receiveBuffer[7]);
+            hwVersion[2] = String(receiveBuffer[8]);
+            hwVersion[3] = String(receiveBuffer[9]);
             
-            swVersion[4] = receiveBuffer[10];
-            swVersion[5] = receiveBuffer[11];
-            swVersion[6] = receiveBuffer[12];
+            swVersion[0] = String(receiveBuffer[10]);
+            swVersion[1] = String(receiveBuffer[11]);
+            swVersion[2] = String(receiveBuffer[12]);
+
+            console.log("on module: " + hwVersion.join("-") + "-" + swVersion.join("-"))
+            console.log("to upload: " + newHwVersion.join("-") + "-" + newSwVersion.join("-"))
+            console.log("hardware matches? " + ArrayEquals(hwVersion, newHwVersion))
+            console.log("firmware is different? " + !ArrayEquals(swVersion, newSwVersion))
             if (ArrayEquals(hwVersion, newHwVersion) && !ArrayEquals(swVersion, newSwVersion)) {
+                console.log("announcing firmware upload to module")
                 Module_AnnounceFirmwareUpload();
             } else {
+                console.log("invalid update detected")
                 Module_CancelFirmwareUpload();
             }
         });
@@ -194,7 +214,6 @@ sendBuffer[BOOTMESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, BOOTMESSAGELENG
     cancel.transfer(bootMessage, (err, bootMessage) => {
     cancel.close(err =>{});});
     /* At this point, The module can be initialized */
-    //initializeTimeout = setTimeout(InputModule_Initialize, 600);
     });
 
 }
@@ -215,9 +234,9 @@ sendBuffer[0] = 29;
 sendBuffer[1] = BOOTMESSAGELENGTH-1; 
 sendBuffer[2] = 29;
 
-sendBuffer[6] = swVersionAvailable[0];
-sendBuffer[7] = swVersionAvailable[1];
-sendBuffer[8] = swVersionAvailable[2];
+sendBuffer[6] = parseInt(newSwVersion[0]);
+sendBuffer[7] = parseInt(newSwVersion[1]);
+sendBuffer[8] = parseInt(newSwVersion[2]);
 
 sendBuffer[BOOTMESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
 
@@ -246,35 +265,32 @@ sendBuffer[BOOTMESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, BOOTMESSAGELENG
 **
 ****************************************************************************************/
 function Module_FirmwareUpload(){
-var checksumCalculated = new Uint8Array(1);
-var sendbufferPointer;
-var messagePointer;
+    var checksumCalculated = new Uint8Array(1);
+    var sendbufferPointer;
+    var messagePointer;
 
     fs.readFile(moduleFirmwareLocation + newFirmware, function(err, code){
 
-    if (err) {
-        //node.warn("Error opening firmware file");
-        //node.status({fill:"red",shape:"dot",text:"Error opening firmware file"});
-        throw err;
-    }
+        if (err) {
+            //node.warn("Error opening firmware file");
+            //node.status({fill:"red",shape:"dot",text:"Error opening firmware file"});
+            throw err;
+        }
 
-    var str = code.toString();
-    var line = str.split('\n');
-    var lineNumber = 0;
-    
-    
-    if(!(line.length > 1))
-    {
-    //node.warn("Firmware file corrupt");
-    //node.status({fill:"red",shape:"dot",text:"Firmware file corrupt"});
-    //initializeTimeout = setTimeout(InputModule_Initialize, 600);
-    return;
-    }
+        var str = code.toString();
+        var line = str.split('\n');
+        var lineNumber = 0;
+        
+        
+        if(!(line.length > 1)) {
+            //node.warn("Firmware file corrupt");
+            //node.status({fill:"red",shape:"dot",text:"Firmware file corrupt"});
+            //initializeTimeout = setTimeout(InputModule_Initialize, 600);
+            return;
+        }
 
         const firmware = spi.open(sL,sB, (err) => {
             Module_SendFirmwareData();
-
-
 
             function Module_SendFirmwareData(){
         
@@ -315,21 +331,20 @@ var messagePointer;
                 /* calculate checksum */
                 sendBuffer[BOOTMESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
 
-                    firmware.transfer(bootMessage, (err, bootMessage) => {
+                firmware.transfer(bootMessage, (err, bootMessage) => {
 
-                    });
+                });
 
-                    if(messageType == 7){
+                if(messageType == 7){
                     firmware.close(err =>{});
                     //node.warn("Firmware from input module on slot: "+moduleSlot+" updated! Now restarting module!");
                     /* At this point, the module can be restarted to check if it provides the new installed firmware */
-                    Module_StartReset();
+                    //Module_StartReset();
+                    //TODO moet de module hier het initialisatie script aanroepen?
                     return;
-                    }
-                    else
-                    {
+                } else {
                     getFirmwareStatusTimeout = setTimeout(Module_GetFirmwareStatus, 3);
-                    }
+                }
             }
                 
                 
@@ -352,7 +367,7 @@ var messagePointer;
             /* calculate checksum */
             sendBuffer[BOOTMESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
             
-                firmware.transfer(bootMessage, (err, bootMessage) => {
+            firmware.transfer(bootMessage, (err, bootMessage) => {
 
                 if(receiveBuffer[BOOTMESSAGELENGTH-1] === ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1))
                 {
@@ -394,7 +409,7 @@ var messagePointer;
                         
                 sendFirmwareDataTimeout = setTimeout(Module_SendFirmwareData, 2);
 
-                });
+            });
 
             }
         });

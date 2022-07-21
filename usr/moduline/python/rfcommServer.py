@@ -16,7 +16,6 @@ import netifaces as ni
 import serial
 from multiprocessing import Process
 import multiprocessing
-import json
 import glob
 from packaging import version
 import signal
@@ -815,9 +814,9 @@ def controller_configuration(commandnmbr, arg):
 	arg = arg[1:]
 
 	if level1 == commands.INIT_CONTROLLER_CONFIGURATION:
-		with open("/etc/modules.json") as j:
-			info = json.load(j)
-		modules = info.values()
+		with open("/usr/module-firmware/modules.txt", "r") as modules:
+			info = modules.readline()
+		modules = info.split(":")
 		firmwares = []
 		module_types = []
 		module_hw_versions = []
@@ -851,10 +850,9 @@ def module_settings(commandnmbr, arg):
 		mod_slot = mod_type[1]
 		mod_type = mod_type[0]
 		available_firmwares = glob.glob("/usr/module-firmware/" + mod_type + "*.srec")
-		with open("/etc/modules.json") as j:
-			info = json.load(j)
-		modules = list(info.values())
-		current_firmware = modules[int(mod_slot)-1][1]
+		with open("/usr/module-firmware/modules.txt", "r") as modules:
+			info = modules.readline().split(":")
+		current_firmware = info[int(mod_slot)-1]
 		current_firmware = ".".join(current_firmware.split("-")[-3:])
 		for i,firmware in enumerate(available_firmwares):
 			firmware = firmware.split(".")[0]
@@ -865,8 +863,8 @@ def module_settings(commandnmbr, arg):
 		
 
 	if level1 == commands.SET_NEW_FIRMWARE:
-		print("function needs to be redone")
-		#TODO new system
+		new_firmware = arg.split(":")[0]
+
 		
 ##########################################################################################
 

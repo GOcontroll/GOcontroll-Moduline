@@ -1,16 +1,22 @@
-//module.exports = function(RED) {
-//"use strict"
-
 const spi = require('spi-device');
 const fs = require('fs');
 
 const BOOTMESSAGELENGTH = 46;
-/* Assigned dynamically */
-var MESSAGELENGTH = 0;
 const SPISPEED = 2000000;
-const moduleFirmwareLocation = "/usr/module-firmware/";
+
 //check what type of controller?
-var controllerType = "IV";
+var controllerType, hardwareFile;
+try {
+    hardwareFile = fs.readFileSync("/sys/firmware/devicetree/base/hardware", "utf-8");
+} catch(err) {
+console.error(err);
+}
+if (hardwareFile.includes("Moduline IV")) {
+    controllerType = "IV"
+} else if (hardwareFile.includes("Moduline Mini")) {
+    controllerType = "mini"
+}
+
 var sL, sB;
 var controllerLayout = new Array(8);
 
@@ -31,20 +37,18 @@ const dummyMessage = [{
     speedHz: SPISPEED
 }]
 
-var spiReady = false;
 var currentSlot = 1;
 var amountOfSlots;
 
 recursionFunc();
 
-
+/*this function get recursively called to keep this process synchronous*/
 function recursionFunc() {
-/*Different controllers have different spi bus to module slot layouts*/
-switch(controllerType)
-{
-    case "IV":
-        amountOfSlots = 8;
-//        for (var moduleSlot = 1; moduleSlot <9; moduleSlot++){
+    /*Different controllers have different spi bus to module slot layouts*/
+    switch(controllerType)
+    {
+        case "IV":
+            amountOfSlots = 8;
             switch(currentSlot)
             {
             case 1: sL = 1; sB = 0;    break;
@@ -57,10 +61,9 @@ switch(controllerType)
             case 8: sL = 0; sB = 1;    break;
             }
             SendDummyByte(sL, sB, currentSlot);
-//        };
-        break;
-    case "mini":
-        for (var moduleSlot = 1; moduleSlot <5; moduleSlot++){
+            break;
+        case "mini":
+            amountOfSlots = 4;
             switch(moduleSlot)
             {
                 case 1: sL = 2; sB=0; break;
@@ -68,21 +71,20 @@ switch(controllerType)
                 case 3: sL = 1; sB=0; break;
                 case 4: sL = 1; sB=1; break;
             }
-        };
-        break;
-    case "dash?":
-        for (var moduleSlot = 1; moduleSlot <3; moduleSlot++){
+            SendDummyByte(sL, sB, currentSlot);
+            break;
+        case "dash?":
             switch(moduleSlot)
             {
                 case 1: sL = 2; sB=0; break;
                 case 2: sL = 2; sB=1; break;
             }
-        };
-        break;
-    default:
-        break;
+            SendDummyByte(sL, sB, currentSlot);
+            break;
+        default:
+            break;
 
-}
+    }
 }
 
 function SendDummyByte(bus, dev, moduleSlot){
@@ -93,44 +95,24 @@ function SendDummyByte(bus, dev, moduleSlot){
     dummy.transfer(dummyMessage, (err, dummyMessage) => {
     dummy.close(err =>{});
     
-    
-    /* Here we start the reset routine */
-    // sleep(50).then(() => {
-    //     Module_StartReset(bus,dev,moduleSlot)
-    // });
-    //await new Promise(r => setTimeout(r, 50));
     resetTimeout = setTimeout(Module_StartReset, 50, bus, dev, moduleSlot);
-    //await Module_StartReset(bus, dev, moduleSlot);
     });
 
     });
-    //return;
 }
 
 function Module_StartReset (bus, dev, moduleSlot){
 	/*Start module reset */
 	Module_Reset(1, moduleSlot);
 	/*Give a certain timeout so module is reset properly*/
-    // sleep(200).then(() => {
-    //     Module_StopReset(bus,dev,moduleSlot)
-    // });
-
-    //await new Promise(r => setTimeout(r, 200));
 	resetTimeout = setTimeout(Module_StopReset, 200, bus, dev, moduleSlot);
-    //await Module_StopReset(bus, dev, moduleSlot);
-
-    //return;
 }
 
 function Module_StopReset (bus, dev, moduleSlot){
     Module_Reset(0, moduleSlot);	
     /*After reset, give the module some time to boot */
     /*Next step is to check for new available firmware */
-    //await new Promise(r => setTimeout(r, 50));
     checkFirmwareTimeout = setTimeout(Module_CheckFirmwareVersion, 100, bus, dev, moduleSlot);
-    //await Module_CheckFirmwareVersion(bus, dev, moduleSlot);
-
-    //return;
 }
 
 function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
@@ -139,11 +121,9 @@ function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
 	sendBuffer[0] = 9;
 	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 	sendBuffer[2] = 9;
-
+    console.log(moduleSlot)
 	/* calculate checksum */
 	sendBuffer[BOOTMESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
-
-    console.log(moduleSlot);
 
     const firmware = spi.open(bus,dev, (err) => {
         /* Only in this scope, receive buffer is available */
@@ -151,19 +131,14 @@ function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
 
 
             if(receiveBuffer[BOOTMESSAGELENGTH-1] != ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1)){
-                console.log("faulty checksum " + receiveBuffer[BOOTMESSAGELENGTH -1] + " should be " + ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1));
-                console.log(receiveBuffer)
-            //node.warn("Checksum from bootloader not correct");
-            Module_CancelFirmwareUpload(bus, dev);
-            return;
+                Module_CancelFirmwareUpload(bus, dev);
+                return;
             }
             else if(	receiveBuffer[0] != 9 || receiveBuffer[2] != 9){
-                console.log("incorrect response");
-            //node.warn("Wrong response from bootloader");
-            Module_CancelFirmwareUpload(bus, dev);
-            return;
+                Module_CancelFirmwareUpload(bus, dev);
+                return;
             }
-            console.log(receiveBuffer);
+
             /* Still here so extract current firmware*/
             swVersion[0] = String(receiveBuffer[6]);
             swVersion[1] = String(receiveBuffer[7]);
@@ -176,30 +151,29 @@ function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
 
             console.log(swVersion);
             firmwareName = swVersion.join("-");
-
-            controllerLayout[moduleSlot] = firmwareName;
-
-            console.log(controllerLayout.join(":"));
+            controllerLayout[moduleSlot-1] = firmwareName;
         });
     });
-    //return;
     currentSlot++;
-    if (currentSlot > amountOfSlots) {
-        console.log("finished")
-    } else {
+    if (currentSlot <= amountOfSlots) {
         recursionTimeout = setTimeout(recursionFunc, 200);
+    } else {
+        fs.writeFile('/usr/module-firmware/modules.txt', controllerLayout.join(":"), err => {
+            if (err) {
+                console.error(err);
+            }
+        });
     }
-    //return;
 }
 
 function ChecksumCalculator(array, length)
 	{
 	var pointer = 0;
 	var checkSum = 0;
-		for (pointer = 0; pointer<length; pointer++)
-		{
-		checkSum += array[pointer];
-		}
+    for (pointer = 0; pointer<length; pointer++)
+    {
+        checkSum += array[pointer];
+    }
 	return (checkSum&255);	
 	}
 
@@ -215,9 +189,7 @@ function Module_CancelFirmwareUpload(bus, dev){
     cancel.transfer(bootMessage, (err, bootMessage) => {
     cancel.close(err =>{});});
     /* At this point, The module can be initialized */
-    //initializeTimeout = setTimeout(InputModule_Initialize, 600);
     });
-    //return;
 }
     
 
@@ -231,4 +203,3 @@ function Module_Reset(state, moduleSlot){
     fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
     }
 }
-//}
