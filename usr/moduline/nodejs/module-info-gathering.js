@@ -121,7 +121,6 @@ function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
 	sendBuffer[0] = 9;
 	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
 	sendBuffer[2] = 9;
-    console.log(moduleSlot)
 	/* calculate checksum */
 	sendBuffer[BOOTMESSAGELENGTH-1] = ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
 
@@ -135,6 +134,7 @@ function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
                 return;
             }
             else if(	receiveBuffer[0] != 9 || receiveBuffer[2] != 9){
+                // console.log("incorrect response" + receiveBuffer)
                 Module_CancelFirmwareUpload(bus, dev);
                 return;
             }
@@ -149,20 +149,16 @@ function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
             swVersion[5] = String(receiveBuffer[11]);
             swVersion[6] = String(receiveBuffer[12]);
 
-            console.log(swVersion);
             firmwareName = swVersion.join("-");
             controllerLayout[moduleSlot-1] = firmwareName;
+            // console.log(controllerLayout)
         });
     });
     currentSlot++;
     if (currentSlot <= amountOfSlots) {
         recursionTimeout = setTimeout(recursionFunc, 200);
     } else {
-        fs.writeFile('/usr/module-firmware/modules.txt', controllerLayout.join(":"), err => {
-            if (err) {
-                console.error(err);
-            }
-        });
+        writeFileTimeout = setTimeout(Write_File, 200)
     }
 }
 
@@ -202,4 +198,13 @@ function Module_Reset(state, moduleSlot){
     {
     fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
     }
+}
+
+function Write_File() {
+    // console.log(controllerLayout)
+    fs.writeFile('/usr/module-firmware/modules.txt', controllerLayout.join(":"), err => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }

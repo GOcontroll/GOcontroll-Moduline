@@ -102,7 +102,6 @@ switch(controllerType)
 SendDummyByte();
 
 function SendDummyByte(){
-	console.log("sending dummy byte");
     /*Send dummy message to setup the SPI bus properly */
     const dummy = spi.open(sL,sB, (err) => {
         
@@ -135,7 +134,6 @@ function Module_StopReset (){
 function Module_CheckFirmwareVersion(){
     var hwVersion = new Array(4)
     var swVersion = new Array(3)
-    console.log("checking firmware")
 	/* Construct the firmware check message */ 
 	sendBuffer[0] = 9;
 	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
@@ -288,6 +286,7 @@ function Module_FirmwareUpload(){
         if (err) {
             //node.warn("Error opening firmware file");
             //node.status({fill:"red",shape:"dot",text:"Error opening firmware file"});
+            console.log("error: unable to open firmware file")
             throw err;
         }
 
@@ -300,6 +299,7 @@ function Module_FirmwareUpload(){
             //node.warn("Firmware file corrupt");
             //node.status({fill:"red",shape:"dot",text:"Firmware file corrupt"});
             //initializeTimeout = setTimeout(InputModule_Initialize, 600);
+            console.log("error: Firmware file corrupt")
             return;
         }
 
@@ -409,6 +409,7 @@ function Module_FirmwareUpload(){
                                 if(firmwareErrorCounter > 5)
                                 {
                                 //node.warn("Firmware checksum for input module on slot: "+moduleSlot+", error on line : "+lineNumber+" , 5 times! Stop firmware update!" );
+                                console.log("error: checksum repeatedly didn't match during firmware upload")
                                 firmwareErrorCounter = 0;
                                 return;
                                 }

@@ -14,7 +14,7 @@ import os
 import zipfile
 import netifaces as ni
 import serial
-from multiprocessing import Process
+from multiprocessing import Process, Pool
 import multiprocessing
 import glob
 from packaging import version
@@ -848,10 +848,10 @@ def controller_configuration(commandnmbr, arg):
 		nodered_status = nodered_status.stdout
 		subprocess.run(["systemctl", "stop", "go-simulink"])
 		subprocess.run(["systemctl", "stop", "nodered"])
-		subprocess.run(["node", "/usr/node-red-gocontroll/nodes/module-info-gathering.js"])	
-		if simulink_status is "active":
+		subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])	
+		if not "in" in simulink_status:
 			subprocess.run(["systemctl", "start", "go-simulink"])
-		if nodered_status is "active":
+		if not "in" in nodered_status:
 			subprocess.run(["systemctl", "start", "nodered"])
 		send(chr(commandnmbr) + chr(level1) + "done")
 
@@ -882,6 +882,13 @@ def module_settings(commandnmbr, arg):
 		
 
 	if level1 == commands.SET_NEW_FIRMWARE:
+		simulink_status = subprocess.run(["systemctl", "is-active", "go-simulink"], stdout=subprocess.PIPE, text=True)
+		nodered_status = subprocess.run(["systemctl", "is-active", "nodered"], stdout=subprocess.PIPE, text=True)
+		simulink_status = simulink_status.stdout
+		nodered_status = nodered_status.stdout
+		subprocess.run(["systemctl", "stop", "go-simulink"])
+		subprocess.run(["systemctl", "stop", "nodered"])
+		error_array = []
 		matching_modules = []
 		new_firmware = arg
 		with open("/usr/module-firmware/modules.txt", "r") as modules:
@@ -891,16 +898,31 @@ def module_settings(commandnmbr, arg):
 		for i, mod in enumerate(info):
 			if module_hw_code in mod:
 				if new_firmware_version not in mod:
-					matching_modules.append(i+1)
+					matching_modules.append([i+1,new_firmware])
 		number_of_updates = len(matching_modules)
 		if number_of_updates > 0:
-			for i, slot in enumerate(matching_modules):
-				send(chr(commandnmbr) + chr(level1) + str(i+1) + ":" + str(number_of_updates))
-				stdout = subprocess.run(["node", "/usr/node-red-gocontroll/nodes/upload-new-module-firmware.js", str(slot), new_firmware], stdout=subprocess.PIPE, text=True)
-				print(stdout.stdout)
-			send(chr(commandnmbr) + chr(level1) + "255:255")
+			with Pool() as p:
+				results = p.map(upload_firmware, matching_modules)
+				# print(results)
+			for result in results:
+				if "error" in result[1]:
+					error_array.append(":".join(result))
+			if len(error_array)>0:
+				send(chr(commandnmbr) + chr(commands.ERROR_UPLOADING_FIRMWARE) + "\n".join(error_array))
+			else:
+				send(chr(commandnmbr) + chr(commands.NEW_FIRMWARE_UPLOAD_COMPLETE) + "done")
 		else:
-			send(chr(commandnmbr) + chr(level1) + "0:0")
+			send(chr(commandnmbr) + chr(commands.NO_MODULES_TO_UPDATE) + "cancelled")
+		if not "in" in simulink_status:
+			subprocess.run(["systemctl", "start", "go-simulink"])
+		if not "in" in nodered_status:
+			subprocess.run(["systemctl", "start", "nodered"])
+
+def upload_firmware(args):
+	slot = args[0]
+	new_firmware = args[1]
+	stdout = subprocess.run(["node", "/usr/moduline/nodejs/upload-new-module-firmware.js", str(slot), new_firmware], stdout=subprocess.PIPE, text=True)
+	return [slot, stdout.stdout]
 		
 ##########################################################################################
 
