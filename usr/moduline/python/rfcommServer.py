@@ -820,7 +820,7 @@ def controller_configuration(commandnmbr, arg):
 		except FileNotFoundError:
 			send(chr(commandnmbr) + chr(level1) + "-\n") 
 			return
-		modules = info.split(":")
+		modules = info.split("\n")[0].split(":")
 		firmwares = []
 		module_types = []
 		module_hw_versions = []
@@ -833,8 +833,9 @@ def controller_configuration(commandnmbr, arg):
 			else:
 				module_types.append("-")
 				module_hw_versions.append("-")
+				firmwares.append("-")
 		message_out = []
-		firmwares = list(dict.fromkeys(firmwares))
+		# firmwares = list(dict.fromkeys(firmwares))
 		message_out.append(":".join(firmwares))
 		message_out.append(":".join(module_types))
 		message_out.append(":".join(module_hw_versions))
@@ -906,7 +907,7 @@ def module_settings(commandnmbr, arg):
 				# print(results)
 			for result in results:
 				if "error" in result[1]:
-					error_array.append(":".join(result))
+					error_array.append(f"{result[0]}:{result[1][:-1]}")
 			if len(error_array)>0:
 				send(chr(commandnmbr) + chr(commands.ERROR_UPLOADING_FIRMWARE) + "\n".join(error_array))
 			else:
