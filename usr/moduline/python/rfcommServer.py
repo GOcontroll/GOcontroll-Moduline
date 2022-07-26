@@ -39,18 +39,14 @@ def get_line(path, search_term):
 		return False
 
 #checks if the controller is connected to the internet
-def check_connection(timeout):
-	try:
-		requests.head("https://www.github.com/", timeout=timeout)
-		return True
-	except:
-		try:
-			print("could not reach github, trying google.")
-			requests.head("https://www.google.com/", timeout=timeout)
-			return True
-		except:
-			print("could not reach google either.")
-			return False
+def check_connection(timeout=0.5):
+	stdout = subprocess.run(["timeout", "-k", str(timeout), str(timeout), "ping", "google.com"], stdout=subprocess.PIPE, text=True)
+	if not bool(stdout.stdout):
+		print(f"google was not reached{stdout.stdout}")
+		stdout = subprocess.run(["timeout", "-k", str(timeout), str(timeout), "ping", "github.com"], stdout=subprocess.PIPE, text=True)
+		print(f"second test {stdout.stdout}")
+		return bool(stdout.stdout)
+	return bool(stdout.stdout)
 	
 
 #thread that makes a led fade in and out in the colour blue
@@ -98,16 +94,27 @@ def status_led_gocontroll():
 #handles device verification
 
 def verify_device(commandnmbr, arg):
-	global trust_device
-	with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
-		passkey = trusted_devices.readline()
-	if (passkey[:-1] == arg):
-		trust_device = True
-		with open("/etc/bluetooth/trusted_devices.txt", "a") as add_trusted_device:
-			add_trusted_device.write(s.client_address + "\n")
-		request_verification(commands.DEVICE_VERIFICATION_SUCCESS)
-	else:
-		request_verification(commands.DEVICE_VERIFICATION_INCORRECT_PASSKEY)
+	level1 = ord(arg[0])
+	arg = arg[1:]
+	if (level1 == commands.DEVICE_VERIFICATION_ATTEMPT):
+		global trust_device
+		with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
+			passkey = trusted_devices.readline()
+		if (passkey[:-1] == arg.split(":")[0]):
+			trust_device = True
+			with open("/etc/bluetooth/trusted_devices.txt", "a") as add_trusted_device:
+				add_trusted_device.write(arg.split(":")[1] + "\n")
+			request_verification(commands.DEVICE_VERIFICATION_SUCCESS)
+		else:
+			request_verification(commands.DEVICE_VERIFICATION_INCORRECT_PASSKEY)
+
+	
+	elif (level1 == commands.DEVICE_VERIFICATION_EXCHANGE_KEY):
+		with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
+			if (trusted_devices.read().find(arg) != -1):
+				trust_device = True
+			else:
+				request_verification(commands.DEVICE_VERIFICATION_MISSING)
 
 #part of the verification structure but is called from multiple places
 def request_verification(char):
@@ -127,7 +134,7 @@ def update_controller(commandnmbr, arg):
 			current_release = file.read()
 		if current_release[-1] == "\n":
 			current_release = current_release[:-1]
-		if (check_connection(1)):
+		if (check_connection(0.2)):
 			with open("/etc/bluetooth/accesstoken.txt", "r") as file:
 				token = file.read()
 			try:
@@ -265,7 +272,7 @@ def ethernet_settings(commandnmbr, arg):
 
 	#get the information for the ethernet settings screen
 	if level1 == commands.INIT_ETHERNET_SETTINGS:
-		connection_status = str(check_connection(1))
+		connection_status = str(check_connection(0.2))
 		stdout = subprocess.run(["nmcli", "con"], stdout=subprocess.PIPE, text=True)
 		result = stdout.stdout
 		result = result.split("\n")
@@ -323,7 +330,7 @@ def wireless_settings(commandnmbr, arg):
 	if level1 == commands.INIT_WIRELESS_SETTINGS:
 		out = subprocess.run(["nmcli", "d", "s"], stdout=subprocess.PIPE, text=True)
 		status = out.stdout[:-1]
-		connection_status = str(check_connection(1))
+		connection_status = str(check_connection(0.2))
 		try:
 			ip = ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
 		except KeyError:
@@ -567,7 +574,7 @@ def wwan_settings(commandnmbr, arg):
 
 	#initialize the screen for the user
 	if level1 == commands.INIT_WWAN_SETTINGS:
-		net_status = [str(check_connection(1))]
+		net_status = [str(check_connection(0.2))]
 		mmcli_info = ["Info not available"]
 		sim_number = ["Info not available"]
 		pin=["-"]
@@ -943,10 +950,11 @@ def request_enabled_features(commandnmbr, arg):
 
 
 	elif level1 == commands.FEATURES_APROVED:
-		if fe.UPDATE_CONTROLLER and trust_device:
-			update_controller(commands.UPDATE_CONTROLLER, chr(commands.CHECK_FOR_UPDATE))
-		elif not trust_device:
-			request_verification(commands.DEVICE_VERIFICATION_MISSING)
+		send(chr(commands.VERIFY_DEVICE) + chr(commands.DEVICE_VERIFICATION_EXCHANGE_KEY))
+		# if fe.UPDATE_CONTROLLER and trust_device:
+		# 	update_controller(commands.UPDATE_CONTROLLER, chr(commands.CHECK_FOR_UPDATE))
+		# elif not trust_device:
+		# 	request_verification(commands.DEVICE_VERIFICATION_MISSING)
 		
 ##########################################################################################
 
@@ -1041,7 +1049,7 @@ def data_received(data):
 	global trust_device
 	global transfer_mode
 	first_byte = data[0]
-	if (trust_device or first_byte == commands.VERIFY_DEVICE):
+	if (trust_device or first_byte == commands.VERIFY_DEVICE or first_byte == commands.REQUEST_ENABLED_FEATURES):
 		if transfer_mode == "command":
 			print(data)
 			data = data[1:]
@@ -1051,7 +1059,7 @@ def data_received(data):
 		elif fe.FILE_TRANSFER:
 			receive_zip(data)
 	else:
-		request_verification(commands.DEVICE_VERIFICATION_MISSING)
+		send(chr(commands.VERIFY_DEVICE) + chr(commands.DEVICE_VERIFICATION_EXCHANGE_KEY))
 
 #function that gets called when a device connects to the server
 def when_client_connects():
@@ -1073,9 +1081,9 @@ def when_client_connects():
 	trust_device = False
 	connected_client = s.client_address
 	print("connected to: " + connected_client)
-	with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
-		if (trusted_devices.read().find(connected_client) != -1):
-			trust_device = True
+	# with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
+	# 	if (trusted_devices.read().find(connected_client) != -1):
+	# 		trust_device = True
 	request_enabled_features(commands.REQUEST_ENABLED_FEATURES, chr(commands.INIT_FEATURES))
 
 #function that gets called when a device disconnects from the server
