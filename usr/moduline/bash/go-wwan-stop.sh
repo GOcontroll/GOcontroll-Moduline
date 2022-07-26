@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Delete connection descriptor
-nmcli connection delete GO-celular
+# nmcli connection delete GO-celular
 
 # WANN functionality is not claiming the supply anymore so set property
 filename=/usr/moduline/moduline.properties

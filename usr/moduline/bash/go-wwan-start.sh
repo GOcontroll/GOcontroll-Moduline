@@ -50,7 +50,7 @@ else
 fi
 
 # Create connection descriptor
-nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
+# nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
 
 # Helpfull commands:
 # Get connection status --> nmcli device status

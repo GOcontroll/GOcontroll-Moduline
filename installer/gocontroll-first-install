@@ -25,6 +25,9 @@ echo -e "${YELLOW}-Git is not yet installed so let's install first ${NORMAL}"
 apt -y install git 
 fi
 
+echo -e "${YELLOW}-Update debian ${NORMAL}"
+apt-get update -y
+
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
 
@@ -89,6 +92,8 @@ chmod 555 /usr/moduline/bash/go-gps-start.sh
 chmod 555 /usr/moduline/bash/go-gps-stop.sh
 chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/nodejs/upload_server.js
+chmod 555 /usr/moduline/nodejs/module-info-gathering.js
+chmod 555 /usr/moduline/nodejs/upload-new-module-firmware.js
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
@@ -142,5 +147,12 @@ systemctl start go-upload-server
 
 echo -e "${YELLOW}-Set time zone ${NORMAL}"
 timedatectl set-timezone Europe/Luxembourg
+
+if [ ! -f "/etc/NetworkManage/system-connections/GO-celular.nmconnection" ]
+then
+	nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
+fi
+
+python3 /usr/moduline/python/installModuleFirmware.py
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
