@@ -39,7 +39,7 @@ def get_line(path, search_term):
 		return False
 
 #checks if the controller is connected to the internet
-def check_connection(timeout=0.5):
+def check_connection(timeout=1):
 	stdout = subprocess.run(["timeout", "-k", str(timeout), str(timeout), "ping", "google.com"], stdout=subprocess.PIPE, text=True)
 	if not bool(stdout.stdout):
 		print(f"google was not reached{stdout.stdout}")
@@ -134,7 +134,7 @@ def update_controller(commandnmbr, arg):
 			current_release = file.read()
 		if current_release[-1] == "\n":
 			current_release = current_release[:-1]
-		if (check_connection(0.2)):
+		if (check_connection(0.5)):
 			with open("/etc/bluetooth/accesstoken.txt", "r") as file:
 				token = file.read()
 			try:
@@ -272,7 +272,7 @@ def ethernet_settings(commandnmbr, arg):
 
 	#get the information for the ethernet settings screen
 	if level1 == commands.INIT_ETHERNET_SETTINGS:
-		connection_status = str(check_connection(0.2))
+		connection_status = str(check_connection(0.5))
 		stdout = subprocess.run(["nmcli", "con"], stdout=subprocess.PIPE, text=True)
 		result = stdout.stdout
 		result = result.split("\n")
@@ -330,7 +330,7 @@ def wireless_settings(commandnmbr, arg):
 	if level1 == commands.INIT_WIRELESS_SETTINGS:
 		out = subprocess.run(["nmcli", "d", "s"], stdout=subprocess.PIPE, text=True)
 		status = out.stdout[:-1]
-		connection_status = str(check_connection(0.2))
+		connection_status = str(check_connection(0.5))
 		try:
 			ip = ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
 		except KeyError:
@@ -354,16 +354,23 @@ def wireless_settings(commandnmbr, arg):
 				networks.pop(i)
 			elif networks[i][1]=="": #if this is true the current index contains a network with no name
 				networks.pop(i)
+			elif len(networks[i]) > 8:
+				if networks[i][7]=="":
+					networks.pop(i)
+				else:
+					networks[i] = [networks[i][0],networks[i][7],networks[i][11],networks[i][13]]
+					if networks[i][3] == "":
+						networks[i][3] = "No Security"
+					networks[i] = ":".join(networks[i])
 			else:
-				networks[i].pop(6)
-				networks[i].pop(4)
-				networks[i].pop(3)
-				networks[i].pop(2)
+				networks[i] = [networks[i][0],networks[i][1],networks[i][5],networks[i][7]]
 				if networks[i][3] == "":
 					networks[i][3] = "No Security"
 				networks[i] = ":".join(networks[i])
 			i -=1
+		networks.sort(reverse=True)
 		networks = "\n".join(networks)
+		print(repr(networks))
 		send(chr(commandnmbr) + chr(commands.GET_WIFI_NETWORKS) + networks)
 		return
 
@@ -574,7 +581,7 @@ def wwan_settings(commandnmbr, arg):
 
 	#initialize the screen for the user
 	if level1 == commands.INIT_WWAN_SETTINGS:
-		net_status = [str(check_connection(0.2))]
+		net_status = [str(check_connection(0.5))]
 		mmcli_info = ["Info not available"]
 		sim_number = ["Info not available"]
 		pin=["-"]
