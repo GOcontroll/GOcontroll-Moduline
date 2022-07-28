@@ -255,7 +255,7 @@ def check_for_file_reception():
 		file_timeout += 0.5
 		if kill_threads:
 			break
-	if transfer_mode is not "command":
+	if transfer_mode != "command":
 		send(chr(commands.FILE_TRANSFER) + chr(commands.NO_FILE_RECEIVED))
 		transfer_mode = "command"
 
