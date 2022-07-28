@@ -1073,7 +1073,7 @@ def when_client_connects():
 	with SMBus(2) as bus:
 		bus.write_i2c_block_data(address,23,[255])
 		bus.write_i2c_block_data(address,0,[64])
-		tf = threading.Thread(target=status_led_on)
+		tf = threading.Thread(target=status_led_gocontroll)
 		tf.start()
 	global trust_device
 	global transfer_mode
