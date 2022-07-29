@@ -378,7 +378,26 @@ def wireless_settings(commandnmbr, arg):
 	#show devices connected to the access point
 	#TODO implement
 	elif level1 == commands.GET_CONNECTED_DEVICES:
-		print("send connected devices")
+		final_device_list = []
+		stdout = subprocess.run(["ip", "n", "show", "dev", "wlan0"], stdout=subprocess.PIPE, text=True)
+		connected_devices = stdout.stdout.split("\n")
+		i = len(connected_devices) -1
+		for n in range(len(connected_devices)):
+			if "REACHABLE" not in connected_devices[i] and "DELAY" not in connected_devices[i]:
+				connected_devices.pop(i)
+			i -=1
+
+		stdout = subprocess.run(["cat", "/var/lib/misc/dnsmasq.leases"], stdout=subprocess.PIPE, text=True)
+		previous_connections = stdout.stdout.split("\n")[:-1]
+
+		for i, connected_device in enumerate(connected_devices):
+			connected_device_list = connected_device.split(" ")
+			for j, previous_connection in enumerate(previous_connections):
+				if connected_device_list[2] in previous_connection:
+					final_device_list.append(";".join([connected_device_list[2], previous_connection.split(" ")[3]]))
+
+		send(chr(commandnmbr) + chr(level1) + "\n".join(final_device_list))
+
 
 
 	#gather the information about the access point for the user
