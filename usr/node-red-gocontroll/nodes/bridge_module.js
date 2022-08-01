@@ -4,6 +4,8 @@ module.exports = function(RED) {
 	const spi = require('spi-device');
 	const fs = require('fs');
 	const fsp = require('fs/promises');
+
+	const BOOTMESSAGELENGTH = 46;
 	
 	const MESSAGELENGTH = 44;
 	const SPISPEED = 2000000;
@@ -52,6 +54,13 @@ module.exports = function(RED) {
 		/*Allocate memory for receive and send buffer */
 		var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
 		var	receiveBuffer = Buffer.alloc(MESSAGELENGTH+5);
+
+		const bootMessage = [{
+		sendBuffer, 
+		receiveBuffer,           
+		byteLength: BOOTMESSAGELENGTH+1,
+		speedHz: SPISPEED 
+		}];
 		
 		const normalMessage = [{
 		sendBuffer, 

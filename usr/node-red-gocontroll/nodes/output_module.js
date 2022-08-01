@@ -5,9 +5,10 @@ module.exports = function(RED) {
 	const fs = require('fs');
 	const fsp = require('fs/promises');
 
+	const BOOTMESSAGELENGTH = 46;
+
 	/* Assigned dynamically */
 	var MESSAGELENGTH 	= 0;
-	
 	const SPISPEED = 2000000;
 
 	
@@ -115,6 +116,13 @@ module.exports = function(RED) {
 		/*Allocate memory for receive and send buffer */
 		var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
 		var	receiveBuffer = Buffer.alloc(MESSAGELENGTH+5);
+
+		const bootMessage = [{
+		sendBuffer, 
+		receiveBuffer,           
+		byteLength: BOOTMESSAGELENGTH+1,
+		speedHz: SPISPEED 
+		}];
 		
 		const normalMessage = [{
 		sendBuffer, 
@@ -170,7 +178,7 @@ module.exports = function(RED) {
 			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
 			modulesArr = data.split(":");
 			firmware = "Firmware: " + modulesArr[moduleSlot-1];
-			InputModule_SendDummyByte(); 
+			OutputModule_SendDummyByte(); 
 			} catch (err) {
 				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
 			}
