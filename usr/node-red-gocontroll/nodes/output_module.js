@@ -3,11 +3,12 @@ module.exports = function(RED) {
 
 	const spi = require('spi-device');
 	const fs = require('fs');
-	
-	const BOOTMESSAGELENGTH = 46
+	const fsp = require('fs/promises');
+
+	const BOOTMESSAGELENGTH = 46;
+
 	/* Assigned dynamically */
 	var MESSAGELENGTH 	= 0;
-	
 	const SPISPEED = 2000000;
 
 	
@@ -16,17 +17,13 @@ module.exports = function(RED) {
 	   
 	   	var interval = null;
 		var node = this;
+		var modulesArr;
+		var firmware;
 		
-		const moduleFirmwareLocation = "/usr/module-firmware/";
 		
 		const moduleSlot = config.moduleSlot;
 		const moduleType = config.moduleType; 
 		const sampleTime = config.sampleTime;
-		
-		const moduleHwId1	= 20;
-		const moduleHwId2	= 20;
-		/* Assigned dynamically */
-		var moduleHwId3		= 0;
 	
 		var outputType = {};
 		outputType[0] = config.output1;
@@ -96,15 +93,6 @@ module.exports = function(RED) {
 		key[8] = config.key9;
 		key[9] = config.key10;
 		
-		var hwVersion = {};
-		var swVersion = {};
-		var swVersionAvailable = {};
-		
-		var firmwareFileName;
-		
-		var firmwareLineCheck = 0;
-		var firmwareErrorCounter = 0;
-		
 		/* Declarations for timeout handlers */
 		var resetTimeout;
 		var initializeTimeout;
@@ -119,18 +107,16 @@ module.exports = function(RED) {
 		/* Assign information according module type */
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
-			moduleHwId3 	= 2;
 			MESSAGELENGTH 	= 44;
 		/* In case 10 channel output module is selected */
 		}else{
-			moduleHwId3 	= 3;
 			MESSAGELENGTH 	= 49;
 		}
 		
 		/*Allocate memory for receive and send buffer */
 		var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
 		var	receiveBuffer = Buffer.alloc(MESSAGELENGTH+5);
-		
+
 		const bootMessage = [{
 		sendBuffer, 
 		receiveBuffer,           
@@ -172,7 +158,7 @@ module.exports = function(RED) {
 		}
 
 		/* Send dummy byte once so the master SPI is initialized properly */
-		OutputModule_SendDummyByte();
+		readFile();
 			
 		/* Start module reset and initialization proces */
 		/* The output module reset is started after dummty byte is send */
@@ -186,6 +172,17 @@ module.exports = function(RED) {
 			spiReady = true;
 			} 
 		});
+
+		async function readFile() {
+			try {
+			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+			modulesArr = data.split(":");
+			firmware = "Firmware: " + modulesArr[moduleSlot-1];
+			OutputModule_SendDummyByte(); 
+			} catch (err) {
+				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
+			}
+		}
 		
 		/***************************************************************************************
 		** \brief
@@ -211,7 +208,7 @@ module.exports = function(RED) {
 		
 			});
 		}
-		
+
 		/***************************************************************************************
 		** \brief
 		**
@@ -222,14 +219,14 @@ module.exports = function(RED) {
 		**
 		****************************************************************************************/
 		function OutputModule_StartReset (){
-		/*Start module reset */
-		OutputModule_Reset(1);
-		/*Give a certain timeout so module is reset properly*/
-		/*The stop of the reset is now called after the dummy is properly send */
-		resetTimeout = setTimeout(OutputModule_StopReset, 200);
+			/*Start module reset */
+			OutputModule_Reset(1);
+			/*Give a certain timeout so module is reset properly*/
+			/*The stop of the reset is now called after the dummy is properly send */
+			resetTimeout = setTimeout(OutputModule_StopReset, 200);
 		}
-			
-			
+				
+				
 		/***************************************************************************************
 		** \brief
 		**
@@ -240,101 +237,11 @@ module.exports = function(RED) {
 		**
 		****************************************************************************************/
 		function OutputModule_StopReset (){
-		OutputModule_Reset(0);
-		/*After reset, give the module some time to boot */
-		/*Next step is to check for new available firmware */
-		checkFirmwareTimeout = setTimeout(OutputModule_CheckFirmwareVersion, 100);
-		}	
-			
-	
-
-		/***************************************************************************************
-		** \brief
-		**
-		**
-		** \param
-		** \param
-		** \return
-		**
-		****************************************************************************************/
-		function OutputModule_CheckFirmwareVersion(){
-		/* Construct the firmware check message */ 
-		sendBuffer[0] = 9;
-		sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
-		sendBuffer[2] = 9;
-
-
-		/* calculate checksum */
-		sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
-
-			const firmware = spi.open(sL,sB, (err) => {
-				/* Only in this scope, receive buffer is available */
-				firmware.transfer(bootMessage, (err, bootMessage) => {
-
-					if(receiveBuffer[BOOTMESSAGELENGTH-1] != OutputModule_ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1)){
-					node.warn("Checksum from bootloader not correct");
-					OutputModule_CancelFirmwareUpload();
-					return;
-					}
-					else if(	receiveBuffer[0] != 9 || receiveBuffer[2] != 9){
-					node.warn("Wrong response from bootloader");
-					OutputModule_CancelFirmwareUpload();
-					return;
-					}
-					
-					/* Still here so extract HW version and SW version */
-					hwVersion[0] = receiveBuffer[6];
-					hwVersion[1] = receiveBuffer[7];
-					hwVersion[2] = receiveBuffer[8];
-					hwVersion[3] = receiveBuffer[9];
-										
-					swVersion[0] = receiveBuffer[10];
-					swVersion[1] = receiveBuffer[11];
-					swVersion[2] = receiveBuffer[12];
-									
-					/* Check which files are present in the folder */
-					fs.readdir(moduleFirmwareLocation, (err, files) => {
-						files.forEach(file => {
-		
-							if(hwVersion[0] == moduleHwId1 && hwVersion[1] == moduleHwId2 && hwVersion[2] == moduleHwId3)
-							{								
-							/* In this case, the node matches the installed hardware */
-							var versionStored = file.split("-");
-								if(hwVersion[0] == parseInt(versionStored[0],10) && hwVersion[1] == parseInt(versionStored[1],10) && hwVersion[2] == parseInt(versionStored[2],10) && hwVersion[3] == parseInt(versionStored[3],10)){
-									/* Check if file that matches the hardware has a different software version */
-									swVersionAvailable[0] = parseInt(versionStored[4],10)
-									swVersionAvailable[1] = parseInt(versionStored[5],10)
-									swVersionAvailable[2] = parseInt(versionStored[6],10)
-
-									if (swVersion[0] != swVersionAvailable[0] || swVersion[1] != swVersionAvailable[1] || swVersion[2] != swVersionAvailable[2]){
-									firmwareFileName =  file;
-									node.warn("New firmware available for Output Module on slot: "+ moduleSlot +". Firmware version: "+ swVersionAvailable[0] + "." + swVersionAvailable[1] + "." + swVersionAvailable[2] +" will be installed");
-									node.status({fill:"blue",shape:"dot",text:"Installing new firmware"});
-									/* In this case, new firmware is available so tell the module there is new software */
-									OutputModule_AnnounceFirmwareUpload();
-									/* FOR DEBUG PURPOSE */
-									//OutputModule_CancelFirmwareUpload();
-									}
-									else{
-									/* In this case, the latest firmware is installed so show on node status*/
-									const statusText = "HW:V"+hwVersion[0]+hwVersion[1]+"0"+hwVersion[2]+"0"+hwVersion[3]+"  SW:V"+swVersion[0]+"."+swVersion[1]+"."+swVersion[2];
-									node.status({fill:"green",shape:"dot",text:statusText});
-									/* Tell the module that it needs to start the module program */
-									OutputModule_CancelFirmwareUpload();
-									}
-								return;								
-								}
-							}
-							else
-							{
-							node.status({fill:"red",shape:"dot",text:"Installed module does not match with node"});	
-							}
-						});
-					});
-				});
-			});
-		}	
-
+			OutputModule_Reset(0);
+			/*After reset, give the module some time to boot */
+			/*Next step is to check for new available firmware */
+			checkFirmwareTimeout = setTimeout(OutputModule_CancelFirmwareUpload, 100);
+			}	
 
 		/***************************************************************************************
 		** \brief 	First initialisation message that is send to the output module
@@ -405,31 +312,28 @@ module.exports = function(RED) {
 
 		sendBuffer[0] = 1;
 		sendBuffer[1] = MESSAGELENGTH-1;
+		var values
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
 		sendBuffer[2] = 111;
 		sendBuffer[3] = 0;
 		sendBuffer[4] = 0;
 		sendBuffer[5] = 0;
-			for(var s =0; s <6; s++)
-			{
-			sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
-			sendBuffer.writeUInt16LE(outputTime[s], 18+(s*2));
-			}
+		values = 6;
 		/* In case 10 channel output module is selected */
 		}else{
 		sendBuffer[2] = 1;
 		sendBuffer[3] = 23;
 		sendBuffer[4] = 2;
 		sendBuffer[5] = 2;
-			for(var s =0; s <10; s++)
-			{
-			sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
-			sendBuffer.writeUInt16LE(outputTime[s], 26+(s*2));
-			}
+		values = 10;
 		}
 			
-
+		for(var s =0; s <values; s++)
+		{
+		sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
+		sendBuffer.writeUInt16LE(outputTime[s], 26+(s*2));
+		}
 						
 		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 			
@@ -627,7 +531,7 @@ module.exports = function(RED) {
 			}
 		return (checkSum&255);	
 		}
-		
+
 		/***************************************************************************************
 		** \brief
 		**
@@ -638,229 +542,23 @@ module.exports = function(RED) {
 		**
 		****************************************************************************************/
 		function OutputModule_CancelFirmwareUpload(){
-		sendBuffer[0] = 19;
-		sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
-		sendBuffer[2] = 19;
-		
-		sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
-
+			sendBuffer[0] = 19;
+			sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+			sendBuffer[2] = 19;
+			
+			sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+	
 			const cancel = spi.open(sL,sB, (err) => {
 
-			cancel.transfer(bootMessage, (err, bootMessage) => {
-			cancel.close(err =>{});});
-			/* At this point, The module can be initialized */
-			initializeTimeout = setTimeout(OutputModule_Initialize, 600);
+				cancel.transfer(bootMessage, (err, bootMessage) => {
+				cancel.close(err =>{});});
+				node.status({fill:"green",shape:"dot",text:firmware})
+				/* At this point, The module can be initialized */
+				initializeTimeout = setTimeout(OutputModule_Initialize, 600);
 			});
-
-		}
-		
-		/***************************************************************************************
-		** \brief
-		**
-		**
-		** \param
-		** \param
-		** \return
-		**
-		****************************************************************************************/
-		function OutputModule_AnnounceFirmwareUpload(){
-		sendBuffer[0] = 29;
-		sendBuffer[1] = BOOTMESSAGELENGTH-1; 
-		sendBuffer[2] = 29;
-		
-		sendBuffer[6] = swVersionAvailable[0];
-		sendBuffer[7] = swVersionAvailable[1];
-		sendBuffer[8] = swVersionAvailable[2];
-		
-		sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
-
-			const announce = spi.open(sL,sB, (err) => {
-
-			/* Only in this scope, receive buffer is available */
-			announce.transfer(bootMessage, (err, bootMessage) => {
-			announce.close(err =>{});});
-			
-			/* The bootloader will start a memory erase which will take some seconds to complete. After that, start the firmware upload */
-			firmwareUploadTimeout = setTimeout(OutputModule_FirmwareUpload, 2500);
-			});
-
-		}
 	
-	
-		/***************************************************************************************
-		** \brief
-		**
-		**
-		** \param
-		** \param
-		** \return
-		**
-		****************************************************************************************/
-		function OutputModule_FirmwareUpload(){
-		var checksumCalculated = new Uint8Array(1);
-		var sendbufferPointer;
-		var messagePointer;
-
-			fs.readFile(moduleFirmwareLocation + firmwareFileName, function(err, code){
-
-			if (err) {
-				node.warn("Error opening firmware file");
-				node.status({fill:"red",shape:"dot",text:"Error opening firmware file"});
-				throw err;
-			}
-
-			var str = code.toString();
-			var line = str.split('\n');
-			var lineNumber = 0;
-			
-			if(!(line.length > 1))
-			{
-			node.warn("Firmware file corrupt");
-			node.status({fill:"red",shape:"dot",text:"Firmware file corrupt"});
-			initializeTimeout = setTimeout(OutputModule_Initialize, 600);
-			return;
-			}
-
-				const firmware = spi.open(sL,sB, (err) => {
-					OutputModule_SendFirmwareData();
-
-
-					/***************************************************************************************
-					** \brief
-					**
-					**
-					** \param
-					** \param
-					** \return
-					**
-					****************************************************************************************/
-					function OutputModule_SendFirmwareData(){
-				
-						var messageType =  parseInt(line[lineNumber].slice(1, 2),16);
-						/* Get the decimal length of the specific line */
-						var lineLength = parseInt((line[lineNumber].slice(2, 4)),16);
-						//memoryAddr = line[lineNumber].slice(4, 12);
-						//data = line[lineNumber].slice(12, (line[lineNumber].length - 3));
-						var checksum = parseInt(line[lineNumber].slice((line[lineNumber].length - 3), line[lineNumber].length),16);
-
-						sendBuffer[0] = 39;
-						sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
-						sendBuffer[2] = 39;
-
-
-						var sendbufferPointer = 6;
-						sendBuffer[sendbufferPointer++] = lineNumber>>8; 
-						sendBuffer[sendbufferPointer++] = lineNumber;
-						sendBuffer[sendbufferPointer++] = messageType; 
-
-						checksumCalculated[0] = 0;
-
-							for(messagePointer = 2; messagePointer < (lineLength*2)+2; messagePointer += 2)
-							{
-							sendBuffer[sendbufferPointer] = parseInt((line[lineNumber].slice(messagePointer,messagePointer+2)),16);
-							checksumCalculated[0] += sendBuffer[sendbufferPointer++];	
-							}
-
-						sendBuffer[sendbufferPointer++] = parseInt((line[lineNumber].slice(messagePointer,messagePointer+2)),16);
-
-						checksumCalculated[0] = ~checksumCalculated[0];
-
-							if(checksumCalculated[0] != checksum)
-							{
-							/* Annoying error message */
-						    // node.warn("Wrong file checksum: "+ checksumCalculated[0]);
-							}
-
-						/* calculate checksum */
-						sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
-
-							firmware.transfer(bootMessage, (err, bootMessage) => {
-
-							});
-
-							if(messageType == 7){
-							firmware.close(err =>{});
-							node.warn("Firmware from output module on slot: "+moduleSlot+" updated! Now restarting module!");
-							/* At this point, the module can be restarted to check if it provides the new installed firmware */
-							OutputModule_StartReset();
-							return;
-							}
-							
-							else
-							{
-							getFirmwareStatusTimeout = setTimeout(OutputModule_GetFirmwareStatus, 3);
-							}
-						}
-						
-						
-						/***************************************************************************************
-						** \brief
-						**
-						**
-						** \param
-						** \param
-						** \return
-						**
-						****************************************************************************************/
-						function OutputModule_GetFirmwareStatus(){
-				
-						sendBuffer[0] = 49;
-						sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
-						sendBuffer[2] = 49;
-						
-						/* calculate checksum */
-						sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
-						
-							firmware.transfer(bootMessage, (err, bootMessage) => {
-
-							if(receiveBuffer[BOOTMESSAGELENGTH-1] === OutputModule_ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1))
-							{
-								/* Check if received data complies with the actual line number from the .srec file */
-								if(lineNumber == receiveBuffer.readUInt16BE(6))
-								{
-									/* Check if the returned line is correctly received by module*/
-									if(receiveBuffer[8] ==1)
-									{
-										/* At this position, the module has received the line correct so jump to next line */
-										lineNumber++;
-									}
-									else
-									{
-									//node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );
-										if(firmwareLineCheck != lineNumber)
-										{
-										firmwareLineCheck = lineNumber;
-										firmwareErrorCounter = 0;
-										}
-										else
-										{
-											firmwareErrorCounter ++;
-										
-											if(firmwareErrorCounter > 5)
-											{
-											node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , 5 times! Stop firmware update!" );
-											firmwareErrorCounter = 0;
-											return;
-											}
-										}
-									}
-								}
-							}
-							else
-							{
-							//node.warn("Firmware checksum for output module on slot: "+moduleSlot+", error on line : "+lineNumber+" , going to retry!" );	
-							}
-							
-							sendFirmwareDataTimeout = setTimeout(OutputModule_SendFirmwareData, 1);
-
-							});
-
-						}
-				});
-
-			});	
 		}
-		
+
 		/***************************************************************************************
 		** \brief	Function that controls the low level reset of the modules
 		**
@@ -871,13 +569,12 @@ module.exports = function(RED) {
 		function OutputModule_Reset(state){
 			if(state === 1)
 			{
-				fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','255');
+			fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','255');
 			}
 			else
 			{
-				fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
+			fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
 			}
-		
 		}
 	}
 RED.nodes.registerType("Output-Module",GOcontrollOutputModule);
