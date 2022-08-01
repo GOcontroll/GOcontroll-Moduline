@@ -2,6 +2,8 @@ module.exports = function(RED) {
     "use strict"
 
 	const spi = require('spi-device');
+	const fs = require('fs');
+	const fsp = require('fs/promises');
 	
 	const MESSAGELENGTH = 44;
 	const SPISPEED = 2000000;
@@ -11,6 +13,8 @@ module.exports = function(RED) {
 	   
 	   	var interval = null;
 		var node = this;
+		var modulesArr;
+		var firmware;
 		
 		const moduleSlot = config.moduleSlot; 
 		const sampleTime = config.sampleTime;
@@ -84,7 +88,7 @@ module.exports = function(RED) {
 		}
 
 		/* Send dummy byte once so the master SPI is initialized properly */
-		BridgeModule_SendDummyByte();
+		readFile();
 	
 		
 		/* open SPI device for continous communication */
@@ -94,6 +98,17 @@ module.exports = function(RED) {
 			spiReady = true;
 			} 
 		});
+
+		async function readFile() {
+			try {
+			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+			modulesArr = data.split(":");
+			firmware = "Firmware: " + modulesArr[moduleSlot-1];
+			BridgeModule_SendDummyByte(); 
+			} catch (err) {
+				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
+			}
+		}
 		
 		/***************************************************************************************
 		** \brief
@@ -114,11 +129,45 @@ module.exports = function(RED) {
 			dummy.close(err =>{});
 			/* Here we start the reset routine */
 			//resetTimeout = setTimeout(BridgeModule_StartReset, 50);
-			BridgeModule_Initialize();
+			BridgeModule_StartReset();
 			});
 		
 			});
 		}
+
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function BridgeModule_StartReset (){
+			/*Start module reset */
+			BridgeModule_Reset(1);
+			/*Give a certain timeout so module is reset properly*/
+			/*The stop of the reset is now called after the dummy is properly send */
+			resetTimeout = setTimeout(BridgeModule_StopReset, 200);
+		}
+			
+			
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function BridgeModule_StopReset (){
+			BridgeModule_Reset(0);
+			/*After reset, give the module some time to boot */
+			/*Next step is to check for new available firmware */
+			checkFirmwareTimeout = setTimeout(BridgeModule_CancelFirmwareUpload, 100);
+		}	
 
 
 		/***************************************************************************************
@@ -288,6 +337,53 @@ module.exports = function(RED) {
 			checkSum += array[pointer];
 			}
 		return (checkSum&255);	
+		}
+
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function BridgeModule_CancelFirmwareUpload(){
+			sendBuffer[0] = 19;
+			sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+			sendBuffer[2] = 19;
+			
+			sendBuffer[BOOTMESSAGELENGTH-1] = BridgeModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+	
+			const cancel = spi.open(sL,sB, (err) => {
+
+				cancel.transfer(bootMessage, (err, bootMessage) => {
+				cancel.close(err =>{});});
+				node.status({fill:"green",shape:"dot",text:firmware})
+				/* At this point, The module can be initialized */
+				initializeTimeout = setTimeout(BridgeModule_Initialize, 600);
+			});
+	
+		}
+
+
+		/***************************************************************************************
+		** \brief	Function that controls the low level reset of the modules
+		**
+		** \param	State of the reset action
+		** \return	None
+		**
+		****************************************************************************************/
+		function BridgeModule_Reset(state){
+			if(state === 1)
+			{
+				fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','255');
+			}
+			else
+			{
+				fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
+			}
+		
 		}
 	}
 RED.nodes.registerType("Bridge-Module",GOcontrollBridgeModule);

@@ -2,6 +2,8 @@ module.exports = function(RED) {
     "use strict"
 
 	const spi = require('spi-device');
+	const fs = require('fs');
+	const fsp = require('fs/promises');
 
 	/* Assigned dynamically */
 	var MESSAGELENGTH 	= 0;
@@ -14,6 +16,8 @@ module.exports = function(RED) {
 	   
 	   	var interval = null;
 		var node = this;
+		var modulesArr;
+		var firmware;
 		
 		
 		const moduleSlot = config.moduleSlot;
@@ -146,7 +150,7 @@ module.exports = function(RED) {
 		}
 
 		/* Send dummy byte once so the master SPI is initialized properly */
-		OutputModule_SendDummyByte();
+		readFile();
 			
 		/* Start module reset and initialization proces */
 		/* The output module reset is started after dummty byte is send */
@@ -160,6 +164,17 @@ module.exports = function(RED) {
 			spiReady = true;
 			} 
 		});
+
+		async function readFile() {
+			try {
+			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+			modulesArr = data.split(":");
+			firmware = "Firmware: " + modulesArr[moduleSlot-1];
+			InputModule_SendDummyByte(); 
+			} catch (err) {
+				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
+			}
+		}
 		
 		/***************************************************************************************
 		** \brief
@@ -180,11 +195,45 @@ module.exports = function(RED) {
 			dummy.close(err =>{});
 			/* Here we start the reset routine */
 			//resetTimeout = setTimeout(OutputModule_StartReset, 50);
-			OutputModule_Initialize();
+			OutputModule_StartReset();
 			});
 		
 			});
 		}
+
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function OutputModule_StartReset (){
+			/*Start module reset */
+			OutputModule_Reset(1);
+			/*Give a certain timeout so module is reset properly*/
+			/*The stop of the reset is now called after the dummy is properly send */
+			resetTimeout = setTimeout(OutputModule_StopReset, 200);
+		}
+				
+				
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function OutputModule_StopReset (){
+			OutputModule_Reset(0);
+			/*After reset, give the module some time to boot */
+			/*Next step is to check for new available firmware */
+			checkFirmwareTimeout = setTimeout(OutputModule_CancelFirmwareUpload, 100);
+			}	
 
 		/***************************************************************************************
 		** \brief 	First initialisation message that is send to the output module
@@ -473,6 +522,51 @@ module.exports = function(RED) {
 			checkSum += array[pointer];
 			}
 		return (checkSum&255);	
+		}
+
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function OutputModule_CancelFirmwareUpload(){
+			sendBuffer[0] = 19;
+			sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+			sendBuffer[2] = 19;
+			
+			sendBuffer[BOOTMESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+	
+			const cancel = spi.open(sL,sB, (err) => {
+
+				cancel.transfer(bootMessage, (err, bootMessage) => {
+				cancel.close(err =>{});});
+				node.status({fill:"green",shape:"dot",text:firmware})
+				/* At this point, The module can be initialized */
+				initializeTimeout = setTimeout(OutputModule_Initialize, 600);
+			});
+	
+		}
+
+		/***************************************************************************************
+		** \brief	Function that controls the low level reset of the modules
+		**
+		** \param	State of the reset action
+		** \return	None
+		**
+		****************************************************************************************/
+		function OutputModule_Reset(state){
+			if(state === 1)
+			{
+			fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','255');
+			}
+			else
+			{
+			fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
+			}
 		}
 	}
 RED.nodes.registerType("Output-Module",GOcontrollOutputModule);

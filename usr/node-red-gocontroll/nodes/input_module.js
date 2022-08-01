@@ -2,16 +2,23 @@ module.exports = function(RED) {
 "use strict"
 
 const spi = require('spi-device');
+const fs = require('fs');
+const fsp = require('fs/promises');
 
+const BOOTMESSAGELENGTH = 46;
 /* Assigned dynamically */
 var MESSAGELENGTH 	= 0;
 const SPISPEED = 2000000;
+
+
 
 function GOcontrollInputModule(config) { 	 
 	RED.nodes.createNode(this,config);
 
 	var interval = null;
 	var node = this;
+	var modulesArr;
+	var firmware;
 	
 	/* Get information from the Node configuration */
 	const moduleSlot 		= config.moduleSlot;
@@ -125,6 +132,13 @@ function GOcontrollInputModule(config) {
 	/*Allocate memory for receive and send buffer */
 	var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
 	var	receiveBuffer = Buffer.alloc(MESSAGELENGTH+5);
+
+	const bootMessage = [{
+	sendBuffer, 
+	receiveBuffer,           
+	byteLength: BOOTMESSAGELENGTH+1,
+	speedHz: SPISPEED 
+	}];
 	
 	const normalMessage = [{
 	sendBuffer, 
@@ -159,7 +173,7 @@ function GOcontrollInputModule(config) {
 	}
 
 	/* Send dummy byte once so the master SPI is initialized properly */
-	InputModule_SendDummyByte();
+	readFile();
 
 	/* Start module reset and initialization proces */
 	//InputModule_StartReset();
@@ -171,6 +185,18 @@ function GOcontrollInputModule(config) {
 		spiReady = true;
 		} 
 	});
+
+
+	async function readFile() {
+		try {
+		const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+		modulesArr = data.split(":");
+		firmware = "Firmware: " + modulesArr[moduleSlot-1];
+		InputModule_SendDummyByte(); 
+		} catch (err) {
+			node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
+		}
+	}
 
 
 	/***************************************************************************************
@@ -193,10 +219,70 @@ function GOcontrollInputModule(config) {
 		
 		/* Here we start the reset routine */
 		//resetTimeout = setTimeout(OutputModule_StartReset, 50);
-		InputModule_Initialize();
+		InputModule_StartReset();
 		});
 	
 		});
+	}
+
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
+	function InputModule_StartReset (){
+	/*Start module reset */
+	InputModule_Reset(1);
+	/*Give a certain timeout so module is reset properly*/
+	resetTimeout = setTimeout(InputModule_StopReset, 200);
+	}
+		
+
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
+	function InputModule_StopReset (){
+	InputModule_Reset(0);	
+	/*After reset, give the module some time to boot */
+	/*Next step is to check for new available firmware */
+	checkFirmwareTimeout = setTimeout(InputModule_CancelFirmwareUpload, 100);
+	}
+
+	/***************************************************************************************
+	** \brief
+	**
+	**
+	** \param
+	** \param
+	** \return
+	**
+	****************************************************************************************/
+	function InputModule_CancelFirmwareUpload(){
+		sendBuffer[0] = 19;
+		sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
+		sendBuffer[2] = 19;
+		
+		sendBuffer[BOOTMESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, BOOTMESSAGELENGTH-1);
+	
+		const cancel = spi.open(sL,sB, (err) => {
+	
+			cancel.transfer(bootMessage, (err, bootMessage) => {
+			cancel.close(err =>{});});
+			node.status({fill:"green",shape:"dot",text:firmware})
+			/* At this point, The module can be initialized */
+			initializeTimeout = setTimeout(InputModule_Initialize, 600);
+		});
+	
 	}
 
 	/***************************************************************************************
@@ -384,6 +470,23 @@ function GOcontrollInputModule(config) {
 		checkSum += array[pointer];
 		}
 	return (checkSum&255);	
+	}
+	/***************************************************************************************
+	** \brief	Function that controls the low level reset of the modules
+	**
+	** \param	State of the reset action
+	** \return	None
+	**
+	****************************************************************************************/
+	function InputModule_Reset(state){
+		if(state === 1)
+		{
+		fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','255');
+		}
+		else
+		{
+		fs.writeFileSync('/sys/class/leds/ResetM-' + String(moduleSlot) + '/brightness','0');
+		}
 	}
 }
 
