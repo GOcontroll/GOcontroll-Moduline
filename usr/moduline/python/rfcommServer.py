@@ -284,7 +284,7 @@ def ethernet_settings(commandnmbr, arg):
 					mode= "auto"
 		try:
 			ip = ni.ifaddresses("eth0")[ni.AF_INET][0]["addr"]
-		except KeyError:
+		except:
 			ip = "no IP available"
 		with open(path, "r") as con:
 			ip_line = get_line(path, "address1=")
@@ -333,7 +333,7 @@ def wireless_settings(commandnmbr, arg):
 		connection_status = str(check_connection(0.5))
 		try:
 			ip = ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
-		except KeyError:
+		except:
 			ip = "no IP available"
 		if "GOcontroll-ap" in status: 
 			status = "ap"

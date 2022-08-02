@@ -108,7 +108,8 @@ cp -avr /root/GOcontroll/GOcontroll-Moduline/version.txt /root
 
 if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
 [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.05" ]]; then
+[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.05" ]]||
+[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.06" ]]; then
 
 echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
 patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch

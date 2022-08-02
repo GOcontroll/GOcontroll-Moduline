@@ -13,12 +13,14 @@ console.error(err);
 }
 if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
+    var controllerLayout = new Array(8);
 } else if (hardwareFile.includes("Moduline Mini")) {
     controllerType = "mini"
+    var controllerLayout = new Array(4);
 }
 
 var sL, sB;
-var controllerLayout = new Array(8);
+
 
 var sendBuffer = Buffer.alloc(BOOTMESSAGELENGTH+5);
 var receiveBuffer = Buffer.alloc(BOOTMESSAGELENGTH+5);
@@ -64,17 +66,17 @@ function recursionFunc() {
             break;
         case "mini":
             amountOfSlots = 4;
-            switch(moduleSlot)
+            switch(currentSlot)
             {
-                case 1: sL = 2; sB=0; break;
-                case 2: sL = 2; sB=1; break;
-                case 3: sL = 1; sB=0; break;
-                case 4: sL = 1; sB=1; break;
+                case 1: sL = 1; sB=0; break;
+                case 2: sL = 1; sB=1; break;
+                case 3: sL = 2; sB=0; break;
+                case 4: sL = 2; sB=1; break;
             }
             SendDummyByte(sL, sB, currentSlot);
             break;
         case "dash?":
-            switch(moduleSlot)
+            switch(currentSlot)
             {
                 case 1: sL = 2; sB=0; break;
                 case 2: sL = 2; sB=1; break;
@@ -201,7 +203,7 @@ function Module_Reset(state, moduleSlot){
 }
 
 function Write_File() {
-    // console.log(controllerLayout)
+    console.log(controllerLayout)
     fs.writeFile('/usr/module-firmware/modules.txt', controllerLayout.join(":"), err => {
         if (err) {
             console.error(err);

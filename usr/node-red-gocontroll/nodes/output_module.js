@@ -381,7 +381,7 @@ module.exports = function(RED) {
 			}
 				
 		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);	
-		
+		node.status({fill:"green",shape:"dot",text:firmware})
 		/* Start interval to get module data */
 		interval = setInterval(OutputModule_SendAndGetModuleData, parseInt(sampleTime));		
 		}
@@ -552,7 +552,6 @@ module.exports = function(RED) {
 
 				cancel.transfer(bootMessage, (err, bootMessage) => {
 				cancel.close(err =>{});});
-				node.status({fill:"green",shape:"dot",text:firmware})
 				/* At this point, The module can be initialized */
 				initializeTimeout = setTimeout(OutputModule_Initialize, 600);
 			});
