@@ -110,10 +110,16 @@ module.exports = function(RED) {
 
 		async function readFile() {
 			try {
-			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
-			modulesArr = data.split(":");
-			firmware = "Firmware: " + modulesArr[moduleSlot-1];
-			BridgeModule_SendDummyByte(); 
+				const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+				modulesArr = data.split(":");
+				firmware = "Firmware: " + modulesArr[moduleSlot-1];
+				/*check if the selected module is okay for this slot*/
+				if (firmware.includes("20-20-1")) {
+					node.status({fill:"green",shape:"dot",text:firmware})
+					BridgeModule_SendDummyByte(); 
+				} else {
+					node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+				}
 			} catch (err) {
 				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
 			}
@@ -236,7 +242,7 @@ module.exports = function(RED) {
 			}
 				
 		sendBuffer[MESSAGELENGTH-1] = BridgeModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);	
-		
+		node.status({fill:"green",shape:"dot",text:firmware})
 		/* Start interval to get module data */
 		interval = setInterval(BridgeModule_SendAndGetModuleData, parseInt(sampleTime));		
 		}
@@ -368,7 +374,6 @@ module.exports = function(RED) {
 
 				cancel.transfer(bootMessage, (err, bootMessage) => {
 				cancel.close(err =>{});});
-				node.status({fill:"green",shape:"dot",text:firmware})
 				/* At this point, The module can be initialized */
 				initializeTimeout = setTimeout(BridgeModule_Initialize, 600);
 			});
