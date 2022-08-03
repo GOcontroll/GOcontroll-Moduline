@@ -110,10 +110,16 @@ module.exports = function(RED) {
 
 		async function readFile() {
 			try {
-			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
-			modulesArr = data.split(":");
-			firmware = "Firmware: " + modulesArr[moduleSlot-1];
-			BridgeModule_SendDummyByte(); 
+				const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+				modulesArr = data.split(":");
+				firmware = "Firmware: " + modulesArr[moduleSlot-1];
+				/*check if the selected module is okay for this slot*/
+				if (firmware.includes("20-20-1")) {
+					node.status({fill:"green",shape:"dot",text:firmware})
+					BridgeModule_SendDummyByte(); 
+				} else {
+					node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+				}
 			} catch (err) {
 				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
 			}

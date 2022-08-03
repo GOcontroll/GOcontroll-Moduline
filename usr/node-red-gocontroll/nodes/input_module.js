@@ -121,10 +121,10 @@ function GOcontrollInputModule(config) {
 	var sL, sB;
 	
 	/* Assign information according module type */
-	/* In case 6 channel output module is selected */
+	/* In case 6 channel input module is selected */
 	if(moduleType == 1){
 		MESSAGELENGTH 	= 55;
-	/* In case 10 channel output module is selected */
+	/* In case 10 channel input module is selected */
 	}else{
 		MESSAGELENGTH 	= 50;
 	}
@@ -192,7 +192,24 @@ function GOcontrollInputModule(config) {
 		const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
 		modulesArr = data.split(":");
 		firmware = "Firmware: " + modulesArr[moduleSlot-1];
-		InputModule_SendDummyByte(); 
+		/*check if the selected module is okay for this slot*/
+		/*6 channel input*/
+		if(moduleType == 1){
+			if (firmware.includes("20-10-1")) {
+				node.status({fill:"green",shape:"dot",text:firmware})
+				InputModule_SendDummyByte(); 
+			} else {
+				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+			}
+		/* In case 10 channel input module is selected */
+		}else{
+			if (firmware.includes("20-10-2")) {
+				node.status({fill:"green",shape:"dot",text:firmware})
+				InputModule_SendDummyByte(); 
+			} else {
+				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+			}
+		}
 		} catch (err) {
 			node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
 		}
@@ -296,40 +313,40 @@ function GOcontrollInputModule(config) {
 	function InputModule_Initialize (){
 
 
-	sendBuffer[0] = 1;
-	sendBuffer[1] = MESSAGELENGTH-1;
-	
-	/* In case 6 channel output module is selected */
-	if(moduleType == 1){
-		sendBuffer[2] = 1;
-		sendBuffer[3] = 0;
-		sendBuffer[4] = 0;
-		sendBuffer[5] = 0;
-	
-		for(var messagePointer = 0; messagePointer < 6; messagePointer ++)
-		{
-		sendBuffer[(messagePointer+1)*6] = input[messagePointer];
-		sendBuffer[((messagePointer+1)*6)+1] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2)|((voltageRange[messagePointer]&3)<<6);
-		}
+		sendBuffer[0] = 1;
+		sendBuffer[1] = MESSAGELENGTH-1;
 		
-		sendBuffer[42] = supply[0]; 
-		sendBuffer[43] = supply[1]; 
-		sendBuffer[44] = supply[2]; 
-	}
-	/* In case 10 channel output module is selected */
-	else{
-		sendBuffer[2] = 1;
-		sendBuffer[3] = 12;
-		sendBuffer[4] = 2;
-		sendBuffer[5] = 1;
-		for(var messagePointer = 0; messagePointer < 10; messagePointer ++)
-		{
-		sendBuffer[(messagePointer*4)+6] = input[messagePointer];
-		sendBuffer[((messagePointer*4)+7)] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2);
+		/* In case 6 channel output module is selected */
+		if(moduleType == 1){
+			sendBuffer[2] = 1;
+			sendBuffer[3] = 0;
+			sendBuffer[4] = 0;
+			sendBuffer[5] = 0;
+		
+			for(var messagePointer = 0; messagePointer < 6; messagePointer ++)
+			{
+			sendBuffer[(messagePointer+1)*6] = input[messagePointer];
+			sendBuffer[((messagePointer+1)*6)+1] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2)|((voltageRange[messagePointer]&3)<<6);
+			}
+			
+			sendBuffer[42] = supply[0]; 
+			sendBuffer[43] = supply[1]; 
+			sendBuffer[44] = supply[2]; 
 		}
-		sendBuffer[46] = supply[0];
-	}
-	sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
+		/* In case 10 channel output module is selected */
+		else{
+			sendBuffer[2] = 1;
+			sendBuffer[3] = 12;
+			sendBuffer[4] = 2;
+			sendBuffer[5] = 1;
+			for(var messagePointer = 0; messagePointer < 10; messagePointer ++)
+			{
+			sendBuffer[(messagePointer*4)+6] = input[messagePointer];
+			sendBuffer[((messagePointer*4)+7)] = (pullUp[messagePointer]&3)|((pullDown[messagePointer]&3)<<2);
+			}
+			sendBuffer[46] = supply[0];
+		}
+		sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 
 		const initialize = spi.open(sL,sB, (err) => {
 
@@ -338,9 +355,7 @@ function GOcontrollInputModule(config) {
 				initialize.close(err =>{});
 			});
 		});
-	node.status({fill:"green",shape:"dot",text:firmware})
-	/* Start interval to get module data */
-	interval = setInterval(InputModule_GetData, parseInt(sampleTime));
+		interval = setInterval(InputModule_GetData, parseInt(sampleTime));
 	}
 
 
@@ -439,14 +454,14 @@ function GOcontrollInputModule(config) {
 	**
 	****************************************************************************************/
 	node.on('close', function(done) {
-	clearInterval(interval);
-	clearTimeout(resetTimeout);
-	clearTimeout(initializeTimeout);
-	clearTimeout(sendFirmwareDataTimeout);
-	clearTimeout(getFirmwareStatusTimeout);
-	clearTimeout(checkFirmwareTimeout);
-	clearTimeout(firmwareUploadTimeout);
-	done();
+		clearInterval(interval);
+		clearTimeout(resetTimeout);
+		clearTimeout(initializeTimeout);
+		clearTimeout(sendFirmwareDataTimeout);
+		clearTimeout(getFirmwareStatusTimeout);
+		clearTimeout(checkFirmwareTimeout);
+		clearTimeout(firmwareUploadTimeout);
+		done();
 	});
 
 

@@ -178,7 +178,24 @@ module.exports = function(RED) {
 			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
 			modulesArr = data.split(":");
 			firmware = "Firmware: " + modulesArr[moduleSlot-1];
-			OutputModule_SendDummyByte(); 
+			/*check if the selected module is okay for this slot*/
+		/*6 channel output*/
+		if(moduleType == 1){
+			if (firmware.includes("20-20-2")) {
+				node.status({fill:"green",shape:"dot",text:firmware})
+				OutputModule_SendDummyByte(); 
+			} else {
+				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+			}
+		/* In case 10 channel output module is selected */
+		}else{
+			if (firmware.includes("20-20-3")) {
+				node.status({fill:"green",shape:"dot",text:firmware})
+				OutputModule_SendDummyByte(); 
+			} else {
+				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+			}
+		}
 			} catch (err) {
 				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
 			}
