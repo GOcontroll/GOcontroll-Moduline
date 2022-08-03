@@ -57,7 +57,7 @@ for i,module in enumerate(modules):
         for firmware in newest_firmwares:
             if mod_type in firmware:
                 if current_software not in firmware:
-                    modules_to_update.append([i+1,firmware.split("/")[-1]])
+                    modules_to_update.append([str(i+1),firmware.split("/")[-1]])
 
 #run a pool of processes to asynchronously upload all the firmwares
 if len(modules_to_update) > 0:
