@@ -536,14 +536,19 @@ def controller_settings(commandnmbr, arg):
 
 	#change the bluetooth name
 	if level1 == commands.SET_CONTROLLER_SETTINGS:
-		if "GOcontroll" in arg:
-			write_device_name(arg)
-		else:
-			arg = "GOcontroll-" + arg
-			write_device_name(arg)
+		try:
+			if "GOcontroll" in arg:
+				write_device_name(arg)
+			else:
+				arg = "GOcontroll-" + arg
+				write_device_name(arg)
+			send(chr(commandnmbr) + chr(commands.SET_CONTROLLER_SETTINGS) + "1")
+		except:
+			send(chr(commandnmbr) + chr(commands.SET_CONTROLLER_SETTINGS) + "0")
 
 	#gather information to display
 	elif (level1 == commands.INIT_CONTROLLER_SETTINGS):
+		time.sleep(0.2) #if the controller responds too quick the app gets wacky
 		with open("/sys/firmware/devicetree/base/hardware", "r") as file:
 			hardware_version = file.read()
 		with open("/root/version.txt", "r") as file:
@@ -570,7 +575,7 @@ def controller_programs(commandnmbr, arg):
 	#initialize the screen for the user
 	if level1 == commands.INIT_CONTROLLER_PROGRAMS:
 		statusses = []
-		services = arg.split("\n")[1].split(":")
+		services = arg.split(":")
 		for service in services:
 			stdout = subprocess.run(["systemctl", "is-active", service], stdout=subprocess.PIPE, text=True)
 			status = stdout.stdout[:-1]
@@ -580,14 +585,21 @@ def controller_programs(commandnmbr, arg):
 	
 	#apply change to a service
 	elif level1 == commands.SET_CONTROLLER_PROGRAMS:
-		data = arg.split("\n")[1].split(":")
+		data = arg.split(":")
 		service = data[-1]
 		new_states = data[:-1]
 		if len(data)>2:
 			for new_state in new_states:
-				subprocess.run(["systemctl", new_state, service])
-		else:
-			subprocess.run(["systemctl", data[0], data[1]])
+				stdout = subprocess.run(["systemctl", new_state, service], stderr=subprocess.PIPE, text=True)
+				stdout = stdout.stderr
+				print("test")
+				if "Failed" in stdout:
+					send(chr(commandnmbr) + chr(commands.SET_CONTROLLER_PROGRAMS) + "0:" + stdout.split(":")[1] + ":" + service)
+					return
+			send(chr(commandnmbr) + chr(commands.SET_CONTROLLER_PROGRAMS) + "1::")
+			return
+		send(chr(commandnmbr) + chr(commands.SET_CONTROLLER_PROGRAMS) + "0:Message received was incorrect.:" + service)
+		
 
 ##########################################################################################
 
