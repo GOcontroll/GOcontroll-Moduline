@@ -673,8 +673,8 @@ def wwan_settings(commandnmbr, arg):
 	elif level1 == commands.SET_WWAN_SETTINGS:
 		arg = arg.split(":")
 		#arg = [pin,apn]
-		subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.apn", arg[1]])
-		subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.pin", arg[0]])
+		subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.apn", arg[1], "gsm.pin", arg[0]])
+		# subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.pin", arg[0]])
 		reload = subprocess.run(["nmcli", "con", "down", "GO-celular"], stdout=subprocess.PIPE, text=True)
 		reload = reload.stdout
 		if "succesfully" in reload:
