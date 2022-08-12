@@ -112,32 +112,32 @@ echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
 service dnsmasq start
 
 
-echo -e "${YELLOW}-Jump node Node RED folder on root ${NORMAL}"
-cd ~/.node-red
+# echo -e "${YELLOW}-Jump node Node RED folder on root ${NORMAL}"
+# cd ~/.node-red
 
-echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
+# echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
 
 # It seems that NPM not always installs AND builds the dependencies again. It is important to delete
 # the node modules first and then also delete the package.lock.json file!
 # https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
 
-npm install --unsafe-perm /usr/node-red-gocontroll
+# npm install --unsafe-perm /usr/node-red-gocontroll
 
-echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
-npm remove --no-audit --no-update-notifier --no-fund --save node-red-dashboard
-npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-dashboard@3.1.2
-# deprecated way of installing node red dashboard.
-# npm install node-red-dashboard@3.1.2
+# echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
+# npm remove --no-audit --no-update-notifier --no-fund --save node-red-dashboard
+# npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-dashboard@3.1.2
+# # deprecated way of installing node red dashboard.
+# # npm install node-red-dashboard@3.1.2
 
-echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
-npm remove --no-audit --no-update-notifier --no-fund --save node-red-node-serialport
-npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-node-serialport@0.15.0
-# deprecated way of installing serial port.
-# npm install node-red-node-serialport@0.15.0
+# echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
+# npm remove --no-audit --no-update-notifier --no-fund --save node-red-node-serialport
+# npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-node-serialport@0.15.0
+# # deprecated way of installing serial port.
+# # npm install node-red-node-serialport@0.15.0
 
-cd /usr/moduline/nodejs
+# cd /usr/moduline/nodejs
 
-#npm install
+# #npm install
 
 echo -e "${YELLOW}-Autostart Node-RED ${NORMAL}"
 systemctl enable nodered
