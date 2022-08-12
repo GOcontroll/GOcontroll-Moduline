@@ -11,7 +11,7 @@ def upload_firmware(args):
 	slot = args[0]
 	new_firmware = args[1]
 	stdout = subprocess.run(["node", "/usr/moduline/nodejs/upload-new-module-firmware.js", str(slot), new_firmware], stdout=subprocess.PIPE, text=True)
-	return [slot, stdout.stdout]
+	return [str(slot), stdout.stdout]
 
 #check if simulink or nodered is running and stop them.
 simulink_status = subprocess.run(["systemctl", "is-active", "go-simulink"], stdout=subprocess.PIPE, text=True)
