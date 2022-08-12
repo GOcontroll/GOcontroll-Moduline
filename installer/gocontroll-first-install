@@ -54,13 +54,13 @@ fi
 if [ -d /usr/moduline/bash ]
 then
 echo -e "${YELLOW}-Delete bash automation scripts ${NORMAL}"
-	rm -r /usr/moduline/bash 
+	rm /usr/moduline/bash/* 
 fi
 
 if [ -d /usr/moduline/nodejs ]
 then
 echo -e "${YELLOW}-Delete nodejs scripts ${NORMAL}"
-	rm -r /usr/moduline/nodejs 
+	rm /usr/moduline/nodejs/* 
 fi
 
 echo -e "${YELLOW}-Copy GOcontroll files to correct location ${NORMAL}"
