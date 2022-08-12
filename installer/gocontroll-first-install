@@ -51,17 +51,17 @@ echo -e "${YELLOW}-Delete old module firmware ${NORMAL}"
 	rm -r /usr/module-firmware 
 fi
 
-# if [ -d /usr/moduline/bash ]
-# then
-# echo -e "${YELLOW}-Delete bash automation scripts ${NORMAL}"
-# 	rm -r /usr/moduline/bash 
-# fi
+if [ -d /usr/moduline/bash ]
+then
+echo -e "${YELLOW}-Delete bash automation scripts ${NORMAL}"
+	rm -r /usr/moduline/bash 
+fi
 
-# if [ -d /usr/moduline/nodejs ]
-# then
-# echo -e "${YELLOW}-Delete nodejs scripts ${NORMAL}"
-# 	rm -r /usr/moduline/nodejs 
-# fi
+if [ -d /usr/moduline/nodejs ]
+then
+echo -e "${YELLOW}-Delete nodejs scripts ${NORMAL}"
+	rm -r /usr/moduline/nodejs 
+fi
 
 echo -e "${YELLOW}-Copy GOcontroll files to correct location ${NORMAL}"
 cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
@@ -82,7 +82,6 @@ patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcont
 patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_html.patch
 patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll-Moduline/patch/can_receive_html.patch
 patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch
-
 fi
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
@@ -91,13 +90,11 @@ chmod 555 /usr/moduline/bash/go-wwan-start.sh
 chmod 555 /usr/moduline/bash/go-wwan-stop.sh
 chmod 555 /usr/moduline/bash/go-gps-start.sh
 chmod 555 /usr/moduline/bash/go-gps-stop.sh
-#chmod 555 /usr/moduline/bash/identify.sh
+chmod 555 /usr/moduline/bash/identify.sh
 chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
 chmod 555 /usr/moduline/nodejs/upload-server.js
-#chmod 555 /usr/moduline/nodejs/flash-led.js
-
-#alias identify="/usr/moduline/bash/identify.sh"
+chmod 555 /usr/moduline/nodejs/flash-led.js
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
