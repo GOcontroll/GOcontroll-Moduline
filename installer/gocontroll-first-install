@@ -152,22 +152,22 @@ timedatectl set-timezone Europe/Luxembourg
 
 echo -e "${YELLOW}-Fix network manager connections ${NORMAL}"
 
-if [ ! -f "/etc/NetworkManage/system-connections/Wired connnection auto.nmconnection" ]
+if [ ! -f "/etc/NetworkManager/system-connections/Wired connnection auto.nmconnection" ]
 then
 	 nmcli con mod "Wired connection 1" con-name "Wired connection auto"
 fi
 
-if [ ! -f "/etc/NetworkManage/system-connections/Wired connection static.nmconnection" ]
+if [ ! -f "/etc/NetworkManager/system-connections/Wired connection static.nmconnection" ]
 then
 	nmcli con add type ethernet con-name "Wired connection static" ifname eth0 ipv4.addresses 192.168.255.255/16 ipv4.method manual connection.autoconnect no
 fi
 
-if [ ! -f "/etc/NetworkManage/system-connections/GOcontroll-ap.nmconnection" ]
+if [ ! -f "/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection" ]
 then
-	nmcli con add type wifi con-name "GOcontroll-ap" ifname wlan0 ssid GOcontroll-ap ipv4.addresses 192.168.2.85/16 ipv4.method manual connection.autoconnect no 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk GOcontrolltest 802-11-wireless-security.key-mgmt wpa-psk
+	nmcli con add type wifi con-name "GOcontroll-ap" ifname wlan0 ssid GOcontroll-ap ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect no 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk GOcontrolltest 802-11-wireless-security.key-mgmt wpa-psk
 fi
 
-if [ ! -f "/etc/NetworkManage/system-connections/GO-celular.nmconnection" ]
+if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
 then
 	nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
 fi
@@ -178,7 +178,10 @@ echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
 
 if [ ! -f "/etc/bluetooth/trusted_devices.txt" ]
 then
-	mkdir /etc/bluetooth
+	if [ ! -d "/etc/bluetooth" ]
+	then
+		mkdir "/etc/bluetooth"
+	fi
 	choose() { echo ${1:RANDOM%${#1}:1} $RANDOM; }
 	pass="$({ for i in $( seq 1 $(( 12 + RANDOM % 4 )) )
 		do
