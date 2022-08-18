@@ -179,6 +179,18 @@ echo -e "${YELLOW}-Gathering module configuration and updating outdated modules 
 
 python3 /usr/moduline/python/installModuleFirmware.py
 
+echo -e "${YELLOW}-Setting the bluetooth name${NORMAL}"
+
+hw=$(tr -d '\0' </sys/firmware/devicetree/base/hardware)
+case $hw in
+
+	*IV*)
+		echo PRETTY_HOSTNAME="GOcontroll Moduline IV" > /etc/machine-info
+		;;
+	*Mini*)
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini" > /etc/machine-info
+esac
+
 echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
 
 if [ ! -f "/etc/bluetooth/trusted_devices.txt" ]
