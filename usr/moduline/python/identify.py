@@ -31,7 +31,7 @@ for i,module in enumerate(modules):
     elif "20-30-3" in module:
         output.append([f"{i+1}", "IR communication", moduleSplit[3], moduleSplit[4]+"."+moduleSplit[5]+"."+moduleSplit[6]])
     else:
-        output.append(["-", "-", "-", "-"])
+        output.append([f"{i+1}", "-", "-", "-"])
 
 s = [[str(e) for e in row] for row in output]
 lens = [max(map(len, col)) for col in zip(*s)]
