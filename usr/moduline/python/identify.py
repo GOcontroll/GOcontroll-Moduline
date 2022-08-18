@@ -9,7 +9,8 @@ tf.start()
 subprocess.run(["cat", "/sys/firmware/devicetree/base/hardware"])
 print("\n")
 subprocess.run(["lsb_release", "-a"])
-subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering"],stdout=subprocess.PIPE, text=False)
+stdout = subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering"],stdout=subprocess.PIPE, text=False)
+stdout = stdout.stdout
 with open("/usr/module-firmware/modules.txt", "r") as modulesfile:
     layout = modulesfile.readline()
 
@@ -31,7 +32,7 @@ for i,module in enumerate(modules):
     elif "20-30-3" in module:
         output.append([f"{i+1}", "IR communication", moduleSplit[3], moduleSplit[4]+"."+moduleSplit[5]+"."+moduleSplit[6]])
     else:
-        output.append(["-", "-", "-", "-"])
+        output.append([f"{i+1}", "-", "-", "-"])
 
 s = [[str(e) for e in row] for row in output]
 lens = [max(map(len, col)) for col in zip(*s)]

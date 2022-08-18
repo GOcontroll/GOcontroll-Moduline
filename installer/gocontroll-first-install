@@ -11,7 +11,7 @@ cd
 if [ -d GOcontroll ]
 then
 echo -e "${YELLOW}-Delete existing GOcontroll folder ${NORMAL}"
-	rm -r GOcontroll
+	rm -r GOcontroll > /dev/null
 fi
 
 echo -e "${YELLOW}-Create new GOcontroll folder ${NORMAL}"
@@ -26,49 +26,49 @@ apt -y install git
 fi
 
 echo -e "${YELLOW}-Update debian ${NORMAL}"
-apt-get update -y
+apt-get update -y > /dev/null
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
-git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
+git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
 
 echo -e "${YELLOW}-remove old GOcontroll stuff ${NORMAL}"
 
 if [ -d /usr/node-red-gocontroll/nodes ]
 then
 echo -e "${YELLOW}-Delete existing GOcontroll nodes ${NORMAL}"
-	rm -r /usr/node-red-gocontroll/nodes
+	rm -r /usr/node-red-gocontroll/nodes > /dev/null
 fi
 
 if [ -d /usr/node-red-static ]
 then
 echo -e "${YELLOW}-Delete node red static folder ${NORMAL}"
-	rm -r /usr/node-red-static
+	rm -r /usr/node-red-static > /dev/null
 fi
 
 if [ -d /usr/module-firmware ]
 then
 echo -e "${YELLOW}-Delete old module firmware ${NORMAL}"
-	rm -r /usr/module-firmware 
+	rm -r /usr/module-firmware > /dev/null
 fi
 
 if [ -d /usr/moduline/bash ]
 then
 echo -e "${YELLOW}-Delete bash automation scripts ${NORMAL}"
-	rm /usr/moduline/bash/* 
+	rm /usr/moduline/bash/* > /dev/null
 fi
 
 if [ -d /usr/moduline/nodejs ]
 then
 echo -e "${YELLOW}-Delete nodejs scripts ${NORMAL}"
-	rm /usr/moduline/nodejs/* 
+	rm /usr/moduline/nodejs/* > /dev/null
 fi
 
 echo -e "${YELLOW}-Copy GOcontroll files to correct location ${NORMAL}"
-cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/version.txt /root
+cp -avr /root/GOcontroll/GOcontroll-Moduline/lib / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/etc / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/root / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/version.txt /root > /dev/null
 
 if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
 [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]||
@@ -76,12 +76,12 @@ if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V
 [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.06" ]]; then
 
 echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
-patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch
-patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll-Moduline/patch/output_module_html.patch
-patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_reset_html.patch
-patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_html.patch
-patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll-Moduline/patch/can_receive_html.patch
-patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch
+patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll-Moduline/patch/output_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_reset_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll-Moduline/patch/can_receive_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch > /dev/null
 fi
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
@@ -137,15 +137,15 @@ service dnsmasq start
 # #npm install
 
 echo -e "${YELLOW}-Autostart Node-RED ${NORMAL}"
-systemctl enable nodered
-systemctl restart nodered
+systemctl enable nodered > /dev/null
+systemctl restart nodered > /dev/null
 
 echo -e "${YELLOW}-Start upload server ${NORMAL}"
-systemctl enable go-upload-server
-systemctl start go-upload-server
+systemctl enable go-upload-server > /dev/null
+systemctl start go-upload-server > /dev/null
 
 echo -e "${YELLOW}-Start bluetooth service ${NORMAL}"
-systemctl enable go-bluetooth
+systemctl enable go-bluetooth > /dev/null
 
 echo -e "${YELLOW}-Set time zone ${NORMAL}"
 timedatectl set-timezone Europe/Luxembourg
@@ -154,23 +154,25 @@ echo -e "${YELLOW}-Fix network manager connections ${NORMAL}"
 
 if [ ! -f "/etc/NetworkManager/system-connections/Wired connnection auto.nmconnection" ]
 then
-	 nmcli con mod "Wired connection 1" con-name "Wired connection auto"
+	 nmcli con mod "Wired connection 1" con-name "Wired connection auto" > /dev/null
 fi
 
 if [ ! -f "/etc/NetworkManager/system-connections/Wired connection static.nmconnection" ]
 then
-	nmcli con add type ethernet con-name "Wired connection static" ifname eth0 ipv4.addresses 192.168.255.255/16 ipv4.method manual connection.autoconnect no
+	nmcli con add type ethernet con-name "Wired connection static" ifname eth0 ipv4.addresses 192.168.255.255/16 ipv4.method manual connection.autoconnect no > /dev/null
 fi
 
 if [ ! -f "/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection" ]
 then
-	nmcli con add type wifi con-name "GOcontroll-ap" ifname wlan0 ssid GOcontroll-ap ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect no 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk GOcontrolltest 802-11-wireless-security.key-mgmt wpa-psk
+	nmcli con add type wifi con-name "GOcontroll-ap" ifname wlan0 ssid GOcontroll-ap ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect no 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk GOcontrolltest 802-11-wireless-security.key-mgmt wpa-psk > /dev/null
 fi
 
 if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
 then
 	nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
 fi
+
+echo -e "${YELLOW}-Gathering module configuration and updating outdated modules ${NORMAL}"
 
 python3 /usr/moduline/python/installModuleFirmware.py
 
