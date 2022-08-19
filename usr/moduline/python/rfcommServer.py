@@ -71,17 +71,21 @@ def status_led_on():
 #thread that makes an led flash in the colour orange
 def status_led_gocontroll():
 	while 1==1:
-		with SMBus(2) as bus:
-			bus.write_i2c_block_data(address, 0x0D, [0])
-			bus.write_i2c_block_data(address, 0x0B, [165])
-			bus.write_i2c_block_data(address, 0x0C, [50])
-		if(kill_threads):
+		try:
+			with SMBus(2) as bus:
+				bus.write_i2c_block_data(address, 0x0D, [0])
+				bus.write_i2c_block_data(address, 0x0B, [165])
+				bus.write_i2c_block_data(address, 0x0C, [50])
+			if(kill_threads):
+				break
+			time.sleep(0.5)
+			with SMBus(2) as bus:
+				bus.write_i2c_block_data(address, 0x0D, [0])
+				bus.write_i2c_block_data(address, 0x0B, [0])
+				bus.write_i2c_block_data(address, 0x0C, [0])
+		except:
+			print("unable to send i2c message")
 			break
-		time.sleep(0.5)
-		with SMBus(2) as bus:
-			bus.write_i2c_block_data(address, 0x0D, [0])
-			bus.write_i2c_block_data(address, 0x0B, [0])
-			bus.write_i2c_block_data(address, 0x0C, [0])
 		time.sleep(0.5)
 		if(kill_threads_shutdown):
 			break
@@ -1108,11 +1112,14 @@ def when_client_connects():
 	read_can_bus_load = False
 	kill_threads = False
 	kill_threads_shutdown = False
-	with SMBus(2) as bus:
-		bus.write_i2c_block_data(address,23,[255])
-		bus.write_i2c_block_data(address,0,[64])
-		tf = threading.Thread(target=status_led_gocontroll)
-		tf.start()
+	try:
+		with SMBus(2) as bus:
+			bus.write_i2c_block_data(address,23,[255])
+			bus.write_i2c_block_data(address,0,[64])
+			tf = threading.Thread(target=status_led_gocontroll)
+			tf.start()
+	except:
+		print("unable to send i2c message")
 	global trust_device
 	global transfer_mode
 	transfer_mode = "command"
