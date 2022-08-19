@@ -96,8 +96,8 @@ chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
 chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
 
-alias identify="/usr/moduline/python/identify.py"
-echo alias identify="/usr/moduline/python/identify.py" >> ~/.bashrc
+# alias identify="/usr/moduline/python/identify.py"
+# echo alias identify="/usr/moduline/python/identify.py" >> ~/.bashrc
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
