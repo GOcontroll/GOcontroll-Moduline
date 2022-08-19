@@ -175,27 +175,34 @@ module.exports = function(RED) {
 
 		async function readFile() {
 			try {
-			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
-			modulesArr = data.split(":");
-			firmware = "Firmware: " + modulesArr[moduleSlot-1];
-			/*check if the selected module is okay for this slot*/
-		/*6 channel output*/
-		if(moduleType == 1){
-			if (firmware.includes("20-20-2")) {
-				node.status({fill:"green",shape:"dot",text:firmware})
-				OutputModule_SendDummyByte(); 
-			} else {
-				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
-			}
-		/* In case 10 channel output module is selected */
-		}else{
-			if (firmware.includes("20-20-3")) {
-				node.status({fill:"green",shape:"dot",text:firmware})
-				OutputModule_SendDummyByte(); 
-			} else {
-				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
-			}
-		}
+				const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+				modulesArr = data.split(":");
+				var moduleArr = modulesArr[moduleSlot-1].split("-");
+				if (moduleArr[2].length==1) {
+					moduleArr[2] = "0" + moduleArr[2];
+				}
+				if (moduleArr[3].length==1) {
+					moduleArr[3] = "0" + moduleArr[3];
+				}
+				firmware = "HW:V"+moduleArr[0]+moduleArr[1]+moduleArr[2]+moduleArr[3] + "  SW:V"+moduleArr[4]+"."+moduleArr[5]+"."+moduleArr[6];
+				/*check if the selected module is okay for this slot*/
+				/*6 channel output*/
+				if(moduleType == 1){
+					if (firmware.includes("202002")) {
+						node.status({fill:"green",shape:"dot",text:firmware})
+						OutputModule_SendDummyByte(); 
+					} else {
+						node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+					}
+				/* In case 10 channel output module is selected */
+				}else{
+					if (firmware.includes("202003")) {
+						node.status({fill:"green",shape:"dot",text:firmware})
+						OutputModule_SendDummyByte(); 
+					} else {
+						node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+					}
+				}
 			} catch (err) {
 				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
 			}

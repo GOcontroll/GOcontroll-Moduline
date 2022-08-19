@@ -112,9 +112,16 @@ module.exports = function(RED) {
 			try {
 				const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
 				modulesArr = data.split(":");
-				firmware = "Firmware: " + modulesArr[moduleSlot-1];
+				var moduleArr = modulesArr[moduleSlot-1].split("-");
+				if (moduleArr[2].length==1) {
+					moduleArr[2] = "0" + moduleArr[2];
+				}
+				if (moduleArr[3].length==1) {
+					moduleArr[3] = "0" + moduleArr[3];
+				}
+				firmware = "HW:V"+moduleArr[0]+moduleArr[1]+moduleArr[2]+moduleArr[3] + "  SW:V"+moduleArr[4]+"."+moduleArr[5]+"."+moduleArr[6];
 				/*check if the selected module is okay for this slot*/
-				if (firmware.includes("20-20-1")) {
+				if (firmware.includes("202001")) {
 					node.status({fill:"green",shape:"dot",text:firmware})
 					BridgeModule_SendDummyByte(); 
 				} else {

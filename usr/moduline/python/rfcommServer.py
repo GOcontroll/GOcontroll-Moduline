@@ -335,7 +335,7 @@ def wireless_settings(commandnmbr, arg):
 			ip = ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
 		except:
 			ip = "no IP available"
-		if "GOcontroll-ap" in status: 
+		if "GOcontroll-AP" in status: 
 			status = "ap"
 			send(chr(commands.WIRELESS_SETTINGS) + chr(commands.INIT_WIRELESS_SETTINGS) + status + ":" + connection_status + ":" + ip)
 		else:
@@ -402,7 +402,7 @@ def wireless_settings(commandnmbr, arg):
 
 	#gather the information about the access point for the user
 	elif level1 == commands.INIT_AP_SETTINGS:
-		path = "/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection"
+		path = "/etc/NetworkManager/system-connections/GOcontroll-AP.nmconnection"
 		with open(path , "r") as settings:
 			file = settings.readlines()
 			ssid_line = get_line(path, "ssid=")
@@ -464,13 +464,13 @@ def wireless_settings(commandnmbr, arg):
 		wifi_connections = []
 		for i, con in enumerate(stdout):
 			if "wireless" in con:
-				if "GOcontroll-ap" not in con:
+				if "GOcontroll-AP" not in con:
 					wifi_connections.append(con.split(":")[0])
 		if arg == "ap":
 			for con in wifi_connections:
 				subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "no"])
-			subprocess.run(["nmcli", "con", "mod", "GOcontroll-ap", "connection.autoconnect", "yes"])
-			stdout = subprocess.run(["nmcli", "con", "up", "GOcontroll-ap"], stdout=subprocess.PIPE, text=True)
+			subprocess.run(["nmcli", "con", "mod", "GOcontroll-AP", "connection.autoconnect", "yes"])
+			stdout = subprocess.run(["nmcli", "con", "up", "GOcontroll-AP"], stdout=subprocess.PIPE, text=True)
 			result = stdout.stdout
 			if "successfully" in result:
 				send(chr(commandnmbr) + chr(commands.SWITCH_WIRELESS_MODE) + "ap")
@@ -479,8 +479,8 @@ def wireless_settings(commandnmbr, arg):
 		elif arg == "wifi":
 			for con in wifi_connections:
 				subprocess.run(["nmcli", "con", "mod", con, "connection.autoconnect", "yes"])
-			subprocess.run(["nmcli", "con", "mod", "GOcontroll-ap", "connection.autoconnect", "no"])
-			stdout = subprocess.run(["nmcli", "con", "down", "GOcontroll-ap"], stdout=subprocess.PIPE, text=True)
+			subprocess.run(["nmcli", "con", "mod", "GOcontroll-AP", "connection.autoconnect", "no"])
+			stdout = subprocess.run(["nmcli", "con", "down", "GOcontroll-AP"], stdout=subprocess.PIPE, text=True)
 			result = stdout.stdout
 			if "successfully" in result:
 				send(chr(commandnmbr) + chr(commands.SWITCH_WIRELESS_MODE) + "wifi")
@@ -505,18 +505,18 @@ def access_point_settings(commandnmbr, arg):
 		arg = arg.split(":")
 		name = arg[0]
 		psk = arg[1]
-		subprocess.run(["nmcli", "con", "mod", "GOcontroll-ap", "802-11-wireless.ssid", name])
-		subprocess.run(["nmcli", "con", "mod", "GOcontroll-ap", "wifi-sec.psk", psk])
-		reload = subprocess.run(["nmcli", "con", "down", "GOcontroll-ap"], stdout=subprocess.PIPE, text=True)
+		subprocess.run(["nmcli", "con", "mod", "GOcontroll-AP", "802-11-wireless.ssid", name])
+		subprocess.run(["nmcli", "con", "mod", "GOcontroll-AP", "wifi-sec.psk", psk])
+		reload = subprocess.run(["nmcli", "con", "down", "GOcontroll-AP"], stdout=subprocess.PIPE, text=True)
 		reload = reload.stdout
 		if "succesfully" in reload:
-			subprocess.run(["nmcli", "con", "up", "GOcontroll-ap"])
+			subprocess.run(["nmcli", "con", "up", "GOcontroll-AP"])
 		send(chr(commandnmbr) + chr(commands.SET_AP_SETTINGS) + "done")
 
 
 	#initialize the screen for the user
 	elif level1 == commands.INIT_AP_SETTINGS:
-		path = "/etc/NetworkManager/system-connections/GOcontroll-ap.nmconnection"
+		path = "/etc/NetworkManager/system-connections/GOcontroll-AP.nmconnection"
 		with open(path , "r") as settings:
 			file = settings.readlines()
 			ssid_line = get_line(path, "ssid=")
