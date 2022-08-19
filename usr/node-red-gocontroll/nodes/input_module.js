@@ -191,11 +191,18 @@ function GOcontrollInputModule(config) {
 		try {
 		const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
 		modulesArr = data.split(":");
-		firmware = "Firmware: " + modulesArr[moduleSlot-1];
+		var moduleArr = modulesArr[moduleSlot-1].split("-");
+		if (moduleArr[2].length==1) {
+			moduleArr[2] = "0" + moduleArr[2];
+		}
+		if (moduleArr[3].length==1) {
+			moduleArr[3] = "0" + moduleArr[3];
+		}
+		firmware = "HW:V"+moduleArr[0]+moduleArr[1]+moduleArr[2]+moduleArr[3] + "  SW:V"+moduleArr[4]+"."+moduleArr[5]+"."+moduleArr[6];
 		/*check if the selected module is okay for this slot*/
 		/*6 channel input*/
 		if(moduleType == 1){
-			if (firmware.includes("20-10-1")) {
+			if (firmware.includes("201001")) {
 				node.status({fill:"green",shape:"dot",text:firmware})
 				InputModule_SendDummyByte(); 
 			} else {
@@ -203,7 +210,7 @@ function GOcontrollInputModule(config) {
 			}
 		/* In case 10 channel input module is selected */
 		}else{
-			if (firmware.includes("20-10-2")) {
+			if (firmware.includes("201002")) {
 				node.status({fill:"green",shape:"dot",text:firmware})
 				InputModule_SendDummyByte(); 
 			} else {
