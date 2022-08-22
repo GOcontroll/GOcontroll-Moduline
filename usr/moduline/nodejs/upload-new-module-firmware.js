@@ -4,6 +4,13 @@ const fs = require('fs');
 var args = process.argv.slice(2)
 const slot = parseInt(args[0]);
 const newFirmware = args[1];
+var forceUpdate = parseInt(args[2])
+
+if (forceUpdate == 1) {
+    console.log("Forcing update, I hope you know what you are doing.");
+}
+
+
 const moduleFirmwareLocation = "/usr/module-firmware/"
 const BOOTMESSAGELENGTH = 46
 const SPISPEED = 2000000;
@@ -169,6 +176,10 @@ function Module_CheckFirmwareVersion(){
 
             if (ArrayEquals(hwVersion, newHwVersion) && !ArrayEquals(swVersion, newSwVersion)) {
                 oldSwVersion = swVersion;
+                Module_AnnounceFirmwareUpload();
+            } else if (forceUpdate==1) {
+                oldSwVersion = swVersion;
+                forceUpdate=0;
                 Module_AnnounceFirmwareUpload();
             } else if (!ArrayEquals(oldSwVersion, swVersion)) {
                 var controllerLayoutFile;

@@ -18,7 +18,7 @@ systemctl go-wwan
 # module related scripts
 python3 /usr/moduline/python/installModuleFirmware.py -- scan the module slots and update any outdate modules
 node /usr/moduline/nodejs/module-info-gathering.js -- scan the module slots
-node /usr/moduline/nodjs/upload-new-module-firmware <slot> <firmware.srec> -- upload specific firmware to a module
+node /usr/moduline/nodjs/upload-new-module-firmware <slot> <firmware.srec> <force update (1 for yes, empty for no)> -- upload specific firmware to a module
 
 *** System services
 # Service to start Node-RED
