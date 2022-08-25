@@ -14,9 +14,15 @@ console.error(err);
 if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
     var controllerLayout = new Array(8);
+    var moduleManufacturers = new Array(8);
+    var moduleQRsfront = new Array(8);
+    var moduleQRsback = new Array(8);
 } else if (hardwareFile.includes("Moduline Mini")) {
     controllerType = "mini"
     var controllerLayout = new Array(4);
+    var moduleManufacturers = new Array(4);
+    var moduleQRsfront = new Array(4);
+    var moduleQRsback = new Array(4);
 }
 
 var sL, sB;
@@ -119,6 +125,9 @@ function Module_StopReset (bus, dev, moduleSlot){
 
 function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
     var swVersion = new Array(7);
+    var manufacturer;
+    var QRfront;
+    var QRback;
 	/* Construct the firmware check message */ 
 	sendBuffer[0] = 9;
 	sendBuffer[1] = BOOTMESSAGELENGTH-1; // Messagelength from bootloader
@@ -150,9 +159,16 @@ function Module_CheckFirmwareVersion(bus, dev, moduleSlot){
             swVersion[4] = String(receiveBuffer[10]);
             swVersion[5] = String(receiveBuffer[11]);
             swVersion[6] = String(receiveBuffer[12]);
+            
+            manufacturer = receiveBuffer.readUInt32BE(13);
+            QRfront = receiveBuffer.readUInt32BE(17);
+            QRback = receiveBuffer.readUInt32BE(21);
 
             firmwareName = swVersion.join("-");
             controllerLayout[moduleSlot-1] = firmwareName;
+            moduleManufacturers[moduleSlot-1] = manufacturer;
+            moduleQRsfront[moduleSlot-1] = QRfront;
+            moduleQRsback[moduleSlot-1] = QRback;
             // console.log(controllerLayout)
         });
     });
@@ -204,7 +220,7 @@ function Module_Reset(state, moduleSlot){
 
 function Write_File() {
     console.log(controllerLayout)
-    fs.writeFile('/usr/module-firmware/modules.txt', controllerLayout.join(":"), err => {
+    fs.writeFile('/usr/module-firmware/modules.txt', controllerLayout.join(":") + "\n" + moduleManufacturers.join(":") + "\n" + moduleQRsfront.join(":") + "\n" + moduleQRsback.join(":"), err => {
         if (err) {
             console.error(err);
         }
