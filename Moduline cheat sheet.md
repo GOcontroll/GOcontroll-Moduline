@@ -16,7 +16,7 @@
 identify <-v> -- gives information about the controller and makes LED's flash, add -v for more detailed information about the modules
 
 # module related scripts
-python3 /usr/moduline/python/installModuleFirmware.py -- scan the module slots and update any outdate modules
+python3 /usr/moduline/python/installModuleFirmware.py -- scan the module slots and update any outdated module firmwares
 node /usr/moduline/nodejs/module-info-gathering.js -- scan the module slots
 node /usr/moduline/nodjs/upload-new-module-firmware <slot> <firmware.srec> <force update (1 for yes, empty or other for no)> -- upload specific firmware to a module
 
