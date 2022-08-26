@@ -18,6 +18,11 @@ retrievedKey=$(sed -rn 's/^GO_GPS=([^\n]+)$/\1/p' /usr/moduline/moduline.propert
 
 if [[ $retrievedKey == "NOT-ACTIVE" ]]
 then
-	# Stop with powering the module only if GPS is not using it.
-	echo 0 > /sys/devices/platform/leds/leds/ldo-sim7000/brightness
+  if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
+  echo 0 > /sys/devices/platform/leds/leds/sim7000-level-active/brightness
+  else
+  # Start with powering the module
+  echo 0 > /sys/devices/platform/leds/leds/ldo-sim7000/brightness
+  echo 0 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
+  fi
 fi
