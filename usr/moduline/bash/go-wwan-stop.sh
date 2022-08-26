@@ -23,6 +23,7 @@ then
   else
   # Start with powering the module
   echo 0 > /sys/devices/platform/leds/leds/ldo-sim7000/brightness
-  echo 0 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
   fi
+  echo 0 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
+  echo 0 > /sys/devices/platform/leds/leds/rst-sim7000/brightness
 fi
