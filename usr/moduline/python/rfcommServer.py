@@ -558,13 +558,17 @@ def controller_settings(commandnmbr, arg):
 		with open("/root/version.txt", "r") as file:
 			software_version = file.read(6)
 		with open("/etc/machine-info", "r") as file:
-			controller_name = file.read().split("\"")
-		send(chr(commandnmbr) + chr(commands.INIT_CONTROLLER_SETTINGS) + hardware_version + ":" + software_version + ":" + controller_name[1])
+			controller_name = file.read().split("=")
+		try:
+			name = controller_name[1]
+		except IndexError:
+			name = "faulty name"
+		send(chr(commandnmbr) + chr(commands.INIT_CONTROLLER_SETTINGS) + hardware_version + ":" + software_version + ":" + name)
 
 #write the new bluetooth name to the right file
 def write_device_name(name):
 	with open("/etc/machine-info", "w") as file:
-		file.write("PRETTY_HOSTNAME=\""+name+"\"")
+		file.write("PRETTY_HOSTNAME="+name)
 
 ##########################################################################################
 
