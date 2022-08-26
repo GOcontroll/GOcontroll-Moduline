@@ -15,10 +15,9 @@ echo 255 > /sys/devices/platform/leds/leds/sim7000-level-active/brightness
 else
 # Start with powering the module
 echo 255 > /sys/devices/platform/leds/leds/ldo-sim7000/brightness
+echo 255 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
 fi
 
-
-echo 255 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
 echo 255 > /sys/devices/platform/leds/leds/rst-sim7000/brightness
 
 # WANN functionality is claiming the supply so set propertie
