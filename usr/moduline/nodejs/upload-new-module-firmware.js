@@ -90,10 +90,10 @@ switch(controllerType)
     case "mini":
         switch(slot)
         {
-            case 1: sL = 2; sB=0; break;
-            case 2: sL = 2; sB=1; break;
-            case 3: sL = 1; sB=0; break;
-            case 4: sL = 1; sB=1; break;
+            case 1: sL = 1; sB=0; break;
+            case 2: sL = 1; sB=1; break;
+            case 3: sL = 2; sB=0; break;
+            case 4: sL = 2; sB=1; break;
         }
         break;
     case "dash?":
