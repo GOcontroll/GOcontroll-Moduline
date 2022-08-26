@@ -182,20 +182,6 @@ function Module_CheckFirmwareVersion(){
                 forceUpdate=0;
                 Module_AnnounceFirmwareUpload();
             } else if (!ArrayEquals(oldSwVersion, swVersion)) {
-                var controllerLayoutFile;
-                try {
-                    controllerLayoutFile = fs.readFileSync("/usr/module-firmware/modules.txt", "utf-8");
-                } catch(err) {
-                console.error(err);
-                }
-                var modules = controllerLayoutFile.split(":");
-                modules[slot-1] = hwVersion.join("-") + "-" + swVersion.join("-");
-
-                fs.writeFileSync("/usr/module-firmware/modules.txt", modules.join(":"), err => {
-                    if (err) {
-                        console.error(err)
-                    }
-                })
                 console.log("firmware update successfull")
                 Module_CancelFirmwareUpload();
             } else {

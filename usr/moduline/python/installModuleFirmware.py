@@ -74,6 +74,15 @@ if len(error_array) > 0:
 else:
     print(f"{OKGREEN}Module firmware succesfully uploaded:\n{modules_to_update}{ENDC}")
 
+    with open("/usr/module-firmware/modules.txt", "r") as modules:
+        info = modules.readlines()
+    firmwares = info[0].split(":")
+    for module in modules_to_update:
+        firmwares[int(module[0])-1]=module[1].split(".")[0]
+    info[0] = ":".join(firmwares) + "\n"
+    with open("/usr/module-firmware/modules.txt", "w") as modules:
+        modules.writelines(info)
+
 #restart simulink or nodered if they were turned on before the script
 if not "in" in simulink_status:
     subprocess.run(["systemctl", "start", "go-simulink"])

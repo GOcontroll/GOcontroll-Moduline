@@ -965,6 +965,7 @@ def module_settings(commandnmbr, arg):
 				send(chr(commandnmbr) + chr(commands.ERROR_UPLOADING_FIRMWARE) + "\n".join(error_array))
 			else:
 				send(chr(commandnmbr) + chr(commands.NEW_FIRMWARE_UPLOAD_COMPLETE) + "done")
+				subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])
 		else:
 			send(chr(commandnmbr) + chr(commands.NO_MODULES_TO_UPDATE) + "cancelled")
 		if not "in" in simulink_status:
