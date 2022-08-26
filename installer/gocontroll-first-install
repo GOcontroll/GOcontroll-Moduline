@@ -190,21 +190,23 @@ esac
 
 echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
 
-if [ ! -f "/etc/bluetooth/trusted_devices.txt" ]
-then
-	if [ ! -d "/etc/bluetooth" ]
-	then
-		mkdir "/etc/bluetooth"
-	fi
-	choose() { echo ${1:RANDOM%${#1}:1} $RANDOM; }
-	pass="$({ for i in $( seq 1 $(( 12 + RANDOM % 4 )) )
-		do
-			choose '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^\&'
-		done
-	} | sort -R | awk '{printf "%s",$1}')"
-	#TODO also send this pass to the label printer
-	echo "$pass" > /etc/bluetooth/trusted_devices.txt
-fi
+python3 /usr/moduline/python/btKeyGen.py
+
+# if [ ! -f "/etc/bluetooth/trusted_devices.txt" ]
+# then
+# 	if [ ! -d "/etc/bluetooth" ]
+# 	then
+# 		mkdir "/etc/bluetooth"
+# 	fi
+# 	choose() { echo ${1:RANDOM%${#1}:1} $RANDOM; }
+# 	pass="$({ for i in $( seq 1 $(( 12 + RANDOM % 4 )) )
+# 		do
+# 			choose '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^\&'
+# 		done
+# 	} | sort -R | awk '{printf "%s",$1}')"
+# 	#TODO also send this pass to the label printer
+# 	echo "$pass" > /etc/bluetooth/trusted_devices.txt
+# fi
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
 echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"
