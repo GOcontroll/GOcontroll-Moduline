@@ -7,10 +7,7 @@
 #
 
 # Check if hardware is Moduline Mini controller. In this case, LDO and Level shifter needs to be enabled
-if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.05" ]]||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.06" ]]; then
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
 # Start with powering the module and level shifter
 echo 0 > /sys/devices/platform/leds/leds/communication-ldo-active/brightness
 echo 0 > /sys/devices/platform/leds/leds/sim7000-level-active/brightness
@@ -22,10 +19,7 @@ fi
 sleep 4
 
 # Check if hardware is Moduline Mini controller. In this case, LDO and Level shifter needs to be enabled
-if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.05" ]]||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.06" ]]; then
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
 # Start with powering the module and level shifter
 echo 255 > /sys/devices/platform/leds/leds/communication-ldo-active/brightness
 echo 255 > /sys/devices/platform/leds/leds/sim7000-level-active/brightness
