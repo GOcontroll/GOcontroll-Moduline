@@ -564,7 +564,7 @@ def controller_settings(commandnmbr, arg):
 #write the new bluetooth name to the right file
 def write_device_name(name):
 	with open("/etc/machine-info", "w") as file:
-		file.write("PRETTY_HOSTNAME="+name)
+		file.write("PRETTY_HOSTNAME=\""+name+"\"")
 
 ##########################################################################################
 
