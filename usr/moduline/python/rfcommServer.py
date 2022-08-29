@@ -104,7 +104,7 @@ def verify_device(commandnmbr, arg):
 		global trust_device
 		with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
 			passkey = trusted_devices.readline()
-		if (passkey[:-1] == arg.split(":")[0]):
+		if (passkey[:-1].lower() == arg.split(":")[0].lower()):
 			trust_device = True
 			with open("/etc/bluetooth/trusted_devices.txt", "a") as add_trusted_device:
 				add_trusted_device.write(arg.split(":")[1] + "\n")
