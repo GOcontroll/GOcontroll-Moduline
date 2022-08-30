@@ -100,14 +100,18 @@ def status_led_gocontroll():
 def verify_device(commandnmbr, arg):
 	level1 = ord(arg[0])
 	arg = arg[1:]
+
 	if (level1 == commands.DEVICE_VERIFICATION_ATTEMPT):
 		global trust_device
+		split_arg = arg.split(":")
+		device_id = split_arg[-1]
+		entered_key = ":".join(split_arg[:-1])
 		with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
 			passkey = trusted_devices.readline()
-		if (passkey[:-1].lower() == arg.split(":")[0].lower()):
+		if (passkey[:-1].lower() == entered_key.lower()):
 			trust_device = True
 			with open("/etc/bluetooth/trusted_devices.txt", "a") as add_trusted_device:
-				add_trusted_device.write(arg.split(":")[1] + "\n")
+				add_trusted_device.write(device_id + "\n")
 			request_verification(commands.DEVICE_VERIFICATION_SUCCESS)
 		else:
 			request_verification(commands.DEVICE_VERIFICATION_INCORRECT_PASSKEY)
