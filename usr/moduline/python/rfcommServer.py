@@ -106,8 +106,17 @@ def verify_device(commandnmbr, arg):
 		split_arg = arg.split(":")
 		device_id = split_arg[-1]
 		entered_key = ":".join(split_arg[:-1])
-		with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
-			passkey = trusted_devices.readline()
+		try:
+			with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
+				passkey = trusted_devices.readline()
+		except:
+			subprocess.run(["python3", "/usr/moduline/python/btKeyGen.py"])
+			try:
+				with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
+					passkey = trusted_devices.readline()
+			except:
+				request_verification(commands.DEVICE_VERIFICATION_FILE_MISSING)
+				return
 		if (passkey[:-1].lower() == entered_key.lower()):
 			trust_device = True
 			with open("/etc/bluetooth/trusted_devices.txt", "a") as add_trusted_device:
@@ -118,12 +127,17 @@ def verify_device(commandnmbr, arg):
 
 	
 	elif (level1 == commands.DEVICE_VERIFICATION_EXCHANGE_KEY):
-		with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
-			if (trusted_devices.read().find(arg) != -1):
-				trust_device = True
-			else:
-				request_verification(commands.DEVICE_VERIFICATION_MISSING)
+		try:
+			with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
+				if (trusted_devices.read().find(arg) != -1):
+					trust_device = True
+				else:
+					request_verification(commands.DEVICE_VERIFICATION_MISSING)
+		except:
+			subprocess.run(["python3", "/usr/moduline/python/btKeyGen.py"])
+			request_verification(commands.DEVICE_VERIFICATION_MISSING)
 
+			
 #part of the verification structure but is called from multiple places
 def request_verification(char):
 	send(chr(commands.VERIFY_DEVICE)+chr(char))
@@ -138,8 +152,12 @@ def update_controller(commandnmbr, arg):
 	level1 = ord(arg[0])
 	arg = arg[1:]
 	if (level1 == commands.CHECK_FOR_UPDATE):
-		with open("/etc/controller_update/current-release.txt", "r") as file:
-			current_release = file.read()
+		try:
+			with open("/etc/controller_update/current-release.txt", "r") as file:
+				current_release = file.read()
+		except:
+			send(chr(commandnmbr) + chr(commands.UPDATE_VERSION_FILE_MISSING))
+			return
 		if current_release[-1] == "\n":
 			current_release = current_release[:-1]
 		if (check_connection(0.5)):
@@ -171,11 +189,15 @@ def update_controller(commandnmbr, arg):
 			
 	#update the controller through its own network connection
 	elif (level1==commands.UPDATE_CONTROLLER_LOCAL):
-		file = requests.get(zip_url, stream=True)
-		with open("/tmp/temporary.zip", "wb") as zip:
-			for chunk in file.iter_content(chunk_size=1024):
-				if chunk:
-					zip.write(chunk)
+		try:
+			file = requests.get(zip_url, stream=True)
+			with open("/tmp/temporary.zip", "wb") as zip:
+				for chunk in file.iter_content(chunk_size=1024):
+					if chunk:
+						zip.write(chunk)
+		except:
+			send(chr(commandnmbr) + chr(commands.UPDATE_LOCAL_FAILED))
+			return
 		install_update()
 		send(chr(commandnmbr) + chr(commands.UPDATE_LOCAL_SUCCESS))
 
@@ -240,11 +262,11 @@ def receive_zip(data):
 	if progress > progress_check: #only send progress when it changes to clear up bluetooth bandwidth
 		send(chr(commands.FILE_TRANSFER) + chr(commands.FILE_TRANSFER_PROGRESS) + chr(progress))
 	if first_write == 1:
-		with open("/tmp/temporary." + "zip", "wb") as file:
+		with open("/tmp/temporary.zip", "wb") as file:
 			file.write(data)
 		first_write =0
 	else:
-		with open("/tmp/temporary." + "zip", "ab") as file:
+		with open("/tmp/temporary.zip", "ab") as file:
 			file.write(data)
 	if file_size==os.path.getsize("/tmp/temporary.zip"):
 		transfer_mode = "command"
@@ -280,25 +302,48 @@ def ethernet_settings(commandnmbr, arg):
 
 	#get the information for the ethernet settings screen
 	if level1 == commands.INIT_ETHERNET_SETTINGS:
+		connection_status = "False"
 		connection_status = str(check_connection(0.5))
 		stdout = subprocess.run(["nmcli", "con"], stdout=subprocess.PIPE, text=True)
 		result = stdout.stdout
 		result = result.split("\n")
+		mode = "auto"
+		ip = "-"
+		ip_static = "missing"
 		for name in result:
-			if "static" in name:
+			if "Wired connection static" in name:
 				if "eth0" in name:
 					mode= "static"
-				else:
+					break
+			elif "Wired connection auto" in name:
+				if "eth0" in name:
 					mode= "auto"
+					break
+			elif "Wired connection 1" in name:
+				subprocess.run(["nmcli", "con", "mod", "Wired connection 1", "con-name", "Wired connection auto"])
+				if "eth0" in name:
+					mode="auto"
+					break
 		try:
 			ip = ni.ifaddresses("eth0")[ni.AF_INET][0]["addr"]
 		except:
 			ip = "no IP available"
-		with open(path, "r") as con:
-			ip_line = get_line(path, "address1=")
-			file = con.readlines()
-			ip_static = file[ip_line].split("=")[1]
-			ip_static = ip_static.split("/")[0]
+		try:
+			with open(path, "r") as con:
+				ip_line = get_line(path, "address1=")
+				file = con.readlines()
+				ip_static = file[ip_line].split("=")[1]
+				ip_static = ip_static.split("/")[0]
+		except:
+			subprocess.run(["nmcli", "con", "add", "type", "ethernet", "con-name", "Wired connection static", "ifname", "eth0", "ipv4.addresses", "192.168.255.255/16", "ipv4.method", "manual", "connection.autoconnect", "no"])
+			try:
+				with open(path, "r") as con:
+					ip_line = get_line(path, "address1=")
+					file = con.readlines()
+					ip_static = file[ip_line].split("=")[1]
+					ip_static = ip_static.split("/")[0]
+			except:
+				ip_static = "missing"
 		send(chr(commandnmbr) + chr(commands.INIT_ETHERNET_SETTINGS) + mode + ":" + ip_static + ":" + ip + ":" + connection_status)
 
 	#apply changes that were made by the user
@@ -336,19 +381,25 @@ def wireless_settings(commandnmbr, arg):
 
 	#get information to set up the main wireless settings screen
 	if level1 == commands.INIT_WIRELESS_SETTINGS:
-		out = subprocess.run(["nmcli", "d", "s"], stdout=subprocess.PIPE, text=True)
-		status = out.stdout[:-1]
+		stdout = subprocess.run(["nmcli", "con"], stdout=subprocess.PIPE, text=True)
+		result = stdout.stdout
+		status = "wifi"
+		if "GOcontroll-AP" not in result:
+			subprocess.run(["nmcli", "con", "add", "type", "wifi", "con-name", "GOcontroll-AP", "ifname", "wlan0", "ssid", "GOcontroll-AP", "ipv4.addresses", "192.168.19.85/16", "ipv4.method", "manual", "connection.autoconnect", "no", "802-11-wireless.band", "bg", "wifi-sec.psk", "GOcontrolltest", "802-11-wireless-security.key-mgmt", "wpa-psk"])
+			status = "wifi"
+		else:
+			result = result.split("\n")
+			for con in result:
+				if "GOcontroll-AP" in con:
+					if "wlan0" in con:
+						status = "ap"
+						break
 		connection_status = str(check_connection(0.5))
 		try:
 			ip = ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
 		except:
 			ip = "no IP available"
-		if "GOcontroll-AP" in status: 
-			status = "ap"
-			send(chr(commands.WIRELESS_SETTINGS) + chr(commands.INIT_WIRELESS_SETTINGS) + status + ":" + connection_status + ":" + ip)
-		else:
-			status = "wifi"
-			send(chr(commands.WIRELESS_SETTINGS) + chr(commands.INIT_WIRELESS_SETTINGS) + status + ":" + connection_status + ":" + ip)
+		send(chr(commands.WIRELESS_SETTINGS) + chr(commands.INIT_WIRELESS_SETTINGS) + status + ":" + connection_status + ":" + ip)
 	
 
 	#get the list of networks available to the controller
@@ -494,9 +545,6 @@ def wireless_settings(commandnmbr, arg):
 				send(chr(commandnmbr) + chr(commands.SWITCH_WIRELESS_MODE) + "wifi")
 			else:
 				send(chr(commandnmbr) + chr(commands.SWITCH_WIRELESS_MODE) + "error")
-
-
-	
 
 ##########################################################################################
 
