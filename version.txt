@@ -1,6 +1,10 @@
-V1.4.9
+V1.4.10
 
 ########
+1-9-2022 V1.4.10
+minor bugfixes, automatic update checking was not working
+machine-info file removed from repository
+
 1-9-2022 V1.4.9
 Switch from debian buster to debian bullseye
 Added a bluetooth interface with the GOcontroll app

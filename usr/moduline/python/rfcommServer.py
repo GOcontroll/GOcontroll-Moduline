@@ -132,6 +132,7 @@ def verify_device(commandnmbr, arg):
 			with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
 				if (trusted_devices.read().find(arg) != -1):
 					trust_device = True
+					request_verification(commands.DEVICE_VERIFICATION_SUCCESS)
 				else:
 					request_verification(commands.DEVICE_VERIFICATION_MISSING)
 		except:
@@ -611,10 +612,13 @@ def controller_settings(commandnmbr, arg):
 		time.sleep(0.2) #if the controller responds too quick the app gets wacky
 		with open("/sys/firmware/devicetree/base/hardware", "r") as file:
 			hardware_version = file.read()
-		with open("/root/version.txt", "r") as file:
+		with open("/version.txt", "r") as file:
 			software_version = file.read(6)
-		with open("/etc/machine-info", "r") as file:
-			controller_name = file.read().split("=")
+		try:
+			with open("/etc/machine-info", "r") as file:
+				controller_name = file.read().split("=")
+		except:
+			controller_name = "faulty name"
 		try:
 			name = controller_name[1]
 		except IndexError:

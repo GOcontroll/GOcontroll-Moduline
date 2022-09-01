@@ -1,4 +1,8 @@
-0.1.7
+0.1.8
+
+0.1.8
+minor bugfixes, automatic update checking was not working
+machine-info file removed from repository
 
 0.1.7
 Improved error feedback to app users, server crash now very unlikely
