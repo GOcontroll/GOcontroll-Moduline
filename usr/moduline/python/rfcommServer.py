@@ -155,7 +155,7 @@ def update_controller(commandnmbr, arg):
 	if (level1 == commands.CHECK_FOR_UPDATE):
 		try:
 			with open("/etc/controller_update/current-release.txt", "r") as file:
-				current_release = file.read()
+				current_release = file.readline()
 		except:
 			send(chr(commandnmbr) + chr(commands.UPDATE_VERSION_FILE_MISSING))
 			return
@@ -163,10 +163,12 @@ def update_controller(commandnmbr, arg):
 			current_release = current_release[:-1]
 		if (check_connection(0.5)):
 			with open("/etc/bluetooth/accesstoken.txt", "r") as file:
-				token = file.read()
+				token = file.readline()
+			if token[-1] == "\n":
+				token = token[:-1]
 			try:
 				g = Github(token)
-				r = g.get_repo("Rick-GO/GOcontroll-Moduline")
+				r = g.get_repo("GOcontroll/GOcontroll-Moduline")
 				releases = r.get_releases()
 				for release in releases:
 					latest_release = release.tag_name[1:]
@@ -223,7 +225,7 @@ def install_update():
 		os.remove("/tmp/temporary.zip")
 	except:
 		print("file was not yet created")
-	install_script = glob.glob("/tmp/Rick-GO-GOcontroll*/etc/controller_update/controller_update.sh")
+	install_script = glob.glob("/tmp/GOcontroll-GOcontroll*/etc/controller_update/controller_update.sh")
 	subprocess.run(["bash", install_script[0]])
 	
 	

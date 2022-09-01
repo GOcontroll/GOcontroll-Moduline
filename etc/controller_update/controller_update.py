@@ -2,7 +2,7 @@
 from glob import glob
 from shutil import rmtree
 try:
-    rmtree(glob("/tmp/Rick-GO-GOcontroll*")[0])
+    rmtree(glob("/tmp/GOcontroll-GOcontroll*")[0])
 except:
     print("file already gone")
 

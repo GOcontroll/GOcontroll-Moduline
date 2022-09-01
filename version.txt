@@ -1,6 +1,19 @@
-V1.3.9
+V1.4.9
 
 ########
+1-9-2022 V1.4.9
+Switch from debian buster to debian bullseye
+Added a bluetooth interface with the GOcontroll app
+Functions include
+Manage Wifi connections
+Activate Wifi access point
+Manage ethernet interface dynamic/static ip
+Manage wwan interface
+Manage CAN interfaces
+Set controller bluetooth name, view controller information
+View controller module configuration
+Manage several services on the controller
+
 13-3-2022 V1.3.9
 Add moduline mini V 1.06 to start script of LTE modem
 

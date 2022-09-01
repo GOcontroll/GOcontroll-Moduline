@@ -9,7 +9,7 @@ if test -f "$FILE"; then
     done < $FILE
 fi
 
-cd /tmp/Rick-GO-GOcontroll*
+cd /tmp/GOcontroll-GOcontroll*
 
 cp -r -v --force --backup ./ / > "$FILE"
 
@@ -20,9 +20,11 @@ chmod 555 /usr/moduline/bash/go-wwan-start.sh
 chmod 555 /usr/moduline/bash/go-wwan-stop.sh
 chmod 555 /usr/moduline/bash/go-gps-start.sh
 chmod 555 /usr/moduline/bash/go-gps-stop.sh
+chmod 555 /usr/moduline/python/identify.py
 chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
-chmod 555 /usr/moduline/nodejs/upload_server.js
+chmod 555 /usr/moduline/nodejs/upload-server.js
+chmod 555 /usr/moduline/nodejs/flash-led.js
 
 cd
 

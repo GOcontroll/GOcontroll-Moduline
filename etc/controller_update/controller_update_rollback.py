@@ -6,6 +6,6 @@ with open("/etc/controller_update/backed-up-files.txt", "r") as backup:
         try:
             os.replace(line[:-1], line[:-2])
         except:
-            print("backup file is missing")
+            print("backup file is missing:" + line)
 os.remove("/etc/controller_update/backed-up-files.txt")
 #

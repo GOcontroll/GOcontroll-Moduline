@@ -1,1 +1,20 @@
+0.1.7
+
+0.1.7
+Improved error feedback to app users, server crash now very unlikely
+Module firmware can be updated from the app
+Module configuration can be refreshed from the app
+Improved verification mechanism
+
+
 0.0.7
+Demonstration release, intended for showing the update functionality.
+Functions include
+Manage Wifi connections
+Activate Wifi access point
+Manage ethernet interface dynamic/static ip
+Manage wwan interface
+Manage CAN interfaces
+Set controller bluetooth name, view controller information
+View controller module configuration
+Manage several services on the controller
