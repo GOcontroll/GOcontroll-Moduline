@@ -19,6 +19,7 @@ import multiprocessing
 import glob
 from packaging import version
 import signal
+import traceback
 
 #calculates the sha1 checksum of a file
 def sha1(fname):
@@ -400,20 +401,19 @@ def wireless_settings(commandnmbr, arg):
 		except:
 			ip = "no IP available"
 		send(chr(commands.WIRELESS_SETTINGS) + chr(commands.INIT_WIRELESS_SETTINGS) + status + ":" + connection_status + ":" + ip)
+		return
 	
 
 	#get the list of networks available to the controller
 	elif level1 == commands.GET_WIFI_NETWORKS:
-		wifi_list = subprocess.run(["nmcli", "-t", "dev", "wifi"], stdout=subprocess.PIPE, text=True) #(gets the list in a layout optimal for scripting, networks seperated by \n, columns seperated by :)
+		wifi_list = subprocess.run(["nmcli", "-t", "dev", "wifi"], stdout=subprocess.PIPE, text=True) #gets the list in a layout optimal for scripting, networks seperated by \n, columns seperated by :
 		networks = wifi_list.stdout[:-1].split("\n")
 		i=len(networks)-1
 		for n in range(len(networks)):
 			networks[i] = networks[i].split(":")
 			if len(networks[i]) < 2:
 				networks.pop(i)
-			elif networks[i][1]=="": #if this is true the current index contains a network with no name
-				networks.pop(i)
-			elif len(networks[i]) > 8:
+			elif len(networks[i]) > 8: #new Network manager (bullseye) format, includes mac address at index 1, but it gets split by : aswell which is annoying.
 				if networks[i][7]=="":
 					networks.pop(i)
 				else:
@@ -421,15 +421,18 @@ def wireless_settings(commandnmbr, arg):
 					if networks[i][3] == "":
 						networks[i][3] = "No Security"
 					networks[i] = ":".join(networks[i])
-			else:
-				networks[i] = [networks[i][0],networks[i][1],networks[i][5],networks[i][7]]
-				if networks[i][3] == "":
-					networks[i][3] = "No Security"
-				networks[i] = ":".join(networks[i])
+			else: # old Network manager (buster) format, does not include mac address
+				if networks[i][1]=="": #if this is true the current index contains a network with no name
+					networks.pop(i)
+				else:
+					networks[i] = [networks[i][0],networks[i][1],networks[i][5],networks[i][7]]
+					if networks[i][3]=="":
+						networks[i][3] = "No Security"
+					networks[i] = ":".join(networks[i])
 			i -=1
 		networks.sort(reverse=True)
 		networks = "\n".join(networks)
-		print(repr(networks))
+		
 		send(chr(commandnmbr) + chr(commands.GET_WIFI_NETWORKS) + networks)
 		return
 
@@ -454,9 +457,8 @@ def wireless_settings(commandnmbr, arg):
 			for j, previous_connection in enumerate(previous_connections):
 				if connected_device_list[2] in previous_connection:
 					final_device_list.append(";".join([connected_device_list[2], previous_connection.split(" ")[3]]))
-
 		send(chr(commandnmbr) + chr(level1) + "\n".join(final_device_list))
-
+		return
 
 
 	#gather the information about the access point for the user
@@ -1142,23 +1144,28 @@ def send(string):
 
 #function that gets called when the controller receives a message
 def data_received(data):
-	global message_received_timestamp
-	message_received_timestamp = time.time()
-	print(f"message received {message_received_timestamp}")
-	global trust_device
-	global transfer_mode
-	first_byte = data[0]
-	if (trust_device or first_byte == commands.VERIFY_DEVICE or first_byte == commands.REQUEST_ENABLED_FEATURES):
-		if transfer_mode == "command":
-			print(data)
-			data = data[1:]
-			#get message till stopbyte
-			data = data.split(bytes([255]))[0]
-			command_list(first_byte, data)
-		elif fe.FILE_TRANSFER:
-			receive_zip(data)
-	else:
-		send(chr(commands.VERIFY_DEVICE) + chr(commands.DEVICE_VERIFICATION_EXCHANGE_KEY))
+	try:
+		global message_received_timestamp
+		message_received_timestamp = time.time()
+		print(f"message received {message_received_timestamp}")
+		global trust_device
+		global transfer_mode
+		first_byte = data[0]
+		if (trust_device or first_byte == commands.VERIFY_DEVICE or first_byte == commands.REQUEST_ENABLED_FEATURES):
+			if transfer_mode == "command":
+				print(data)
+				data = data[1:]
+				#get message till stopbyte
+				data = data.split(bytes([255]))[0]
+				command_list(first_byte, data)
+			elif fe.FILE_TRANSFER:
+				receive_zip(data)
+		else:
+			send(chr(commands.VERIFY_DEVICE) + chr(commands.DEVICE_VERIFICATION_EXCHANGE_KEY))
+	except Exception:
+		error = "error:" + traceback.format_exc()
+		send(chr(commands.SERVER_ERROR) + error)
+		return
 
 #function that gets called when a device connects to the server
 def when_client_connects():
