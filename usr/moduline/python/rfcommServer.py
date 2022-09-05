@@ -613,10 +613,10 @@ def controller_settings(commandnmbr, arg):
 		with open("/sys/firmware/devicetree/base/hardware", "r") as file:
 			hardware_version = file.read()
 		with open("/version.txt", "r") as file:
-			software_version = file.read(6)
+			software_version = file.readline()
 		try:
 			with open("/etc/machine-info", "r") as file:
-				controller_name = file.read().split("=")
+				controller_name = file.readline().split("=")
 		except:
 			controller_name = "faulty name"
 		try:

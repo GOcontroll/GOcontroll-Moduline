@@ -1,8 +1,13 @@
-V1.4.10
+V1.4.11
 
 ########
+1-9-2022 V1.4.11
+Fixed a bug where installModuleFirmware.py would attempt to update the last module even though there wasnt an update available
+Fixed the controller version display for longer version numbers in rfcommServer.py
+Removed firmware files that are now included in the prebuild rootfs
+
 1-9-2022 V1.4.10
-minor bugfixes, automatic update checking was not working
+Minor bugfixes, automatic update checking was not working
 machine-info file removed from repository
 
 1-9-2022 V1.4.9

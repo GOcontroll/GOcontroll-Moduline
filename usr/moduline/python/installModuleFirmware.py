@@ -28,6 +28,9 @@ subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])
 with open("/usr/module-firmware/modules.txt", "r") as modules:
     info = modules.readline()
 
+if info[-1]=="\n":
+    info = info[:-1]
+
 #get the newest available firmwares on the controller into an array
 available_firmwares = glob.glob("/usr/module-firmware/" + "*.srec")
 newest_firmwares = []
