@@ -697,7 +697,17 @@ def wwan_settings(commandnmbr, arg):
 					pin = [file[pin_line].split("=")[1][:-1]]
 					apn = [file[apn_line].split("=")[1][:-1]]
 			except FileNotFoundError:
-				print("networkmanager connection file doesn't exist")
+				subprocess.run(["nmcli", "con", "add", "type", "gsm", "ifname", "cdc-wdm0", "con-name", "GO-celular", "apn", "super", "connection.autoconnect", "yes", "gsm.pin", "0000"])
+				try:
+					pin_line = get_line(path, "pin=")
+					apn_line = get_line(path, "apn=")
+					with open(path, "r") as con:
+						file = con.readlines()
+						pin = [file[pin_line].split("=")[1][:-1]]
+						apn = [file[apn_line].split("=")[1][:-1]]
+				except FileNotFoundError:
+					pin=["-"]
+					apn=["-"]
 			modem = subprocess.run(["mmcli", "--list-modems"], stdout=subprocess.PIPE, text=True)
 			modem = modem.stdout
 			if "/freedesktop/" in modem:

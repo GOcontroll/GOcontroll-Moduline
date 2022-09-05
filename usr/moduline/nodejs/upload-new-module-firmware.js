@@ -179,6 +179,7 @@ function Module_CheckFirmwareVersion(){
                 Module_AnnounceFirmwareUpload();
             } else if (forceUpdate==1) {
                 oldSwVersion = swVersion;
+                oldSwVersion[0] = "l"
                 forceUpdate=0;
                 Module_AnnounceFirmwareUpload();
             } else if (!ArrayEquals(oldSwVersion, swVersion)) {
@@ -350,6 +351,7 @@ function Module_FirmwareUpload(){
                     firmware.close(err =>{});
                     //node.warn("Firmware from input module on slot: "+moduleSlot+" updated! Now restarting module!");
                     /* At this point, the module can be restarted to check if it provides the new installed firmware */
+                    //console.log("Firmware uploaded")
                     Module_StartReset();
                     //TODO moet de module hier het initialisatie script aanroepen?
                     return;

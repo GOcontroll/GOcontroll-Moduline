@@ -169,7 +169,7 @@ fi
 
 if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
 then
-	nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
+	nmcli con add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
 fi
 
 echo -e "${YELLOW}-Gathering module configuration and updating outdated modules ${NORMAL}"

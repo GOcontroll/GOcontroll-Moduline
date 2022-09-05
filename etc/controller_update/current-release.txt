@@ -1,10 +1,9 @@
 0.1.9
 
 0.1.9
-Removed no longer usefull firmware files from the repository
+Removed no longer usefull firmware files from the repository, this fixed an issue where the mac address of the bluetooth interface would change to AA:AA:AA:AA:AA:AA after an update.
 Fixed a bug where installModuleFirmware.py would attempt to update the last module even though there wasnt an update available
 Fixed the controller version display for longer version numbers in rfcommServer.py
-Removed firmware files that are now included in the prebuild rootfs
 
 0.1.8
 Minor bugfixes, automatic update checking was not working
