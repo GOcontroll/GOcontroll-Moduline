@@ -58,6 +58,8 @@ for i,module in enumerate(modules):
     if len(module) >0:
         split = module.split("-")
         current_software = "-".join(split[-3:])
+        if current_software == "255.255.255":
+            current_software = "0.0.0"
         mod_type = "-".join(split[0:4])
         for firmware in newest_firmwares:
             if mod_type in firmware:

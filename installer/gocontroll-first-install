@@ -26,7 +26,7 @@ apt -y install git
 fi
 
 echo -e "${YELLOW}-Update debian sources ${NORMAL}"
-apt update -y > /dev/null
+apt-get update -y > /dev/null
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
