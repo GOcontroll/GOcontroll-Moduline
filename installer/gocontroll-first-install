@@ -162,10 +162,9 @@ then
 	nmcli con add type ethernet con-name "Wired connection static" ifname eth0 ipv4.addresses 192.168.255.255/16 ipv4.method manual connection.autoconnect no > /dev/null
 fi
 
-if [ ! -f "/etc/NetworkManager/system-connections/GOcontroll-AP.nmconnection" ]
-then
-	nmcli con add type wifi con-name "GOcontroll-AP" ifname wlan0 ssid GOcontroll-AP ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect no 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk Moduline 802-11-wireless-security.key-mgmt wpa-psk > /dev/null
-fi
+nmcli con delete GOcontroll-AP
+nmcli con add type wifi con-name "GOcontroll-AP" ifname wlan0 ssid GOcontroll-AP ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect yes 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk Moduline 802-11-wireless-security.key-mgmt wpa-psk > /dev/null
+
 
 if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
 then
