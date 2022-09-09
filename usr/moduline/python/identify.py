@@ -9,11 +9,38 @@ def led_flashing():
 
 tf = threading.Thread(target=led_flashing)
 tf.start()
+print("Hardware/software info:\n")
 subprocess.run(["cat", "/sys/firmware/devicetree/base/hardware"])
-print("\n")
+try:
+    with open("/version.txt", "r") as file:
+        software_version = file.readline()
+except:
+    try:
+        with open("/root/version.txt", "r") as file:
+            software_version = file.readline()
+    except:
+        software_version = "repo is not yet installed"
+
+try:
+    with open("/etc/controller_update/current-release.txt", "r") as file:
+        repo_release = file.readline()
+except:
+    repo_release = "repo is not yet installed"
+
+try:
+    with open("/etc/rootfs-version.txt", "r") as file:
+        rootfs_version = file.readline()
+except:
+    rootfs_version = "no rootfs version file found"
+
+print(f"\n\nrepo version: {software_version}")
+print(f"repo release: {repo_release[:-1]}")
+print(f"rootfs/dtb version: {rootfs_version} \n")
+
 subprocess.run(["lsb_release", "-a"])
 stdout = subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering"],stdout=subprocess.PIPE, text=False)
 stdout = stdout.stdout
+print("\nModule configuration: ")
 with open("/usr/module-firmware/modules.txt", "r") as modulesfile:
     layout = modulesfile.readline()[:-1]
 

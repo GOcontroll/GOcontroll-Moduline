@@ -609,11 +609,19 @@ def controller_settings(commandnmbr, arg):
 
 	#gather information to display
 	elif (level1 == commands.INIT_CONTROLLER_SETTINGS):
+		software_version = "missing"
 		time.sleep(0.2) #if the controller responds too quick the app gets wacky
 		with open("/sys/firmware/devicetree/base/hardware", "r") as file:
 			hardware_version = file.read()
-		with open("/version.txt", "r") as file:
-			software_version = file.readline()
+		try:
+			with open("/version.txt", "r") as file:
+				software_version = file.readline()
+		except:
+			try:
+				with open("/root/version.txt", "r") as file:
+					software_version = file.readline()
+			except:
+				software_version = "missing"
 		try:
 			with open("/etc/machine-info", "r") as file:
 				controller_name = file.readline().split("=")

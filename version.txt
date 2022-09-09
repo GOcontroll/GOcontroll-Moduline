@@ -1,6 +1,10 @@
-V1.4.12
+V1.4.13
 
 ########
+9-9-2022 V1.4.13
+small fix on the version checking part of the controller_settings command in rfcommServer.py
+improved indentify.py, extra information, better formatting.
+
 5-9-2022 V1.4.12
 fixed error message after succesfull forced firmware upload with the upload-new-module-firmware.js script
 fixed a bug where in a specific case the installModuleFirmware.py script could downgrade firmware on a module
