@@ -152,7 +152,7 @@ timedatectl set-timezone Europe/Luxembourg
 
 echo -e "${YELLOW}-Fix network manager connections ${NORMAL}"
 
-if [ ! -f "/etc/NetworkManager/system-connections/Wired connnection auto.nmconnection" ]
+if [ ! -f "/etc/NetworkManager/system-connections/Wired connection auto.nmconnection" ]
 then
 	 nmcli con mod "Wired connection 1" con-name "Wired connection auto" > /dev/null
 fi
