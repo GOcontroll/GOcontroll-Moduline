@@ -19,13 +19,13 @@ except:
         with open("/root/version.txt", "r") as file:
             software_version = file.readline()
     except:
-        software_version = "repo is not yet installed"
+        software_version = "repo is not yet installed\n"
 
 try:
     with open("/etc/controller_update/current-release.txt", "r") as file:
         repo_release = file.readline()
 except:
-    repo_release = "repo is not yet installed"
+    repo_release = "repo is not yet installed\n"
 
 try:
     with open("/etc/rootfs-version.txt", "r") as file:
@@ -33,9 +33,9 @@ try:
 except:
     rootfs_version = "no rootfs version file found"
 
-print(f"\n\nrepo version: {software_version}")
-print(f"repo release: {repo_release[:-1]}")
-print(f"rootfs/dtb version: {rootfs_version} \n")
+print(f"\n\nrepo version: {software_version[:-1]}")
+print(f"repo release: {repo_release[:-1]}\n")
+print(f"rootfs/dtb version: {rootfs_version}")
 
 subprocess.run(["lsb_release", "-a"])
 stdout = subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering"],stdout=subprocess.PIPE, text=False)
