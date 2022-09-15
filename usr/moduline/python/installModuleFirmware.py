@@ -68,7 +68,7 @@ for i,module in enumerate(modules):
                     if version.parse(current_software) < version.parse(newest_firmware_sw):
                         modules_to_update.append([str(i+1),firmware.split("/")[-1]])
                     else:
-                        print(f"{WARNING}Warning: The firmware installed on the module is somehow a higher version than what is available on the controller.\nNewest available: {newest_firmware_sw}\nModule vesion: {current_software}{ENDC}")
+                        print(f"{WARNING}Warning: The firmware installed on the module is somehow a higher version than what is available on the controller.\nNewest available: {newest_firmware_sw}\nModule version: {current_software}{ENDC}")
 #run a pool of processes to asynchronously upload all the firmwares
 if len(modules_to_update) > 0:
     with Pool() as p:

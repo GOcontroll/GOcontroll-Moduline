@@ -18,7 +18,7 @@ identify <-v> -- gives information about the controller and makes LED's flash, a
 # module related scripts
 python3 /usr/moduline/python/installModuleFirmware.py -- scan the module slots and update any outdated module firmwares
 node /usr/moduline/nodejs/module-info-gathering.js -- scan the module slots
-node /usr/moduline/nodjs/upload-new-module-firmware <slot> <firmware.srec> <force update (1 for yes, empty or other for no)> -- upload specific firmware to a module
+node /usr/moduline/nodejs/upload-new-module-firmware.js <slot> <firmware.srec> <force update (1 for yes, empty or other for no)> -- upload specific firmware to a module
 
 
 
@@ -59,3 +59,7 @@ nmcli con           -- Show list of connections and their statusses
 nmcli con show <con> -- See detailed information about a specific connection
 nmcli dev wifi      -- Show available Wi-Fi networks
 nmcli dev wifi connect <net name> password <password> -- Connect to a wifi network with the given name and password
+
+# modem manager
+mmcli --list-modems --Show the list of modems to get the modem number
+mmcli -K --modem=<modemnumber>  --Show the details of this modem
