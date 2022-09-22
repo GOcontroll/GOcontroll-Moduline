@@ -1,6 +1,9 @@
-V1.5.13
+V1.6.13
 
 ########
+22-9-2022 V1.6.13
+Support for the Display controller being added
+
 19-9-2022 V1.5.13
 Added the testcan.js script, this script can be used to check if the can busses are functioning when combined with the right plug.
 
