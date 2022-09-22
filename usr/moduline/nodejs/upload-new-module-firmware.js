@@ -25,6 +25,8 @@ if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
 } else if (hardwareFile.includes("Moduline Mini")) {
     controllerType = "mini"
+} else if (hardwareFile.includes("Moduline Screen")) {
+    controllerType = "screen"
 }
 
 var newHwVersion = new Array(4)
@@ -96,11 +98,11 @@ switch(controllerType)
             case 4: sL = 2; sB=1; break;
         }
         break;
-    case "dash?":
+    case "screen":
         switch(slot)
         {
-            case 1: sL = 2; sB=0; break;
-            case 2: sL = 2; sB=1; break;
+            case 1: sL = 1; sB=0; break;
+            case 2: sL = 1; sB=1; break;
         }
         break;
     default:

@@ -23,6 +23,12 @@ if (hardwareFile.includes("Moduline IV")) {
     var moduleManufacturers = new Array(4);
     var moduleQRsfront = new Array(4);
     var moduleQRsback = new Array(4);
+} else if (hardwareFile.includes("Moduline Screen")) {
+    controllerType = "screen"
+    var controllerLayout = new Array(2);
+    var moduleManufacturers = new Array(2);
+    var moduleQRsfront = new Array(2);
+    var moduleQRsback = new Array(2);
 }
 
 var sL, sB;
@@ -81,7 +87,7 @@ function recursionFunc() {
             }
             SendDummyByte(sL, sB, currentSlot);
             break;
-        case "dash?":
+        case "screen":
             switch(currentSlot)
             {
                 case 1: sL = 2; sB=0; break;

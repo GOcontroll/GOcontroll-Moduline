@@ -26,13 +26,13 @@ var data = Buffer.alloc(8);
     data.writeUint8(0x07,6);
     data.writeUint8(0x08,7);
 
-try {
-    led_init();
-    i2c_bus_state = true;
-} catch (err) {
-    error_log += "I2C bus not functioning, led address not found\n"
-    i2c_bus_state = false;
-}
+    try {
+        led_init();
+        i2c_bus_state = true;
+    } catch (err) {
+        error_log += "I2C bus not functioning, led address not found\n"
+        i2c_bus_state = false;
+    }
 
 try {
     hardwareFile = fs.readFileSync("/sys/firmware/devicetree/base/hardware", "utf-8");
@@ -52,6 +52,10 @@ if (hardwareFile.includes("Moduline IV")) {
     canBusCount = 2;
     switch_led(0, "blue");
     switch_led(1, "blue");
+} else if (hardwareFile.includes("Moduline Screen")) {
+    controllerType = "screen"
+    canBusCount = 2;
+    error_log =  "error log:\n";
 }
 
 

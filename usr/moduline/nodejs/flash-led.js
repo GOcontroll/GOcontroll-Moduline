@@ -6,7 +6,7 @@ var i = 0;
 const leds = [1,2,3,4]
 var state = false;
 var pulseTimeout;
-
+var i2c_present = true;
 var ledRed 		= 0x0B;
 var ledGreen 	= 0x0C;
 var ledBlue 	= 0x0D;
@@ -18,25 +18,30 @@ var	sendBuffer = Buffer.alloc(10);
 
 var ADDRESS = 0x14;
 
-/* Open specific I2C port */
-i2c1 = i2c.openSync(2);
 
-/* First, reset the device */
-sendBuffer[0] = 0x17;
-sendBuffer[1] = 0xFF;
-i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
+try {
+    /* Open specific I2C port */
+    i2c1 = i2c.openSync(2);
 
-/* Second, enable the device (Chip_EN)*/
-sendBuffer[0] = 0x00;
-sendBuffer[1] = 0x40;
-i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
+    /* First, reset the device */
+    sendBuffer[0] = 0x17;
+    sendBuffer[1] = 0xFF;
+    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
 
-/* Close the I2C port */
-i2c1.closeSync();
+    /* Second, enable the device (Chip_EN)*/
+    sendBuffer[0] = 0x00;
+    sendBuffer[1] = 0x40;
+    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
 
+    /* Close the I2C port */
+    i2c1.closeSync();
+} catch(err) {
+    i2c_present = false
+}
 
-pulseTimeout = setTimeout(switch_leds, 200);
-
+if (i2c_present){
+    pulseTimeout = setTimeout(switch_leds, 200);
+}
 
 function switch_leds() {
     if (i >= ledPulses*2) {
