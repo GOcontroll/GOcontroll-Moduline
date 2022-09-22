@@ -185,6 +185,9 @@ case $hw in
 		;;
 	*Mini*)
 		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini" > /etc/machine-info
+		;;
+	*Screen*)
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Screen" > /etc/machine-info
 esac
 
 echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
