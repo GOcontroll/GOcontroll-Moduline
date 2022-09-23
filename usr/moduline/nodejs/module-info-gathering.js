@@ -90,8 +90,8 @@ function recursionFunc() {
         case "screen":
             switch(currentSlot)
             {
-                case 1: sL = 2; sB=0; break;
-                case 2: sL = 2; sB=1; break;
+                case 1: sL = 1; sB=0; break;
+                case 2: sL = 1; sB=1; break;
             }
             SendDummyByte(sL, sB, currentSlot);
             break;
