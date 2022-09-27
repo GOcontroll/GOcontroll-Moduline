@@ -28,4 +28,15 @@ chmod 555 /usr/moduline/nodejs/flash-led.js
 
 cd
 
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
+
+echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
+patch /usr/node-red-gocontroll/nodes/bridge_module.html /patch/bridge_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/output_module.html /patch/output_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module_reset.html /patch/input_module_reset_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module.html /patch/input_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_receive.html /patch/can_receive_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_send.html /patch/can_send_html.patch > /dev/null
+fi
+
 python3 /etc/controller_update/controller_update.py

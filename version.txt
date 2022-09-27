@@ -1,6 +1,9 @@
-V1.6.13
+V1.6.14
 
 ########
+27-9-2022 V1.6.14
+fixed mini patches upon bluetooth update.
+
 22-9-2022 V1.6.13
 Support for the Display controller being added
 

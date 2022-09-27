@@ -1,4 +1,8 @@
-0.1.9
+0.1.10
+
+0.1.10
+fixed updates for the moduline mini.
+the html files for node-red need to be patched again after the update with the newest patch files.
 
 0.1.9
 Removed no longer usefull firmware files from the repository, this fixed an issue where the mac address of the bluetooth interface would change to AA:AA:AA:AA:AA:AA after an update.
