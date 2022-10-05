@@ -1,6 +1,9 @@
-V1.6.14
+V1.6.15
 
 ########
+27-9-2022 V1.6.15
+Fixed bug with Node RED can send. 0 was ignored as new value.
+
 27-9-2022 V1.6.14
 fixed mini patches upon bluetooth update.
 
