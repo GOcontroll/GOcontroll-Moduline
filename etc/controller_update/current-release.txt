@@ -1,4 +1,9 @@
-0.1.10
+0.1.11
+
+0.1.11
+repo ver V1.6.16
+Fixed the access point credentials when it gets created by the app for some reason.
+Fixed bug with Node RED can send. 0 was ignored as new value.
 
 0.1.10
 fixed updates for the moduline mini.

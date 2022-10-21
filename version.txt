@@ -1,6 +1,9 @@
-V1.6.15
+V1.6.16
 
 ########
+21-10-2022 V1.6.16
+Fixed the access point credentials when it gets created by the app for some reason.
+
 27-9-2022 V1.6.15
 Fixed bug with Node RED can send. 0 was ignored as new value.
 

@@ -389,7 +389,7 @@ def wireless_settings(commandnmbr, arg):
 		result = stdout.stdout
 		status = "wifi"
 		if "GOcontroll-AP" not in result:
-			subprocess.run(["nmcli", "con", "add", "type", "wifi", "con-name", "GOcontroll-AP", "ifname", "wlan0", "ssid", "GOcontroll-AP", "ipv4.addresses", "192.168.19.85/16", "ipv4.method", "manual", "connection.autoconnect", "no", "802-11-wireless.band", "bg", "wifi-sec.psk", "GOcontrolltest", "802-11-wireless-security.key-mgmt", "wpa-psk"])
+			subprocess.run(["nmcli", "con", "add", "type", "wifi", "con-name", "GOcontroll-AP", "ifname", "wlan0", "ssid", "GOcontroll-AP", "ipv4.addresses", "192.168.19.85/16", "ipv4.method", "manual", "connection.autoconnect", "yes", "802-11-wireless.band", "bg", "wifi-sec.psk", "Moduline", "802-11-wireless-security.key-mgmt", "wpa-psk"])
 			status = "wifi"
 		else:
 			result = result.split("\n")
