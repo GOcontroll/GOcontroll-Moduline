@@ -6,6 +6,20 @@ const slot = parseInt(args[0]);
 const newFirmware = args[1];
 var forceUpdate = parseInt(args[2])
 
+if (!args[0] && !args[1]) {
+    throw new Error("Provide arguments to use this script: command <module slot> <firmware.srec> <force update: 1 for yes, empty or else for no>");
+}
+
+fs.stat("/usr/module-firmware/" + newFirmware, (error, stats) => {
+    if (error) {
+        throw new Error("Firmware file does not exist, enter a valid firmware file");
+    }
+    else if (!newFirmware.includes(".srec")) {
+        throw new Error("File must have a .srec extension to be valid");
+    }
+});
+
+
 if (forceUpdate == 1) {
     console.log("Forcing update, I hope you know what you are doing.");
 }
@@ -23,10 +37,19 @@ console.error(err);
 }
 if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
+    if (slot<1|slot>8) {
+        throw new Error("Incorrect slot number entered, must be a number ranging from 1 to 8");
+    }
 } else if (hardwareFile.includes("Moduline Mini")) {
     controllerType = "mini"
+    if (slot<1|slot>4) {
+        throw new Error("Incorrect slot number entered, must be a number ranging from 1 to 4");
+    }
 } else if (hardwareFile.includes("Moduline Screen")) {
     controllerType = "screen"
+    if (slot<1|slot>2) {
+        throw new Error("Incorrect slot number entered, must be a number ranging from 1 to 2");
+    }
 }
 
 var newHwVersion = new Array(4)
