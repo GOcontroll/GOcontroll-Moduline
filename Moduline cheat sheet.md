@@ -56,10 +56,14 @@ canbusload can<num>@<baudrate> ... -- Add other can busses at the end to monitor
  
 # Network manager
 nmcli con           -- Show list of connections and their statusses
+ 
 nmcli con show <con> -- See detailed information about a specific connection
+ 
 nmcli dev wifi      -- Show available Wi-Fi networks
+ 
 nmcli dev wifi connect <net name> password <password> -- Connect to a wifi network with the given name and password
 
 # modem manager
 mmcli --list-modems --Show the list of modems to get the modem number
+ 
 mmcli -K --modem=<modemnumber>  --Show the details of this modem
