@@ -54,6 +54,8 @@ candump -l can0
 
 canbusload can<num>@<baudrate> ... -- Add other can busses at the end to monitor them at the same time
  
+example: canbusload can0@250000 can1@250000
+ 
 # Network manager
 nmcli con           -- Show list of connections and their statusses
  
