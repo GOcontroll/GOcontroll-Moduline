@@ -1,4 +1,6 @@
 ** Several commands that can be used in the command line using e.g. PuTTY
+"" indicates fields that need to be entered by the user
+
 
 *** General
 # systemctl commands:
@@ -13,14 +15,14 @@
 
 *** GOcontroll commands
 # arbitrary commands
-identify <-v> -- gives information about the controller and makes LED's flash, add -v for more detailed information about the modules
+identify "-v" -- gives information about the controller and makes LED's flash, add -v for more detailed information about the modules
 
 # module related scripts
 go-update-modules (points to installModuleFirmware.py) -- scan the module slots and update any outdated module firmwares
 
 go-scan-modules (points to module-info-gathering.js) -- scan the module slots
 
-go-overwrite-module <slot> <firmware.srec> <force update (1 for yes, empty or other for no)> (points to upload-new-module-firmware.js) -- upload specific firmware to a module
+go-overwrite-module "slot" "firmware.srec" "force update (1 for yes, empty or other for no)" (points to upload-new-module-firmware.js) -- upload specific firmware to a module
 
 *** System services
 # Service to start Node-RED
@@ -52,14 +54,14 @@ candump -l can0
 
 # Check CAN bus load
 
-canbusload can<num>@<baudrate> ... -- Add other can busses at the end to monitor them at the same time
+canbusload can"num"@"baudrate" ... -- Add other can busses at the end to monitor them at the same time
  
 example: canbusload can0@250000 can1@250000
  
 # Network manager
 nmcli con           -- Show list of connections and their statusses
  
-nmcli con show <con> -- See detailed information about a specific connection
+nmcli con show "con" -- See detailed information about a specific connection
  
 nmcli dev wifi      -- Show available Wi-Fi networks
  
@@ -68,4 +70,4 @@ nmcli dev wifi connect <net name> password <password> -- Connect to a wifi netwo
 # modem manager
 mmcli --list-modems --Show the list of modems to get the modem number
  
-mmcli -K --modem=<modemnumber>  --Show the details of this modem
+mmcli -K --modem="modemnumber"  --Show the details of this modem
