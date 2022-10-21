@@ -17,7 +17,9 @@ identify <-v> -- gives information about the controller and makes LED's flash, a
 
 # module related scripts
 go-update-modules (points to installModuleFirmware.py) -- scan the module slots and update any outdated module firmwares
+
 go-scan-modules (points to module-info-gathering.js) -- scan the module slots
+
 go-overwrite-module <slot> <firmware.srec> <force update (1 for yes, empty or other for no)> (points to upload-new-module-firmware.js) -- upload specific firmware to a module
 
 *** System services
