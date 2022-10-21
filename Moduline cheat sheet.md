@@ -16,11 +16,9 @@
 identify <-v> -- gives information about the controller and makes LED's flash, add -v for more detailed information about the modules
 
 # module related scripts
-python3 /usr/moduline/python/installModuleFirmware.py -- scan the module slots and update any outdated module firmwares
-node /usr/moduline/nodejs/module-info-gathering.js -- scan the module slots
-node /usr/moduline/nodejs/upload-new-module-firmware.js <slot> <firmware.srec> <force update (1 for yes, empty or other for no)> -- upload specific firmware to a module
-
-
+go-update-modules (points to installModuleFirmware.py) -- scan the module slots and update any outdated module firmwares
+go-scan-modules (points to module-info-gathering.js) -- scan the module slots
+go-overwrite-module <slot> <firmware.srec> <force update (1 for yes, empty or other for no)> (points to upload-new-module-firmware.js) -- upload specific firmware to a module
 
 *** System services
 # Service to start Node-RED

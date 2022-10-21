@@ -1,6 +1,11 @@
-V1.6.16
+V1.6.17
 
 ########
+21-10-2022 V1.6.17
+Aliasses added for some of the gocontroll scripts
+Added improved argument checking for the upload-new-module-firmware.js script
+Added a script to reset wifi networks and bring the access-point back up
+
 21-10-2022 V1.6.16
 Fixed the access point credentials when it gets created by the app for some reason.
 
