@@ -1,4 +1,11 @@
-0.1.11
+0.1.12
+
+0.1.12
+repo ver V1.6.18
+gocontroll-first-install script now has the choice between a development build and a latest stable release
+Aliasses added for some of the gocontroll scripts
+Added improved argument checking for the upload-new-module-firmware.js script
+Added a script to reset wifi networks and bring the access-point back up
 
 0.1.11
 repo ver V1.6.16
