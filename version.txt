@@ -1,6 +1,9 @@
-V1.6.17
+V1.6.18
 
 ########
+24-10--2022 V1.6.18
+gocontroll-first-install script now has the choice between a development build and a latest stable release
+
 21-10-2022 V1.6.17
 Aliasses added for some of the gocontroll scripts
 Added improved argument checking for the upload-new-module-firmware.js script
