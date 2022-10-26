@@ -1,7 +1,11 @@
-V1.6.18
+V1.6.19
 
 ########
-24-10--2022 V1.6.18
+25-10-2022 V1.6.19
+identify now checks whether a simulink model was running and asks the user if they want to proceed
+fix in module-info-gathering for the moduline screen
+
+24-10-2022 V1.6.18
 gocontroll-first-install script now has the choice between a development build and a latest stable release
 
 21-10-2022 V1.6.17

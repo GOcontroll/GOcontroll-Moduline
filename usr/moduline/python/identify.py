@@ -3,9 +3,29 @@ import subprocess
 import threading
 import sys
 
+response = ""
+
 args = sys.argv[1:]
 def led_flashing():
     subprocess.run(["node", "/usr/moduline/nodejs/flash-led.js", "6"])
+
+simulink_status = subprocess.run(["systemctl", "is-active", "go-simulink"], stdout=subprocess.PIPE, text=True)
+nodered_status = subprocess.run(["systemctl", "is-active", "nodered"], stdout=subprocess.PIPE, text=True)
+simulink_status = simulink_status.stdout
+nodered_status = nodered_status.stdout
+if not "in" in simulink_status:
+    while response == "":
+        response = input("Simulink seems to be active, continuing would temporarily interrupt it, continue? y/n:")
+        if not response:
+            print("Please enter an option.\n")
+
+if "n" in response.lower():
+    exit()
+
+subprocess.run(["systemctl", "stop", "go-simulink"])
+subprocess.run(["systemctl", "stop", "nodered"])
+
+
 
 tf = threading.Thread(target=led_flashing)
 tf.start()
@@ -111,3 +131,9 @@ fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
 table = [fmt.format(*row) for row in s]
 print('\n'.join(table))
 tf.join()
+
+#restart simulink or nodered if they were turned on before the script
+if not "in" in simulink_status:
+    subprocess.run(["systemctl", "start", "go-simulink"])
+if not "in" in nodered_status:
+    subprocess.run(["systemctl", "start", "nodered"])

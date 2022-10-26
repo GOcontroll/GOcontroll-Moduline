@@ -66,7 +66,7 @@ nmcli con show "con" -- See detailed information about a specific connection
  
 nmcli dev wifi      -- Show available Wi-Fi networks
  
-nmcli dev wifi connect <net name> password <password> -- Connect to a wifi network with the given name and password
+nmcli dev wifi connect "net name" password "password" -- Connect to a wifi network with the given name and password
 
 # modem manager
 mmcli --list-modems --Show the list of modems to get the modem number
