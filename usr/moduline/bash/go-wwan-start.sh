@@ -6,6 +6,17 @@
 # - SIM7000 PCIe -> LTE after commands AT+CMNB=1 and AT+CNMP=38
 #
 
+# Check if hardware is Moduline Mini controller. In this case, LDO and Level shifter needs to be enabled
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
+# Start with powering the module and level shifter
+echo 0 > /sys/devices/platform/leds/leds/communication-ldo-active/brightness
+echo 0 > /sys/devices/platform/leds/leds/sim7000-level-active/brightness
+else
+# Start with powering the module
+echo 0 > /sys/devices/platform/leds/leds/ldo-sim7000/brightness
+fi
+
+sleep 4
 
 # Check if hardware is Moduline Mini controller. In this case, LDO and Level shifter needs to be enabled
 if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then

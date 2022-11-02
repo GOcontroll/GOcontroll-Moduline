@@ -1,0 +1,13 @@
+
+[Unit]
+Description=WWAN guard service
+After=network.target
+
+
+[Service]
+ExecStart= node /usr/moduline/nodejs/wwan-guard.js &
+Type=simple
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

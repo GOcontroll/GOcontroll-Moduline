@@ -14,6 +14,7 @@ console.error(err);
 if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
     var controllerLayout = new Array(8);
+<<<<<<< HEAD
     var moduleManufacturers = new Array(8);
     var moduleQRsfront = new Array(8);
     var moduleQRsback = new Array(8);
@@ -29,6 +30,11 @@ if (hardwareFile.includes("Moduline IV")) {
     var moduleManufacturers = new Array(2);
     var moduleQRsfront = new Array(2);
     var moduleQRsback = new Array(2);
+=======
+} else if (hardwareFile.includes("Moduline Mini")) {
+    controllerType = "mini"
+    var controllerLayout = new Array(4);
+>>>>>>> master
 }
 
 var sL, sB;
