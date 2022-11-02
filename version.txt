@@ -1,6 +1,12 @@
-V1.6.19
+V1.6.20
 
 ########
+30-10-2022 V1.7.20
+Added firmware file for IR model HW version 20300302
+
+27-10-2022 V1.6.20
+Updated the GPS node that is now compatible with the SIMCOM 7600G
+
 25-10-2022 V1.6.19
 identify now checks whether a simulink model was running and asks the user if they want to proceed
 fix in module-info-gathering for the moduline screen

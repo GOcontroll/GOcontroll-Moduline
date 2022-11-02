@@ -1,7 +1,8 @@
 module.exports = function(RED) {
     "use strict"
 
-	var SerialPort = require("serialport");
+	const SerialPort = require("serialport");
+	const fs = require('fs');
 
 	function GOcontrollGPS(config) { 	 
 	   RED.nodes.createNode(this,config);
@@ -10,143 +11,234 @@ module.exports = function(RED) {
 		const port = new SerialPort("/dev/ttymxc1", { baudRate: 115200 , autoOpen: false })
 
 		var interval = null;
+		var modulePowered = false;
+		var startGpsSessionTimeout;
 		
-		var gpsFix = 0;
-		var date = 0;
-		var time = 0;
-		var latitude = 0;
-		var longitude = 0;
-		var altitude = 0;
-		var groundSpeed = 0;
-		var satView = 0;
-		var satUse = 0;
-
+		/* Define data containers */
 		var dataString = "";
 
 		var node = this;
 		const sampleTime = 1000;
 
+		/* Open serial port to control GPS modem */
 		port.open(function (err) {
 			if (err) {
 			
 			}
 		});
 		
+		GpsModule_SwitchOnModulePower();
+		
+		/***************************************************************************************
+		** \brief	Switch on LDO that power the SIMCOM7600G module
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function GpsModule_SwitchOnModulePower (){
+			/* Set GPIO pin high */
+			fs.writeFileSync('/sys/devices/platform/leds/leds/ldo-sim7000/brightness','255');
+			/* Give module some time before sending the first AT commands */ 
+			startGpsSessionTimeout = setTimeout(GpsModule_StartGpsSession, 1000);
+		}
+		
+		
+		/***************************************************************************************
+		** \brief	Start the GPS session onboard of the SIM7600G module
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/		
+		async function GpsModule_StartGpsSession (){
+		
+			/* Send first AT commands for Baudrate synchronisation */
+			port.write("AT\r",function(err,res) {
+				if (err) {
 
-		port.write("AT+CGNSPWR=1\r",function(err,res) {
-			if (err) {
+				}
+			});
+			
+			/* Short pauze */
+			 await sleep(500);
+			
+			/* Send second AT commands for Baudrate synchronisation */
+			port.write("AT\r",function(err,res) {
+				if (err) {
 
+				}
+			});
+			
+			/* Short pauze */
+			 await sleep(500);
+			
+			/* Start the GPS session on the module */
+			port.write("AT+CGPS=1\r",function(err,res) {
+				if (err) {
+
+				}
+			});
+				
+			/* Start interval to get GPS data */
+			if(modulePowered === false)
+			{
+			setTimeout(GpsModule_StartGpsSession, 1000);
 			}
-		});
+			else
+			{
+			interval = setInterval(GpsModule_GetData, sampleTime);
+			}
+		}
+		
 
-		/* Start interval to get module data */
-		interval = setInterval(sendGpsData, sampleTime);
+		
+		/***************************************************************************************
+		** \brief	Utillity function fo A-Sync sleep.
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
+		function sleep(ms) {
+		  return new Promise((resolve) => {
+			setTimeout(resolve, ms);
+		  });
+		}
 
-		/***execution initiated by event *******/
+
+		/***************************************************************************************
+		** \brief	Incoming msg property
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
 		node.on('input', function(msg) {
 
 		});
 	
+	
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
 		var msgOut={};
-		function sendGpsData(){
+		function GpsModule_GetData(){
 			
-			port.write("AT+CGNSINF\r",function(err,res) {
+			port.write("AT+CGPSINFO\r",function(err,res) {
 				if (err) {
 				var errmsg = err.toString().replace("Serialport","Serialport "+node.port.serial.path);
 				node.error(errmsg,msg);
 				}
 				
-			});
-					
-			msgOut["date"] = date;
-			msgOut["time"] = time;
-			msgOut["gpsFix"] = gpsFix;
-			msgOut["latitude"] = latitude;
-			msgOut["longitude"] = longitude;
-			msgOut["altitude"] = altitude;
-			msgOut["groundSpeed"] = groundSpeed;
-			msgOut["satView"] = satView;
-			msgOut["satUse"] = satUse;
-
-			node.send(msgOut)	
+			});	
 		}
 		
-		if(msgOut["gpsFix"] == NaN)
-		{
-			port.write("AT+CGNSPWR=1\r",function(err,res) {
-				if (err) {
 
-				}
-			});
-		}
-		
-		
+		/***************************************************************************************
+		** \brief when data is arriving onto the bus. 
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
 		port.on('readable', function () {
 			/* Read serial data from port */
 			var data = port.read(); 
 			/* Glue the seperated string together */
 			dataString += data;
 			
+			var msgOut = {};
+
 			/* Check if the string is finalized with an OK */
 			if(!dataString.includes("OK"))
 			{
+				/* in case it is during startup, it means the AT commands are responsive */
+				modulePowered = true;
 				/* If not, return */
 				return;
 			}
 			
 			/* At this point we know there is valid data so split string*/
-			var gpsData = dataString.toString('utf8').split(',');
-		
-					
-			if(gpsData[1] != null)
-			{
-			gpsFix = parseInt(gpsData[1]);
-			}
+			var validData = dataString.substring(dataString.indexOf(":") + 2);
 			
-			if(gpsData[2] != null)
+			var gpsData = validData.split(',');
+
+			var latitude;
+			var longitude;
+			var altitude;
+			var speed;
+
+			if(gpsData[0] != null)
 			{
-			date = (gpsData[2].slice(0, 4) + "-" + gpsData[2].slice(4, 6) + "-" + gpsData[2].slice(6, 8));
-			time = (gpsData[2].slice(8, 10) + ":" + gpsData[2].slice(10, 12) + ":" + gpsData[2].slice(12, 14));
-			}
-			
-			if(gpsData[3] != null)
-			{
-			latitude = parseFloat(gpsData[3]);
-			}
-			
-			if(gpsData[4] != null)
-			{
-			longitude = parseFloat(gpsData[4]);
-			}
-			
-			if(gpsData[5] != null)
-			{
-			altitude = parseFloat(gpsData[5]);
-			}
-			
-			if(gpsData[6] != null)
-			{
-			groundSpeed = parseFloat(gpsData[6]);
+			var lat = gpsData[0].split('.')
+			latitude = parseInt(lat[0].slice(0, 2))
+			latitude +=(parseInt(lat[0].slice(2, 4)))/60;
+			latitude +=(parseInt(lat[1]))/3600000;
 			}
 
-			if(gpsData[14] != null)
+			if(gpsData[2] != null)
 			{
-			satView = parseInt(gpsData[14]);
-			}		
+			var lon = gpsData[2].split('.')
+			longitude = parseInt(lon[0].slice(0, 3))
+			longitude +=(parseInt(lon[0].slice(3, 5)))/60;
+			longitude +=(parseInt(lon[1]))/36000000;
+			}
+
+			if(gpsData[6] != null)
+			{
+			altitude = parseFloat(gpsData[6]);
+			}
+
+			if(gpsData[7] != null)
+			{
+			speed = parseFloat(gpsData[7])*1.852;
+			}
 			
-			if(gpsData[15] != null)
-			{
-			satUse = parseInt(gpsData[15]);
-			}	
+			
+			
+			msgOut["latitude"] = latitude;
+			msgOut["longitude"] = longitude;
+			msgOut["altitude"] = altitude;
+			msgOut["speed"] = speed;
+			
 			/* Cleanup the dataSTring for new parsing */
 			dataString = "";
+			
+			node.send(msgOut);
 		});
 		
 		
-		
+				
+		/***************************************************************************************
+		** \brief
+		**
+		**
+		** \param
+		** \param
+		** \return
+		**
+		****************************************************************************************/
 		node.on('close', function(done) {
 		port.close();
 		clearInterval(interval);
+		clearTimeout(startGpsSessionTimeout);
 		done();
 		});
 

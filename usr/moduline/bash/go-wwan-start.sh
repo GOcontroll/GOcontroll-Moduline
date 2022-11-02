@@ -31,17 +31,6 @@ fi
 echo 255 > /sys/devices/platform/leds/leds/pwr-sim7000/brightness
 echo 255 > /sys/devices/platform/leds/leds/rst-sim7000/brightness
 
-# WANN functionality is claiming the supply so set propertie
-filename=/usr/moduline/moduline.properties
-thekey="GO_WWAN"
-newvalue="ACTIVE"
-
-if ! grep -R "^[#]*\s*${thekey}=.*" $filename > /dev/null; then
-  echo "$thekey=$newvalue" >> $filename
-else
-  sed -ir "s/^[#]*\s*${thekey}=.*/$thekey=$newvalue/" $filename
-fi
-
 # Wait two seconds to get active
 sleep 5
 # Set serial port to 115200 baudrate 
