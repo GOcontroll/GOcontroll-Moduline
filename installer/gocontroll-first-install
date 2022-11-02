@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # command for development installation
-# wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/bullseye/installer/gocontroll-first-install | bash -s bullseye
+# wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/master/installer/gocontroll-first-install | bash -s master
 
 # command for latest stable release:
 # release=$(curl -s https://api.github.com/repos/GOcontroll/GOcontroll-Moduline/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")') bash -c 'wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/$release/installer/gocontroll-first-install | bash -s $release'
