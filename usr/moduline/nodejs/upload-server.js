@@ -38,7 +38,8 @@
 			res.send('Wrong file extension detected! Check your file!');
 			return;
 			}
-			
+			/* clear the folder */
+			shell.exec("rm /usr/simulink/*")
 			/* The input attribute name needs to have the same value as sampleFile! */
 			let elfFile = req.files.elfFile;
 
@@ -48,7 +49,7 @@
 			}
 
 			/* The MV stores the incomming file to the server */ 
-			elfFile.mv('/usr/simulink/gocontroll_new.elf', function(err) {
+			elfFile.mv('/usr/simulink/gocontroll.elf', function(err) {
 			if (err) return res.status(500).send(err);
 			res.send('File uploaded! You can now close this tab/window.');
 			
@@ -61,20 +62,31 @@
 			/* We first need to stop the current model from running */
 			shell.exec('systemctl stop go-simulink.service');	
 			}
-			/* Now we can delete the old model and rename the new one */
-			shell.exec('rm /usr/simulink/gocontroll.elf');
-			/* Now we can rename the file*/
-			shell.exec('mv /usr/simulink/gocontroll_new.elf /usr/simulink/gocontroll.elf');
 			/* Only restart the service if the model was allready running */
 			if(active.code === 0)
 			{
 			/* Start service */
 			shell.exec('systemctl start go-simulink.service');	
 			}
-			
 			});
-		 }
-		
+		}
+
+		if(req.files.a2lFile)
+		{
+			var fileExtension = (req.files.a2lFile.name).split('.')
+			if(fileExtension[1] != "a2l")
+			{
+				res.send('Wrong file extension detected! Check your file!');
+				return;
+			}
+			let a2lFile = req.files.a2lFile;
+
+			a2lFile.mv('/usr/simulink/gocontroll.a2l', function(err) {
+				if (err) return res.status(500).send(err);
+				res.send('File uploaded! You can now close this tab/window.');
+			});
+		}
+
 		if(req.files.ovpnFile)
 		{
 			var fileExtension = (req.files.ovpnFile.name).split('.')

@@ -1,0 +1,45 @@
+0.1.12
+
+0.1.12
+repo ver V1.6.18
+gocontroll-first-install script now has the choice between a development build and a latest stable release
+Aliasses added for some of the gocontroll scripts
+Added improved argument checking for the upload-new-module-firmware.js script
+Added a script to reset wifi networks and bring the access-point back up
+
+0.1.11
+repo ver V1.6.16
+Fixed the access point credentials when it gets created by the app for some reason.
+Fixed bug with Node RED can send. 0 was ignored as new value.
+
+0.1.10
+fixed updates for the moduline mini.
+the html files for node-red need to be patched again after the update with the newest patch files.
+
+0.1.9
+Removed no longer usefull firmware files from the repository, this fixed an issue where the mac address of the bluetooth interface would change to AA:AA:AA:AA:AA:AA after an update.
+Fixed a bug where installModuleFirmware.py would attempt to update the last module even though there wasnt an update available
+Fixed the controller version display for longer version numbers in rfcommServer.py
+
+0.1.8
+Minor bugfixes, automatic update checking was not working
+machine-info file removed from repository
+
+0.1.7
+Improved error feedback to app users, server crash now very unlikely
+Module firmware can be updated from the app
+Module configuration can be refreshed from the app
+Improved verification mechanism
+
+
+0.0.7
+Demonstration release, intended for showing the update functionality.
+Functions include
+Manage Wifi connections
+Activate Wifi access point
+Manage ethernet interface dynamic/static ip
+Manage wwan interface
+Manage CAN interfaces
+Set controller bluetooth name, view controller information
+View controller module configuration
+Manage several services on the controller

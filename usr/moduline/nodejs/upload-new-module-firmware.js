@@ -4,6 +4,27 @@ const fs = require('fs');
 var args = process.argv.slice(2)
 const slot = parseInt(args[0]);
 const newFirmware = args[1];
+var forceUpdate = parseInt(args[2])
+
+if (!args[0] && !args[1]) {
+    throw new Error("Provide arguments to use this script: command <module slot> <firmware.srec> <force update: 1 for yes, empty or else for no>");
+}
+
+fs.stat("/usr/module-firmware/" + newFirmware, (error, stats) => {
+    if (error) {
+        throw new Error("Firmware file does not exist, enter a valid firmware file");
+    }
+    else if (!newFirmware.includes(".srec")) {
+        throw new Error("File must have a .srec extension to be valid");
+    }
+});
+
+
+if (forceUpdate == 1) {
+    console.log("Forcing update, I hope you know what you are doing.");
+}
+
+
 const moduleFirmwareLocation = "/usr/module-firmware/"
 const BOOTMESSAGELENGTH = 46
 const SPISPEED = 2000000;
@@ -16,8 +37,19 @@ console.error(err);
 }
 if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
+    if (slot<1|slot>8) {
+        throw new Error("Incorrect slot number entered, must be a number ranging from 1 to 8");
+    }
 } else if (hardwareFile.includes("Moduline Mini")) {
     controllerType = "mini"
+    if (slot<1|slot>4) {
+        throw new Error("Incorrect slot number entered, must be a number ranging from 1 to 4");
+    }
+} else if (hardwareFile.includes("Moduline Screen")) {
+    controllerType = "screen"
+    if (slot<1|slot>2) {
+        throw new Error("Incorrect slot number entered, must be a number ranging from 1 to 2");
+    }
 }
 
 var newHwVersion = new Array(4)
@@ -83,17 +115,17 @@ switch(controllerType)
     case "mini":
         switch(slot)
         {
-            case 1: sL = 2; sB=0; break;
-            case 2: sL = 2; sB=1; break;
-            case 3: sL = 1; sB=0; break;
-            case 4: sL = 1; sB=1; break;
+            case 1: sL = 1; sB=0; break;
+            case 2: sL = 1; sB=1; break;
+            case 3: sL = 2; sB=0; break;
+            case 4: sL = 2; sB=1; break;
         }
         break;
-    case "dash?":
+    case "screen":
         switch(slot)
         {
-            case 1: sL = 2; sB=0; break;
-            case 2: sL = 2; sB=1; break;
+            case 1: sL = 1; sB=0; break;
+            case 2: sL = 1; sB=1; break;
         }
         break;
     default:
@@ -170,21 +202,12 @@ function Module_CheckFirmwareVersion(){
             if (ArrayEquals(hwVersion, newHwVersion) && !ArrayEquals(swVersion, newSwVersion)) {
                 oldSwVersion = swVersion;
                 Module_AnnounceFirmwareUpload();
+            } else if (forceUpdate==1) {
+                oldSwVersion = swVersion;
+                oldSwVersion[0] = "l"
+                forceUpdate=0;
+                Module_AnnounceFirmwareUpload();
             } else if (!ArrayEquals(oldSwVersion, swVersion)) {
-                var controllerLayoutFile;
-                try {
-                    controllerLayoutFile = fs.readFileSync("/usr/module-firmware/modules.txt", "utf-8");
-                } catch(err) {
-                console.error(err);
-                }
-                var modules = controllerLayoutFile.split(":");
-                modules[slot-1] = hwVersion.join("-") + "-" + swVersion.join("-");
-
-                fs.writeFileSync("/usr/module-firmware/modules.txt", modules.join(":"), err => {
-                    if (err) {
-                        console.error(err)
-                    }
-                })
                 console.log("firmware update successfull")
                 Module_CancelFirmwareUpload();
             } else {
@@ -353,6 +376,7 @@ function Module_FirmwareUpload(){
                     firmware.close(err =>{});
                     //node.warn("Firmware from input module on slot: "+moduleSlot+" updated! Now restarting module!");
                     /* At this point, the module can be restarted to check if it provides the new installed firmware */
+                    //console.log("Firmware uploaded")
                     Module_StartReset();
                     //TODO moet de module hier het initialisatie script aanroepen?
                     return;

@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# url to bash this script:
-# wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/master/installer/gocontroll-first-install | bash -s master
+# command for development installation
+# wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/bullseye/installer/gocontroll-first-install | bash -s bullseye
+
+# command for latest stable release:
+# release=$(curl -s https://api.github.com/repos/GOcontroll/GOcontroll-Moduline/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")') bash -c 'wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/$release/installer/gocontroll-first-install | bash -s $release'
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -11,7 +14,7 @@ cd
 if [ -d GOcontroll ]
 then
 echo -e "${YELLOW}-Delete existing GOcontroll folder ${NORMAL}"
-	rm -r GOcontroll
+	rm -r GOcontroll > /dev/null
 fi
 
 echo -e "${YELLOW}-Create new GOcontroll folder ${NORMAL}"
@@ -25,64 +28,60 @@ echo -e "${YELLOW}-Git is not yet installed so let's install first ${NORMAL}"
 apt -y install git 
 fi
 
-echo -e "${YELLOW}-Update debian ${NORMAL}"
-apt-get update -y
+echo -e "${YELLOW}-Update debian sources ${NORMAL}"
+apt-get update -y > /dev/null
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
-git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
+git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
 
 echo -e "${YELLOW}-remove old GOcontroll stuff ${NORMAL}"
 
 if [ -d /usr/node-red-gocontroll/nodes ]
 then
 echo -e "${YELLOW}-Delete existing GOcontroll nodes ${NORMAL}"
-	rm -r /usr/node-red-gocontroll/nodes
+	rm -r /usr/node-red-gocontroll/nodes > /dev/null
 fi
 
 if [ -d /usr/node-red-static ]
 then
 echo -e "${YELLOW}-Delete node red static folder ${NORMAL}"
-	rm -r /usr/node-red-static
+	rm -r /usr/node-red-static > /dev/null
 fi
 
 if [ -d /usr/module-firmware ]
 then
 echo -e "${YELLOW}-Delete old module firmware ${NORMAL}"
-	rm -r /usr/module-firmware 
+	rm -r /usr/module-firmware > /dev/null
 fi
 
 if [ -d /usr/moduline/bash ]
 then
 echo -e "${YELLOW}-Delete bash automation scripts ${NORMAL}"
-	rm -r /usr/moduline/bash 
+	rm /usr/moduline/bash/* > /dev/null
 fi
 
 if [ -d /usr/moduline/nodejs ]
 then
 echo -e "${YELLOW}-Delete nodejs scripts ${NORMAL}"
-	rm -r /usr/moduline/nodejs 
+	rm /usr/moduline/nodejs/* > /dev/null
 fi
 
 echo -e "${YELLOW}-Copy GOcontroll files to correct location ${NORMAL}"
-cp -avr /root/GOcontroll/GOcontroll-Moduline/lib /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/etc /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/usr /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/root /
-cp -avr /root/GOcontroll/GOcontroll-Moduline/version.txt /root
+cp -avr /root/GOcontroll/GOcontroll-Moduline/lib / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/etc / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/usr / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/root / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll-Moduline/version.txt /root > /dev/null
 
-if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.03" ]] ||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.04" ]]||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.05" ]]||
-[[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini V1.06" ]]; then
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
 
 echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
-patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch
-patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll-Moduline/patch/output_module_html.patch
-patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_reset_html.patch
-patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_html.patch
-patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll-Moduline/patch/can_receive_html.patch
-patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch
-
+patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll-Moduline/patch/output_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_reset_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll-Moduline/patch/can_receive_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch > /dev/null
 fi
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
@@ -91,15 +90,20 @@ chmod 555 /usr/moduline/bash/go-wwan-start.sh
 chmod 555 /usr/moduline/bash/go-wwan-stop.sh
 chmod 555 /usr/moduline/bash/go-gps-start.sh
 chmod 555 /usr/moduline/bash/go-gps-stop.sh
+chmod 555 /usr/moduline/bash/reset-ap.sh
 chmod 555 /usr/moduline/python/identify.py
 chmod 555 /usr/local/bin/qmi-network-raw
-chmod 555 /usr/moduline/nodejs/upload_server.js
-chmod 555 /usr/moduline/nodejs/module-info-gathering.js
-chmod 555 /usr/moduline/nodejs/upload-new-module-firmware.js
+chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
+chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
 
-alias identify="/usr/moduline/python/identify.py"
-echo alias identify="/usr/moduline/python/identify.py" >> ~/.bashrc
+# alias identify="/usr/moduline/python/identify.py"
+# echo alias identify="/usr/moduline/python/identify.py" >> ~/.bashrc
+echo "alias go-reset-ap=/usr/moduline/bash/reset-ap.sh" >> ~/.bashrc
+echo "alias go-update-modules=\"python3 /usr/moduline/python/installModuleFirmware.py\"" >> ~/.bashrc
+echo "alias go-scan-modules=\"node /usr/moduline/nodejs/module-info-gathering.js\"" >> ~/.bashrc
+echo "alias go-overwrite-module=\"node /usr/moduline/nodejs/upload-new-module-firmware.js\"" >> ~/.bashrc
+
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
@@ -109,56 +113,112 @@ mkdir /usr/mem-sim
 
 echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
-insmod /lib/modules/5.10.9-1.0.0+g7f1c87a753d8/kernel/drivers/net/tun.ko
-
 
 echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
-service hostapd start
 service dnsmasq start
 
-echo -e "${YELLOW}-Jump node Node RED folder on root ${NORMAL}"
-cd ~/.node-red
 
-echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
+# echo -e "${YELLOW}-Jump node Node RED folder on root ${NORMAL}"
+# cd ~/.node-red
+
+# echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
 
 # It seems that NPM not always installs AND builds the dependencies again. It is important to delete
 # the node modules first and then also delete the package.lock.json file!
 # https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
 
-npm install --unsafe-perm /usr/node-red-gocontroll
+# npm install --unsafe-perm /usr/node-red-gocontroll
 
-echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
-npm remove --no-audit --no-update-notifier --no-fund --save node-red-dashboard
-npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-dashboard@3.1.2
-# deprecated way of installing node red dashboard.
-# npm install node-red-dashboard@3.1.2
+# echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
+# npm remove --no-audit --no-update-notifier --no-fund --save node-red-dashboard
+# npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-dashboard@3.1.2
+# # deprecated way of installing node red dashboard.
+# # npm install node-red-dashboard@3.1.2
 
-echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
-npm remove --no-audit --no-update-notifier --no-fund --save node-red-node-serialport
-npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-node-serialport@0.15.0
-# deprecated way of installing serial port.
-# npm install node-red-node-serialport@0.15.0
+# echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
+# npm remove --no-audit --no-update-notifier --no-fund --save node-red-node-serialport
+# npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-node-serialport@0.15.0
+# # deprecated way of installing serial port.
+# # npm install node-red-node-serialport@0.15.0
 
-cd /usr/moduline/nodejs
+# cd /usr/moduline/nodejs
 
-npm install
+# #npm install
 
 echo -e "${YELLOW}-Autostart Node-RED ${NORMAL}"
-systemctl enable nodered
-systemctl restart nodered
+systemctl enable nodered > /dev/null
+systemctl restart nodered > /dev/null
 
 echo -e "${YELLOW}-Start upload server ${NORMAL}"
-systemctl enable go-upload-server
-systemctl start go-upload-server
+systemctl enable go-upload-server > /dev/null
+systemctl start go-upload-server > /dev/null
+
+echo -e "${YELLOW}-Start bluetooth service ${NORMAL}"
+systemctl enable go-bluetooth > /dev/null
 
 echo -e "${YELLOW}-Set time zone ${NORMAL}"
 timedatectl set-timezone Europe/Luxembourg
 
-if [ ! -f "/etc/NetworkManage/system-connections/GO-celular.nmconnection" ]
+echo -e "${YELLOW}-Fix network manager connections ${NORMAL}"
+
+if [ ! -f "/etc/NetworkManager/system-connections/Wired connection auto.nmconnection" ]
 then
-	nmcli connection add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
+	 nmcli con mod "Wired connection 1" con-name "Wired connection auto" > /dev/null
 fi
 
+if [ ! -f "/etc/NetworkManager/system-connections/Wired connection static.nmconnection" ]
+then
+	nmcli con add type ethernet con-name "Wired connection static" ifname eth0 ipv4.addresses 192.168.255.255/16 ipv4.method manual connection.autoconnect no > /dev/null
+fi
+
+nmcli con delete GOcontroll-AP
+nmcli con add type wifi con-name "GOcontroll-AP" ifname wlan0 ssid GOcontroll-AP ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect yes 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk Moduline 802-11-wireless-security.key-mgmt wpa-psk > /dev/null
+
+
+if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
+then
+	nmcli con add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
+fi
+
+echo -e "${YELLOW}-Gathering module configuration and updating outdated modules ${NORMAL}"
+
 python3 /usr/moduline/python/installModuleFirmware.py
+
+echo -e "${YELLOW}-Setting the bluetooth name${NORMAL}"
+
+hw=$(tr -d '\0' </sys/firmware/devicetree/base/hardware)
+case $hw in
+
+	*IV*)
+		echo PRETTY_HOSTNAME="GOcontroll Moduline IV" > /etc/machine-info
+		;;
+	*Mini*)
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini" > /etc/machine-info
+		;;
+	*Screen*)
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Screen" > /etc/machine-info
+esac
+
+echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
+
+python3 /usr/moduline/python/btKeyGen.py
+
+# if [ ! -f "/etc/bluetooth/trusted_devices.txt" ]
+# then
+# 	if [ ! -d "/etc/bluetooth" ]
+# 	then
+# 		mkdir "/etc/bluetooth"
+# 	fi
+# 	choose() { echo ${1:RANDOM%${#1}:1} $RANDOM; }
+# 	pass="$({ for i in $( seq 1 $(( 12 + RANDOM % 4 )) )
+# 		do
+# 			choose '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^\&'
+# 		done
+# 	} | sort -R | awk '{printf "%s",$1}')"
+# 	#TODO also send this pass to the label printer
+# 	echo "$pass" > /etc/bluetooth/trusted_devices.txt
+# fi
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
+echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"
+#test

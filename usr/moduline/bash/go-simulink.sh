@@ -4,8 +4,8 @@
 cd
 
 # be shure the binary has execution acces 
-chmod 555 /usr/simulink/gocontroll.elf
+chmod 555 /usr/simulink/*.elf
 
 # start the program with niceness -20
-nice -n -20 /usr/simulink/gocontroll.elf &
+nice -n -20 /usr/simulink/*.elf &
 

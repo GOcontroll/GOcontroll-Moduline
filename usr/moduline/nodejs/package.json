@@ -7,7 +7,8 @@
         "express-fileupload": "^1.2.1",
         "shelljs": "^0.8.4",
         "spi-device": "^3.1.2",
-        "i2c-bus": "^5.2.2"
+        "i2c-bus": "^5.2.2",
+        "socketcan": "^3.0.0"
     },
     "repository": {
         "type": "",

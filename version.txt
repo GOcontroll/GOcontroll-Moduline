@@ -1,6 +1,70 @@
-V1.3.10
+V1.6.20
 
 ########
+30-10-2022 V1.7.20
+Added firmware file for IR model HW version 20300302
+
+27-10-2022 V1.6.20
+Updated the GPS node that is now compatible with the SIMCOM 7600G
+
+25-10-2022 V1.6.19
+identify now checks whether a simulink model was running and asks the user if they want to proceed
+fix in module-info-gathering for the moduline screen
+
+24-10-2022 V1.6.18
+gocontroll-first-install script now has the choice between a development build and a latest stable release
+
+21-10-2022 V1.6.17
+Aliasses added for some of the gocontroll scripts
+Added improved argument checking for the upload-new-module-firmware.js script
+Added a script to reset wifi networks and bring the access-point back up
+
+21-10-2022 V1.6.16
+Fixed the access point credentials when it gets created by the app for some reason.
+
+27-9-2022 V1.6.15
+Fixed bug with Node RED can send. 0 was ignored as new value.
+
+27-9-2022 V1.6.14
+fixed mini patches upon bluetooth update.
+
+22-9-2022 V1.6.13
+Support for the Display controller being added
+
+19-9-2022 V1.5.13
+Added the testcan.js script, this script can be used to check if the can busses are functioning when combined with the right plug.
+
+9-9-2022 V1.4.13
+small fix on the version checking part of the controller_settings command in rfcommServer.py
+improved indentify.py, extra information, better formatting.
+
+5-9-2022 V1.4.12
+fixed error message after succesfull forced firmware upload with the upload-new-module-firmware.js script
+fixed a bug where in a specific case the installModuleFirmware.py script could downgrade firmware on a module
+
+
+1-9-2022 V1.4.11
+Fixed a bug where installModuleFirmware.py would attempt to update the last module even though there wasnt an update available
+Fixed the controller version display for longer version numbers in rfcommServer.py
+Removed firmware files that are now included in the prebuild rootfs
+
+1-9-2022 V1.4.10
+Minor bugfixes, automatic update checking was not working
+machine-info file removed from repository
+
+1-9-2022 V1.4.9
+Switch from debian buster to debian bullseye
+Added a bluetooth interface with the GOcontroll app
+Functions include
+Manage Wifi connections
+Activate Wifi access point
+Manage ethernet interface dynamic/static ip
+Manage wwan interface
+Manage CAN interfaces
+Set controller bluetooth name, view controller information
+View controller module configuration
+Manage several services on the controller
+
 13-3-2022 V1.3.10
 Fixed small bug with configurations on selecting 6 channel or 10 channel outputs on output module node
 

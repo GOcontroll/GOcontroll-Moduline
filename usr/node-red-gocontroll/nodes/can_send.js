@@ -161,7 +161,7 @@ module.exports = function(RED) {
 			for(var s=0; s<signals; s++)
 			{
 				/* check if property is available in JSON string */
-				if(msg[key[s]])
+				if(msg[key[s]] || msg[key[s]] === 0)
 				{
 					/* Exit if signal value is not changed */
 					if(value[s] == msg[key[s]]){continue;}
@@ -172,7 +172,7 @@ module.exports = function(RED) {
 					if((sb[s]-eb[s]) == 0)
 					{
 					if(msg[key[s]] >  255){msg[key[s]] = 255;}
-					if(msg[key[s]] <  0){msg[key[s]] = 0;}
+					if(msg[key[s]] <=  0){msg[key[s]] = 0;}
 					frame.data.writeUInt8(msg[key[s]],sb[s]-1);	
 					}
 					else
@@ -184,13 +184,13 @@ module.exports = function(RED) {
 							if((eb[s]-sb[s]) == 1)
 							{
 							if(msg[key[s]] >  65535){msg[key[s]] = 65535;}
-							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							if(msg[key[s]] <=  0){msg[key[s]] = 0;}
 							frame.data.writeUInt16BE(msg[key[s]],sb[s]-1);
 							}
 							if((eb[s]-sb[s]) == 3)
 							{
 							if(msg[key[s]] >  4294967295){msg[key[s]] = 4294967295;}
-							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							if(msg[key[s]] <=  0){msg[key[s]] = 0;}
 							frame.data.writeUInt32BE(msg[key[s]],sb[s]-1);	
 							}
 						}
@@ -200,13 +200,13 @@ module.exports = function(RED) {
 							if((sb[s]-eb[s]) == 1)
 							{
 							if(msg[key[s]] >  65535){msg[key[s]] = 65535;}
-							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							if(msg[key[s]] <=  0){msg[key[s]] = 0;}
 							frame.data.writeUInt16LE(msg[key[s]],eb[s]-1);
 							}
 							if((sb[s]-eb[s]) == 3)
 							{
 							if(msg[key[s]] >  4294967295){msg[key[s]] = 4294967295;}
-							if(msg[key[s]] <  0){msg[key[s]] = 0;}
+							if(msg[key[s]] <=  0){msg[key[s]] = 0;}
 							frame.data.writeUInt32LE(msg[key[s]],eb[s]-1);	
 							}	
 						}
