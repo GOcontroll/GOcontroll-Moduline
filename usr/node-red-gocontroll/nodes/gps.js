@@ -2,7 +2,8 @@ module.exports = function(RED) {
     "use strict"
 
 	const SerialPort = require("serialport");
-	const fs = require('fs');
+	/* fs is needed to set GPIO LED but that is not used now */
+	//const fs = require('fs');
 
 	function GOcontrollGPS(config) { 	 
 	   RED.nodes.createNode(this,config);
@@ -39,8 +40,8 @@ module.exports = function(RED) {
 		**
 		****************************************************************************************/
 		function GpsModule_SwitchOnModulePower (){
-			/* Set GPIO pin high */
-			fs.writeFileSync('/sys/devices/platform/leds/leds/ldo-sim7000/brightness','255');
+			/* Set GPIO pin high TODO is this really necessary??? */ 
+			//fs.writeFileSync('/sys/devices/platform/leds/leds/ldo-sim7000/brightness','255');
 			/* Give module some time before sending the first AT commands */ 
 			startGpsSessionTimeout = setTimeout(GpsModule_StartGpsSession, 1000);
 		}
@@ -185,20 +186,17 @@ module.exports = function(RED) {
 			var altitude;
 			var speed;
 
+
 			if(gpsData[0] != null)
 			{
-			var lat = gpsData[0].split('.')
-			latitude = parseInt(lat[0].slice(0, 2))
-			latitude +=(parseInt(lat[0].slice(2, 4)))/60;
-			latitude +=(parseInt(lat[1]))/3600000;
+			latitude = parseInt(gpsData[0].slice(0, 2))
+			latitude +=(parseFloat(gpsData[0].slice(2,(gpsData[0].length)-1)))/60;
 			}
 
 			if(gpsData[2] != null)
 			{
-			var lon = gpsData[2].split('.')
-			longitude = parseInt(lon[0].slice(0, 3))
-			longitude +=(parseInt(lon[0].slice(3, 5)))/60;
-			longitude +=(parseInt(lon[1]))/36000000;
+			longitude = parseInt(gpsData[2].slice(0, 3))
+			longitude +=(parseFloat(gpsData[2].slice(3, (gpsData[2].length)-1)))/60;
 			}
 
 			if(gpsData[6] != null)

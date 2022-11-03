@@ -1,6 +1,9 @@
-V1.6.20
+V1.7.21
 
 ########
+3-11-2022 V1.7.21
+Bugfix on gps.js node that converts GPS raw signal to longitude and latitude.
+
 30-10-2022 V1.7.20
 Added firmware file for IR model HW version 20300302
 
