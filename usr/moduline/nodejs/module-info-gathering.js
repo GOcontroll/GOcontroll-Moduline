@@ -1,5 +1,6 @@
 const spi = require('spi-device');
 const fs = require('fs');
+var shell = require('shelljs');	
 
 const BOOTMESSAGELENGTH = 46;
 const SPISPEED = 2000000;
@@ -14,7 +15,6 @@ console.error(err);
 if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
     var controllerLayout = new Array(8);
-<<<<<<< HEAD
     var moduleManufacturers = new Array(8);
     var moduleQRsfront = new Array(8);
     var moduleQRsback = new Array(8);
@@ -30,15 +30,12 @@ if (hardwareFile.includes("Moduline IV")) {
     var moduleManufacturers = new Array(2);
     var moduleQRsfront = new Array(2);
     var moduleQRsback = new Array(2);
-=======
-} else if (hardwareFile.includes("Moduline Mini")) {
-    controllerType = "mini"
-    var controllerLayout = new Array(4);
->>>>>>> master
 }
 
 var sL, sB;
 
+let nodered =  true; 
+let simulink = true;
 
 var sendBuffer = Buffer.alloc(BOOTMESSAGELENGTH+5);
 var receiveBuffer = Buffer.alloc(BOOTMESSAGELENGTH+5);
@@ -60,7 +57,32 @@ const dummyMessage = [{
 var currentSlot = 1;
 var amountOfSlots;
 
-recursionFunc();
+var exec = require('child_process').exec, child;
+child = exec('systemctl is-active nodered', function(error, stdout, stderr){
+    if (stdout !== null) {
+        if (stdout.includes("in")) {
+            nodered = false;
+        }
+    }
+    child2 = exec('systemctl is-active go-simulink', function(error, stdout, stderr){
+        if (stdout !== null) {
+            if (stdout.includes("in")) {
+                simulink = false;
+            }
+        }
+        shell.exec('systemctl stop nodered');
+        shell.exec('systemctl stop go-simulink');
+
+        recursionFunc();
+
+        if(nodered) {
+            shell.exec('systemctl start nodered');
+        }
+        if(simulink) {
+            shell.exec('systemctl start go-simulink');
+        }
+    })
+})
 
 /*this function get recursively called to keep this process synchronous*/
 function recursionFunc() {

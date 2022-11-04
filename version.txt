@@ -1,6 +1,10 @@
-V1.7.21
+V1.7.22
 
 ########
+4-11-2022 V1.7.22
+Bugfix on upload-new-module-firmware.js and module-info-gathering.js, these scripts now also toggle nodered and go-simulink if they are active.
+these two services would claim modules in the controller which then would not be scanned by these programs.
+
 3-11-2022 V1.7.21
 Bugfix on gps.js node that converts GPS raw signal to longitude and latitude.
 

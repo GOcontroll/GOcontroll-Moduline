@@ -1,5 +1,6 @@
 const spi = require('spi-device');
 const fs = require('fs');
+var shell = require('shelljs');	
 
 var args = process.argv.slice(2)
 const slot = parseInt(args[0]);
@@ -28,6 +29,9 @@ if (forceUpdate == 1) {
 const moduleFirmwareLocation = "/usr/module-firmware/"
 const BOOTMESSAGELENGTH = 46
 const SPISPEED = 2000000;
+
+let nodered =  true; 
+let simulink = true;
 
 var controllerType, hardwareFile;
 try {
@@ -131,7 +135,33 @@ switch(controllerType)
     default:
         break;
 }
-SendDummyByte();
+
+var exec = require('child_process').exec, child;
+child = exec('systemctl is-active nodered', function(error, stdout, stderr){
+    if (stdout !== null) {
+        if (stdout.includes("in")) {
+            nodered = false;
+        }
+    }
+    child2 = exec('systemctl is-active go-simulink', function(error, stdout, stderr){
+        if (stdout !== null) {
+            if (stdout.includes("in")) {
+                simulink = false;
+            }
+        }
+        shell.exec('systemctl stop nodered');
+        shell.exec('systemctl stop go-simulink');
+
+        SendDummyByte();;
+
+        if(nodered) {
+            shell.exec('systemctl start nodered');
+        }
+        if(simulink) {
+            shell.exec('systemctl start go-simulink');
+        }
+    })
+})
 
 function SendDummyByte(){
     /*Send dummy message to setup the SPI bus properly */
