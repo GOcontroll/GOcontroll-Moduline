@@ -95,12 +95,11 @@ chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
 chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
 
-# alias identify="/usr/moduline/python/identify.py"
-# echo alias identify="/usr/moduline/python/identify.py" >> ~/.bashrc
 echo "alias go-reset-ap=/usr/moduline/bash/reset-ap.sh" >> ~/.bashrc
 echo "alias go-update-modules=\"python3 /usr/moduline/python/installModuleFirmware.py\"" >> ~/.bashrc
 echo "alias go-scan-modules=\"node /usr/moduline/nodejs/module-info-gathering.js\"" >> ~/.bashrc
 echo "alias go-overwrite-module=\"node /usr/moduline/nodejs/upload-new-module-firmware.js\"" >> ~/.bashrc
+echo "alias go-manual-update=\"python3 /etc/controller_update/manual_update.py\"" >> ~/.bashrc
 
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
@@ -114,34 +113,6 @@ depmod
 
 echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
 service dnsmasq start
-
-
-# echo -e "${YELLOW}-Jump node Node RED folder on root ${NORMAL}"
-# cd ~/.node-red
-
-# echo -e "${YELLOW}-Install GOcontroll node packages ${NORMAL}"
-
-# It seems that NPM not always installs AND builds the dependencies again. It is important to delete
-# the node modules first and then also delete the package.lock.json file!
-# https://stackoverflow.com/questions/18401606/npm-doesnt-install-module-dependencies
-
-# npm install --unsafe-perm /usr/node-red-gocontroll
-
-# echo -e "${YELLOW}-Install Node-RED dashboard ${NORMAL}"
-# npm remove --no-audit --no-update-notifier --no-fund --save node-red-dashboard
-# npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-dashboard@3.1.2
-# # deprecated way of installing node red dashboard.
-# # npm install node-red-dashboard@3.1.2
-
-# echo -e "${YELLOW}-Install Node-RED serial port ${NORMAL}"
-# npm remove --no-audit --no-update-notifier --no-fund --save node-red-node-serialport
-# npm install --no-audit --no-update-notifier --no-fund --save --save-prefix=~ --production --engine-strict node-red-node-serialport@0.15.0
-# # deprecated way of installing serial port.
-# # npm install node-red-node-serialport@0.15.0
-
-# cd /usr/moduline/nodejs
-
-# #npm install
 
 echo -e "${YELLOW}-Autostart Node-RED ${NORMAL}"
 systemctl enable nodered > /dev/null
@@ -200,23 +171,6 @@ esac
 echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
 
 python3 /usr/moduline/python/btKeyGen.py
-
-# if [ ! -f "/etc/bluetooth/trusted_devices.txt" ]
-# then
-# 	if [ ! -d "/etc/bluetooth" ]
-# 	then
-# 		mkdir "/etc/bluetooth"
-# 	fi
-# 	choose() { echo ${1:RANDOM%${#1}:1} $RANDOM; }
-# 	pass="$({ for i in $( seq 1 $(( 12 + RANDOM % 4 )) )
-# 		do
-# 			choose '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^\&'
-# 		done
-# 	} | sort -R | awk '{printf "%s",$1}')"
-# 	#TODO also send this pass to the label printer
-# 	echo "$pass" > /etc/bluetooth/trusted_devices.txt
-# fi
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
 echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"
-#test

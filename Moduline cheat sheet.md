@@ -16,14 +16,17 @@
 
 *** GOcontroll commands
 # arbitrary commands
-identify "-v" -- gives information about the controller and makes LED's flash, add -v for more detailed information about the modules
+identify "-v" -- (points to identify.py) gives information about the controller and makes LED's flash, add -v for more detailed information about the modules
+
+# controller update
+go-manual-update -- (points to manual_update.py) updates the controller from the command line, gives the option for a development or stable update.
 
 # module related scripts
-go-update-modules (points to installModuleFirmware.py) -- scan the module slots and update any outdated module firmwares
+go-update-modules -- (points to installModuleFirmware.py) scan the module slots and update any outdated module firmwares
 
-go-scan-modules (points to module-info-gathering.js) -- scan the module slots
+go-scan-modules -- (points to module-info-gathering.js) scan the module slots
 
-go-overwrite-module "slot" "firmware.srec" "force update (1 for yes, empty or other for no)" (points to upload-new-module-firmware.js) -- upload specific firmware to a module
+go-overwrite-module "slot" "firmware.srec" "force update (1 for yes, empty or other for no)" -- (points to upload-new-module-firmware.js) upload specific firmware to a module
 
 *** System services
 # Service to start Node-RED
