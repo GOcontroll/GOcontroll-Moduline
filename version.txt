@@ -1,6 +1,10 @@
-V1.7.22
+V1.7.23
 
 ########
+7-11-2022 V1.7.23
+Update protocol improvements, manual update can now choose between stable or development.
+new manual /etc/controller_update/manual_update.py script added, for manual updates without the app.
+
 4-11-2022 V1.7.22
 Bugfix on upload-new-module-firmware.js and module-info-gathering.js, these scripts now also toggle nodered and go-simulink if they are active.
 these two services would claim modules in the controller which then would not be scanned by these programs.
