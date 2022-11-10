@@ -21,6 +21,8 @@ identify "-v" -- (points to identify.py) gives information about the controller 
 # controller update
 go-manual-update -- (points to manual_update.py) updates the controller from the command line, gives the option for a development or stable update.
 
+Accessing the linux image and dtb's can be done by mounting the boot partition like so: mount /dev/mmcblk0p1 /boot
+
 # module related scripts
 go-update-modules -- (points to installModuleFirmware.py) scan the module slots and update any outdated module firmwares
 
