@@ -1,6 +1,11 @@
-V1.7.23
+V1.7.24
 
 ########
+11-11-2022 V1.7.24
+go-test-can added to aliases
+can test now disables leds after 5 seconds
+install script will now check if ~/.bashrc needs to be appended.
+
 7-11-2022 V1.7.23
 Update protocol improvements, manual update can now choose between stable or development.
 new manual /etc/controller_update/manual_update.py script added, for manual updates without the app.

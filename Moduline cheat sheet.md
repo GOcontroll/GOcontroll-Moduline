@@ -15,8 +15,10 @@
 
 
 # GOcontroll commands
-### arbitrary commands
+### help/testing commands
 identify "-v" -- (points to identify.py) gives information about the controller and makes LED's flash, add -v for more detailed information about the modules
+
+go-test-can -- (points to testcan.js) if a can test plug is attached to the controller this can be called to test if the can busses are functioning correctly
 
 ### controller update
 go-manual-update -- (points to manual_update.py) updates the controller from the command line, gives the option for a development or stable update.

@@ -42,16 +42,16 @@ console.error(err);
 if (hardwareFile.includes("Moduline IV")) {
     controllerType = "IV"
     canBusCount = 4;
-    switch_led(0, "blue");
-    switch_led(1, "blue");
-    switch_led(2, "blue");
-    switch_led(3, "blue");
+    set_led(0, "blue");
+    set_led(1, "blue");
+    set_led(2, "blue");
+    set_led(3, "blue");
 
 } else if (hardwareFile.includes("Moduline Mini")) {
     controllerType = "mini"
     canBusCount = 2;
-    switch_led(0, "blue");
-    switch_led(1, "blue");
+    set_led(0, "blue");
+    set_led(1, "blue");
 } else if (hardwareFile.includes("Moduline Screen")) {
     controllerType = "screen"
     canBusCount = 2;
@@ -178,31 +178,34 @@ function SendCan_DataOut(){
 }
 
 function test_failed(number) {
-    switch_led(number, "red")
+    set_led(number, "red")
     finished_tests ++;
     if (finished_tests>= canBusCount) {
         console.log("FAIL: some can bus(ses) did not pass the test.")
         console.log(error_log);
-        process.exit(1);
+        setTimeout(end_test, 5000, -2);
+        //process.exit(-2);
     }
 }
 
 function test_succeeded(number) {
-    switch_led(number, "green")
+    set_led(number, "green")
     finished_tests ++;
     if (finished_tests >= canBusCount) {
         if (failed_tests > 0) {
             console.log("FAIL: some can bus(ses) did not pass the test.")
             console.log(error_log);
-            process.exit(1);
+            setTimeout(end_test, 5000, -1);
+            //process.exit(-1);
         }
         console.log("PASS: All canbusses are functioning")
         console.log(error_log);
-        process.exit(0);
+        setTimeout(end_test, 5000, 0);
+        //process.exit(0);
     }
 }
 
-function switch_led(num, colour){
+function set_led(num, colour){
     if (i2c_bus_state == false) {
         return;
     }
@@ -280,6 +283,19 @@ function switch_led(num, colour){
     sendBuffer[1] = 0;
     i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
     }
+
+    if (colour == "off")
+    {
+    sendBuffer[0] = ledBlue;
+    sendBuffer[1] = 0;
+    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
+    sendBuffer[0] = ledRed;
+    sendBuffer[1] = 0;
+    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
+    sendBuffer[0] = ledGreen;
+    sendBuffer[1] = 0;
+    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
+    }
     
     /* Close the I2C port */	
     i2c1.closeSync();
@@ -305,4 +321,13 @@ function led_init() {
 	sendBuffer[1] = 0x40;
 	i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
     i2c1.closeSync();
+}
+
+function end_test(exitCode) {
+    if (i2c_bus_state) {
+        for (let i = 0; i < 4; i ++) {
+            set_led(i, "off");
+        }
+    }
+    process.exit(exitCode);
 }
