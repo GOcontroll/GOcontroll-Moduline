@@ -1,4 +1,21 @@
-0.1.12
+0.2.12
+
+0.2.12
+repo ver V1.8.24
+Added base for UIO interrupts.
+Improved name generation for the bluetooth adapter and access point.
+go-test-can added to aliases
+can test now disables leds after 5 seconds
+install script will now check if ~/.bashrc needs to be appended.
+Update protocol improvements, manual update can now choose between stable or development.
+new manual /etc/controller_update/manual_update.py script added, for manual updates without the app.
+Bugfix on upload-new-module-firmware.js and module-info-gathering.js, these scripts now also toggle nodered and go-simulink if they are active.
+these two services would claim modules in the controller which then would not be scanned by these programs.
+Bugfix on gps.js node that converts GPS raw signal to longitude and latitude.
+Added firmware file for IR model HW version 20300302
+Updated the GPS node that is now compatible with the SIMCOM 7600G
+identify now checks whether a simulink model was running and asks the user if they want to proceed
+fix in module-info-gathering for the moduline screen
 
 0.1.12
 repo ver V1.6.18

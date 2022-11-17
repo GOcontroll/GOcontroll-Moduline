@@ -3,6 +3,7 @@ V1.8.24
 ########
 V1.8.24
 Added base for UIO interrupts.
+Improved name generation for the bluetooth adapter and access point.
 
 11-11-2022 V1.7.24
 go-test-can added to aliases
