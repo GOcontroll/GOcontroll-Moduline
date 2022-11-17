@@ -1,6 +1,9 @@
-V1.7.24
+V1.8.24
 
 ########
+V1.8.24
+Added base for UIO interrupts.
+
 11-11-2022 V1.7.24
 go-test-can added to aliases
 can test now disables leds after 5 seconds

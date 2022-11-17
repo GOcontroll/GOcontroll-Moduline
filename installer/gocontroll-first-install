@@ -125,6 +125,9 @@ mkdir /usr/mem-sim
 echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
 
+echo -e "${YELLOW}-Set up interrupt for the voltage monnitor if available ${NORMAL}"
+modprobe uio_pdrv_genirq of_id="voltage-monitor,generic-uio,ui_pdrv"
+
 echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
 service dnsmasq start
 
