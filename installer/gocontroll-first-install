@@ -125,8 +125,8 @@ mkdir /usr/mem-sim
 echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
 
-echo -e "${YELLOW}-Set up interrupt for the voltage monnitor if available ${NORMAL}"
-modprobe uio_pdrv_genirq of_id="voltage-monitor,generic-uio,ui_pdrv"
+echo -e "${YELLOW}-Set up UIO interrupts if available ${NORMAL}"
+modprobe uio_pdrv_genirq of_id="go-interrupt,generic-uio,ui_pdrv"
 
 echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
 service dnsmasq start
@@ -145,6 +145,10 @@ systemctl enable go-bluetooth > /dev/null
 echo -e "${YELLOW}-Set time zone ${NORMAL}"
 timedatectl set-timezone Europe/Luxembourg
 
+echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
+
+mod=$(python3 /usr/moduline/python/btKeyGen.py)
+
 echo -e "${YELLOW}-Fix network manager connections ${NORMAL}"
 
 if [ ! -f "/etc/NetworkManager/system-connections/Wired connection auto.nmconnection" ]
@@ -158,7 +162,7 @@ then
 fi
 
 nmcli con delete GOcontroll-AP
-nmcli con add type wifi con-name "GOcontroll-AP" ifname wlan0 ssid GOcontroll-AP ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect yes 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk Moduline 802-11-wireless-security.key-mgmt wpa-psk > /dev/null
+nmcli con add type wifi con-name "GOcontroll-AP" ifname wlan0 ssid GOcontroll-AP-$mod ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect yes 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk Moduline 802-11-wireless-security.key-mgmt wpa-psk > /dev/null
 
 
 if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
@@ -176,18 +180,14 @@ hw=$(tr -d '\0' </sys/firmware/devicetree/base/hardware)
 case $hw in
 
 	*IV*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline IV" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll Moduline IV-$mod" > /etc/machine-info
 		;;
 	*Mini*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini-$mod" > /etc/machine-info
 		;;
 	*Screen*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline Screen" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Screen-$mod" > /etc/machine-info
 esac
-
-echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
-
-python3 /usr/moduline/python/btKeyGen.py
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
 echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"
