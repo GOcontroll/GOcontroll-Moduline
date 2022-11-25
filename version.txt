@@ -1,6 +1,9 @@
-V1.8.24
+V1.8.25
 
 ########
+25-11-2022 V1.8.25
+Bugfix on firmware of IR module. new version added to repositorie. For changes check IR repo.
+
 V1.8.24
 Added base for UIO interrupts.
 Improved name generation for the bluetooth adapter and access point.
