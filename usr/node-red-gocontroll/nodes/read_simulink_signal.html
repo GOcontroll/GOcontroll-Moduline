@@ -1,0 +1,108 @@
+<script type="text/javascript">
+    RED.nodes.registerType('Read-Simulink-Signal', {
+        category: 'GOcontroll',
+        color: '#f76d11',
+        defaults: {
+            name: {value:""},
+            sampleTime: {value:"1000"},
+            Signal: {value:""},
+            KeyOut: {value:""},
+        },
+        inputs:0,
+        outputs:1,
+        icon: "arrow-in.png",
+        paletteLabel: "Simulink Signal",
+        label: function() {
+            if(this.name != ""){
+                return this.name;
+            }
+            if(this.SignalKey == ""){
+                return this.SignalKey;
+            } else {
+                return "Select a Signal to read";
+            }
+        },
+
+        oneditprepare: function() {
+            fetch('signals.json')
+            .then((Response) => {
+                if (!Response.ok) {
+                    throw new Error('HTTP error: ' + Response.status);
+                }
+                return Response.json();
+            })
+            .then((json) => {initialize(json);
+            })
+            .catch((err) => console.error('Fetch problem: ' + err.message));
+        },
+    });
+
+    function initialize(json) {
+        keys = Object.keys(json);
+        var selectKey = document.getElementById("node-input-Signal");
+        for ( var i = 0; i< keys.length; i++) {
+            var option = keys[i];
+            var el = document.createElement("option");
+            el.textContent = option;
+            el.value = JSON.stringify(findValueByPrefix(json, option));
+            selectKey.appendChild(el);
+        }
+    }
+
+    function findValueByPrefix(object, prefix) {
+    for (var property in object) {
+        if (object.hasOwnProperty(property) && 
+        property.toString().startsWith(prefix)) {
+        return object[property];
+        }
+    }
+    }
+
+</script>>
+
+<script type="text/x-red" data-template-name="Read-Simulink-Signal" id="Read-Simulink-Signal-Configuration">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-Signal"><i class="fa fa-id-card"></i> Simulink signal</label>
+        <select id="node-input-Signal" style="width:300px"> 
+            <option value>Choose a signal</option>
+        </select>
+    </div>
+
+    <div class="form-row"> 
+        <label for="node-input-KeyOut"><i class="fa fa-id-card"></i> Output key</label>
+        <input type="text" id="node-input-KeyOut">
+    </div>
+	
+	<div class="form-row">
+        <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time</label>
+        <select id="node-input-sampleTime" style="width:300px" title="The sample time sets the period on which the signals are retrieved">
+            <option value="1000">1 s</option>
+            <option value="200">200 ms</option>
+            <option value="100">100 ms</option>
+			<option value="50">50 ms</option>
+        </select>
+    </div>
+<div id="read-simulink-settings"></div>
+</script>
+
+<script type="text/x-red" data-help-name="Read-Simulink-Signal">
+    <p>The Read Simulink Signal block is used to read the value of a globally exported signal in simulink. Select the desired signal and sample time and it will output its value.</p>
+    <h2>Configuration</h2>
+    <p><strong><em>Simulink signal:</em></strong></p>
+    <p>Select the desired Simulink signal.</p>
+    <p><strong><em>Sample time:</em></strong></p>
+    <p>Specify the sample time at which to read the Simulink signal.</p>
+    <h2><strong>Data format</strong></h2>
+    <p>The data coming from the Node is pushed out of the node in a JSON string format holding 6 key&rsquo;s and 6 values. The keys can be customized to descriptive input signal names. This improves the readability from signals in the model.</p>
+    <p>&nbsp;</p>
+    <h2><strong>Example</strong></h2>
+    <p>This example shows the data from a read simulink signal node during operation.</p>
+    <p>{"Output key" : 2766 }</p>
+    <p>or in case the signal is an array</p>
+    <p>{"Output key" : [100, 65, 300]}</p> 
+</script>

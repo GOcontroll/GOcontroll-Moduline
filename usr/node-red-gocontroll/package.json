@@ -36,7 +36,8 @@
             "can_receive": "nodes/can_receive.js",
             "can_send": "nodes/can_send.js",
             "read_memory": "nodes/read_memory.js",
-            "write_memory": "nodes/write_memory.js"
+            "write_memory": "nodes/write_memory.js",
+            "read_simulink_signal": "nodes/read_simulink_signal.js"
         }
     },
     "author": {
