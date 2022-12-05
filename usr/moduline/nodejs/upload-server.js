@@ -83,7 +83,7 @@
 
 			a2lFile.mv('/usr/simulink/gocontroll.a2l', function(err) {
 				if (err) return res.status(500).send(err);
-				res.send('File uploaded! You can now close this tab/window.');
+				res.send('File uploaded! You can now close this tab/window.\n'+shell.exec("python3 /usr/moduline/python/parse_a2l.py"));
 			});
 		}
 
