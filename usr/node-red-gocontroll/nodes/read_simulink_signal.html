@@ -44,18 +44,9 @@
             var option = keys[i];
             var el = document.createElement("option");
             el.textContent = option;
-            el.value = JSON.stringify(findValueByPrefix(json, option));
+            el.value = option;
             selectKey.appendChild(el);
         }
-    }
-
-    function findValueByPrefix(object, prefix) {
-    for (var property in object) {
-        if (object.hasOwnProperty(property) && 
-        property.toString().startsWith(prefix)) {
-        return object[property];
-        }
-    }
     }
 
 </script>>
