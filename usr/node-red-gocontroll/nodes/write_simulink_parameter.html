@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('Read-Simulink-Signal', {
+    RED.nodes.registerType('Write-Simulink-Parameter', {
         category: 'GOcontroll',
         color: '#f76d11',
         defaults: {
@@ -7,11 +7,13 @@
             sampleTime: {value:"1000"},
             Signal: {value:""},
             KeyOut: {value:""},
+            keyIn: {value:""},
+            data: {value:""},
         },
-        inputs:0,
+        inputs:1,
         outputs:1,
         icon: "arrow-in.png",
-        paletteLabel: "Simulink Signal",
+        paletteLabel: "Simulink Parameter",
         label: function() {
             if(this.name != ""){
                 return this.name;
@@ -19,12 +21,12 @@
             if(this.SignalKey == ""){
                 return this.SignalKey;
             } else {
-                return "Select a Signal to read";
+                return "Select a Parameter to write to";
             }
         },
 
         oneditprepare: function() {
-            fetch('signals.json')
+            fetch('parameters.json')
             .then((Response) => {
                 if (!Response.ok) {
                     throw new Error('HTTP error: ' + Response.status);
@@ -51,7 +53,7 @@
 
 </script>>
 
-<script type="text/x-red" data-template-name="Read-Simulink-Signal" id="Read-Simulink-Signal-Configuration">
+<script type="text/x-red" data-template-name="Write-Simulink-Parameter" id="Write-Simulink-Parameter-Configuration">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -60,8 +62,13 @@
     <div class="form-row">
         <label for="node-input-Signal"><i class="fa fa-id-card"></i> Simulink signal</label>
         <select id="node-input-Signal" style="width:300px"> 
-            <option value>Choose a signal</option>
+            <option value>Choose a parameter</option>
         </select>
+    </div>
+
+    <div class="form-row"> 
+        <label for="node-input-KeyOut"><i class="fa fa-id-card"></i> Input key</label>
+        <input type="text" id="node-input-KeyIn">
     </div>
 
     <div class="form-row"> 
@@ -81,19 +88,24 @@
 <div id="read-simulink-settings"></div>
 </script>
 
-<script type="text/x-red" data-help-name="Read-Simulink-Signal">
-    <p>The Read Simulink Signal block is used to read the value of a globally exported signal in simulink. Select the desired signal and sample time and it will output its value.</p>
+<script type="text/x-red" data-help-name="Write-Simulink-Parameter">
+    <p>The Write Simulink Parameter block is used to overwrite the value of a globally exported parameter in simulink. Select the desired parameter and sample time. It will output its current value at the interval of the sample time, and overwrite the value when it receives a signal on the input.</p>
     <h2>Configuration</h2>
     <p><strong><em>Simulink signal:</em></strong></p>
-    <p>Select the desired Simulink signal.</p>
+    <p>Select the desired Simulink parameter.</p>
     <p><strong><em>Sample time:</em></strong></p>
-    <p>Specify the sample time at which to read the Simulink signal.</p>
+    <p>Specify the sample time at which to read the Simulink parameter.</p>
     <h2><strong>Data format</strong></h2>
-    <p>The data coming from the Node is pushed out of the node in a JSON string format holding 1 key and 1 value which could be an array of values. The key can be customized to descriptive input signal names. This improves the readability from signals in the model.</p>
+    <p>The data coming from the Node is pushed out of the node in a JSON string format holding 1 key and 1 values. The key can be customized to descriptive output signal names. This improves the readability from signals in the model.</p>
     <p>&nbsp;</p>
     <h2><strong>Example</strong></h2>
-    <p>This example shows the data from a read simulink signal node during operation.</p>
+    <p>This example shows the output data from a write simulink parameter node during operation:</p>
     <p>{"Output key" : 2766 }</p>
-    <p>or in case the signal is an array</p>
+    <p>or in case the parameter is an array</p>
     <p>{"Output key" : [100, 65, 300]}</p> 
+    <p>&nbsp;</p>
+    <p>Input example:</p>
+    <p>{"Input Key" : 800}</p>
+    <p>or in case the parameter is an array</p>
+    <p>{"Input Key" : [300, 400, 500]}</p>
 </script>

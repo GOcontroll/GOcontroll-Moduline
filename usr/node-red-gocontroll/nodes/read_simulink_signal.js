@@ -1,5 +1,3 @@
-const { exit, pid } = require("process");
-
 module.exports = function(RED) {
 "use strict"
 
@@ -41,9 +39,14 @@ function GOcontrollReadSimulink(config) {
                 Signal = JSON.parse(SignalFile);
                 //get the desired signal from the list of signals
                 Signal = findValueByPrefix(Signal, SignalName);
-                asap_signal = new uiojs.asap_element(Signal.address, Signal.type, Signal.size);
+                if (Signal){
+                    asap_signal = new uiojs.asap_element(Signal.address, Signal.type, Signal.size);
+                } else {
+                    throw new Error("The selected signal could not be found in signals.json");
+                }
             } catch(err) {
-                console.log(err);
+                node.warn(err);
+                node.status({fill:"red", shape:"dot", text:"An error occured reading signals.json"});
                 return;
             }
             intervalRead = setInterval(readSignal, parseInt(sampleTime));
@@ -80,6 +83,7 @@ function GOcontrollReadSimulink(config) {
             return object[property];
             }
         }
+        return false;
     }
 
     node.on('close', function(done) {
