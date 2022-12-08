@@ -1,6 +1,10 @@
-V1.8.25
+V1.9.25
 
 ########
+8-12-2022 V1.9.25
+Added read simulink signal and write simulink parameter to the nodered nodes. These can be used to communicate with a running simulink model directly instead of through files.
+Added go-parse-a2l command, this parses the a2l file in /usr/simulink/ so it can be used by the new nodered nodes, and future applications involving direct memory reading/writing.
+
 25-11-2022 V1.8.25
 Bugfix on firmware of IR module. new version added to repositorie. For changes check IR repo.
 

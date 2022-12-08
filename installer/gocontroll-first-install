@@ -114,6 +114,9 @@ fi
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-can"* ]]; then
 	echo "alias go-test-can=\"node /usr/moduline/nodejs/testcan.js\"" >> ~/.bashrc
 fi
+if [[ $(tr -d '\0' < ~/.bashrc) != *"go-parse-a2l"* ]]; then
+	echo "alias go-parse-a2l=\"python3 /usr/moduline/python/parse_a2l.py\"" >> ~/.bashrc
+fi
 
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
