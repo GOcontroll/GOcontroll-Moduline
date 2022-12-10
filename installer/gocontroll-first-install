@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # url to bash this script:
-# wget -O - https://raw.githubusercontent.com/Rick-GO/GOcontroll-Moduline/master/installer/gocontroll-first-install | bash -s master
+# wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/Kern5-10-72deb10/installer/gocontroll-first-install | bash -s Kern5-10-72deb10
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
@@ -26,7 +26,7 @@ apt -y install git
 fi
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
-git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1
+git clone https://github.com/GOcontroll/GOcontroll-Moduline.git --branch $1
 
 echo -e "${YELLOW}-remove old GOcontroll stuff ${NORMAL}"
 
