@@ -1,6 +1,10 @@
-V1.9.25
+V1.9.26
 
 ########
+12-12-2022 V1.9.26
+fixed upload server so it no longer hangs on unknown files being sent.
+fixed the read simulink signal node so it remembers settings when you re-open the node, also can now read multiple signals simultaniously.
+
 8-12-2022 V1.9.25
 Added read simulink signal and write simulink parameter to the nodered nodes. These can be used to communicate with a running simulink model directly instead of through files.
 Added go-parse-a2l command, this parses the a2l file in /usr/simulink/ so it can be used by the new nodered nodes, and future applications involving direct memory reading/writing.
