@@ -5,8 +5,7 @@
         defaults: {
             name: {value:""},
             sampleTime: {value:"1000"},
-            Signal: {value:""},
-            KeyOut: {value:""},
+            signals:{value:""},
         },
         inputs:0,
         outputs:1,
@@ -24,11 +23,7 @@
         },
 
         oneditprepare: function() {
-            try{
-                console.log(Signal.value);
-            } catch {
-                console.log("signal was not yet initialized.");
-            }
+            var node = this;
             fetch('signals.json')
             .then((Response) => {
                 if (!Response.ok) {
@@ -36,25 +31,31 @@
                 }
                 return Response.json();
             })
-            .then((json) => {initialize(json);
+            .then((json) => {
+                var keys = Object.keys(json);
+                var options = $('#node-input-signals').typedInput({type:"Signal", types:[{
+                    value: "Signal",
+                    multiple: true,
+                    options: getOptions(keys)
+                }]})
+                options.typedInput('value',node.signals);
+
             })
             .catch((err) => console.error('Fetch problem: ' + err.message));
         },
+        oneditsave: function() {
+            this.signals = $('#node-input-signals').typedInput("value")        
+        },
     });
 
-    function initialize(json) {
-        keys = Object.keys(json);
-        var selectKey = document.getElementById("node-input-Signal");
-        for ( var i = 0; i< keys.length; i++) {
-            var option = keys[i];
-            var el = document.createElement("option");
-            el.textContent = option;
-            el.value = option;
-            selectKey.appendChild(el);
+    function getOptions(keys) {
+        var result = []
+        for (const key in keys) {
+            result.push({value: keys[key], label: keys[key]})
         }
+        return result;
     }
-
-</script>>
+</script>
 
 <script type="text/x-red" data-template-name="Read-Simulink-Signal" id="Read-Simulink-Signal-Configuration">
     <div class="form-row">
@@ -66,25 +67,16 @@
 			<option value="50">50 ms</option>
         </select>
     </div>
-    <div id="read-simulink-settings">
-        <div class="form-row">
-            <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-            <input type="text" id="node-input-name" placeholder="Name">
-        </div>
 
-        <div class="form-row">
-            <label for="node-input-Signal"><i class="fa fa-id-card"></i> Simulink signal</label>
-            <select id="node-input-Signal" style="width:300px"> 
-                <option value>Choose a signal</option>
-            </select>
-        </div>
-
-        <div class="form-row"> 
-            <label for="node-input-KeyOut"><i class="fa fa-id-card"></i> Output key</label>
-            <input type="text" id="node-input-KeyOut">
-        </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
     </div>
 
+    <div class="form-row">
+        <label for="node-input-signals"><i class="icon-tag"></i> Signals</label>
+        <input type="text" id="node-input-signals"></select>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="Read-Simulink-Signal">
