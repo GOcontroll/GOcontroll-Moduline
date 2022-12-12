@@ -71,7 +71,7 @@
 			});
 		}
 
-		if(req.files.a2lFile)
+		else if(req.files.a2lFile)
 		{
 			var fileExtension = (req.files.a2lFile.name).split('.')
 			if(fileExtension[1] != "a2l")
@@ -87,7 +87,7 @@
 			});
 		}
 
-		if(req.files.ovpnFile)
+		else if(req.files.ovpnFile)
 		{
 			var fileExtension = (req.files.ovpnFile.name).split('.')
 			
@@ -120,6 +120,10 @@
 			}			
 
 		});
+		}
+
+		else {
+			res.send("Unexpected file received, skipping...");
 		}
 		
 	});
