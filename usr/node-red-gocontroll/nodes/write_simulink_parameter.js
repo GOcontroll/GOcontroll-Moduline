@@ -12,9 +12,8 @@ module.exports = function(RED) {
         var intervalRead,intervalCheck = null;
         var node = this;
         const sampleTime = config.sampleTime;
-        const outputKey = config.KeyOut;
         const inputKey = config.KeyIn;
-        const SignalName = config.Signal;
+        const parameterName = config.parameter;
         var msgOut={};
         let pid = "";
         let pid1 = "";
@@ -37,7 +36,7 @@ module.exports = function(RED) {
                     ParameterFile = fs.readFileSync("/usr/simulink/parameters.json");
                     Signal = JSON.parse(ParameterFile);
                     //get the desired signal from the list of signals
-                    Signal = findValueByPrefix(Signal, SignalName);
+                    Signal = findValueByPrefix(Signal, parameterName);
                     if (Signal){
                         asap_signal = new uiojs.asap_element(Signal.address, Signal.type, Signal.size);
                     } else {
@@ -53,7 +52,7 @@ module.exports = function(RED) {
                 intervalRead = setInterval(readSignal, parseInt(sampleTime));
                 clearInterval(intervalCheck);
                 console.log("simulink model started")
-                node.status({fill:"green",shape:"dot",text:"Writing/reading " + SignalName});
+                node.status({fill:"green",shape:"dot",text:"Writing/reading " + parameterName});
             } else {
                 node.status({fill:"red",shape:"dot",text:"Simulink model stopped, looking for entry point..."})
             }
@@ -64,7 +63,7 @@ module.exports = function(RED) {
             if (simulink == true){
                 try{
                     res = uiojs.process_read(pid, asap_signal);
-                    msgOut={[outputKey]:res};
+                    msgOut={[parameterName]:res};
                     node.send(msgOut);  
                 } catch(err) {
                     simulink = false;

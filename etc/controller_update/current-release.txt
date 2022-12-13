@@ -1,4 +1,10 @@
-0.2.13
+0.3.13
+
+0.3.13
+fixed upload server so it no longer hangs on unknown files being sent.
+Added read simulink signal and write simulink parameter to the nodered nodes. These can be used to communicate with a running simulink model directly instead of through files.
+Added go-parse-a2l command, this parses the a2l file in /usr/simulink/ so it can be used by the new nodered nodes, and future applications involving direct memory reading/writing.
+Bugfix on firmware of IR module. new version added to repositorie. For changes check IR repo.
 
 0.2.13
 repo ver V1.8.24

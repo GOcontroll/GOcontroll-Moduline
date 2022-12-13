@@ -1,6 +1,9 @@
-V1.9.26
+V1.9.27
 
 ########
+13-12-2022 V1.9.27 Release 0.3.13
+fixed the write simulink parameter node so the settings are remembered.
+
 12-12-2022 V1.9.26
 fixed upload server so it no longer hangs on unknown files being sent.
 fixed the read simulink signal node so it remembers settings when you re-open the node, also can now read multiple signals simultaniously.
@@ -12,7 +15,7 @@ Added go-parse-a2l command, this parses the a2l file in /usr/simulink/ so it can
 25-11-2022 V1.8.25
 Bugfix on firmware of IR module. new version added to repositorie. For changes check IR repo.
 
-V1.8.24
+V1.8.24 Release 0.2.13
 Added base for UIO interrupts.
 Improved name generation for the bluetooth adapter and access point.
 
@@ -42,7 +45,7 @@ Updated the GPS node that is now compatible with the SIMCOM 7600G
 identify now checks whether a simulink model was running and asks the user if they want to proceed
 fix in module-info-gathering for the moduline screen
 
-24-10-2022 V1.6.18
+24-10-2022 V1.6.18 Release 0.1.12
 gocontroll-first-install script now has the choice between a development build and a latest stable release
 
 21-10-2022 V1.6.17

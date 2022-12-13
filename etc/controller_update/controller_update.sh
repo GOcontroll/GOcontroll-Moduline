@@ -37,4 +37,12 @@ patch /usr/node-red-gocontroll/nodes/can_receive.html /patch/can_receive_html.pa
 patch /usr/node-red-gocontroll/nodes/can_send.html /patch/can_send_html.patch > /dev/null
 fi
 
+cd /usr/node-red-gocontroll/
+npm list | grep uiojs || npm install uiojs --no-shrinkwrap
+
+cd
+
+pip3 list | grep -F pyuio || pip3 install pyuio
+
+
 python3 /etc/controller_update/controller_update.py

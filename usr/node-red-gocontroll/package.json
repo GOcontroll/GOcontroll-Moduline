@@ -10,7 +10,8 @@
         "serialport": "^9.2.0",
         "shelljs": "^0.8.4",
         "socketcan": "^3.0.0",
-        "spi-device": "^3.1.2"
+        "spi-device": "^3.1.2",
+        "uiojs": "1.0.4"
     },
     "repository": {
         "type": "",
