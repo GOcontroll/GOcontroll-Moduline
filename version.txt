@@ -3,6 +3,7 @@ V1.9.27
 ########
 13-12-2022 V1.9.27 Release 0.3.13
 fixed the write simulink parameter node so the settings are remembered.
+fixed parse_a2l to use pyuio
 
 12-12-2022 V1.9.26
 fixed upload server so it no longer hangs on unknown files being sent.

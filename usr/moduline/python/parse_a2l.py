@@ -1,4 +1,4 @@
-from asap_element import asap_datatypes
+from pyuio import asap_datatypes
 import json
 
 reached_end = False
