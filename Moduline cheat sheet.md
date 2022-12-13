@@ -20,6 +20,9 @@ identify "-v" -- (points to identify.py) gives information about the controller 
 
 go-test-can -- (points to testcan.js) if a can test plug is attached to the controller this can be called to test if the can busses are functioning correctly
 
+go-parse-a2l -- (points to parse_a2l.py) parses a /usr/simulink/gocontroll.a2l to a json string, this can then be used by other applications. \
+Normally this gets called automatically by upload-server.js, but can also be called manually in case the server was not used to transfer the file
+
 ### controller update
 go-manual-update -- (points to manual_update.py) updates the controller from the command line, gives the option for a development or stable update.
 
