@@ -11,7 +11,7 @@
         "shelljs": "^0.8.4",
         "socketcan": "^3.0.0",
         "spi-device": "^3.1.2",
-        "uiojs": "1.0.4"
+        "uiojs": "1.0.5"
     },
     "repository": {
         "type": "",
@@ -24,16 +24,16 @@
     ],
     "node-red": {
         "nodes": {
-            "settings": "nodes/settings.js",		
-			"controller_active": "nodes/controller_active.js",
+            "settings": "nodes/settings.js",
+            "controller_active": "nodes/controller_active.js",
             "controller_supply": "nodes/controller_supply.js",
             "controller_temperature": "nodes/controller_temperature.js",
             "status_led": "nodes/status_led.js",
-            "gps": "nodes/gps.js",			
+            "gps": "nodes/gps.js",
             "input_module": "nodes/input_module.js",
             "input_module_reset": "nodes/input_module_reset.js",
             "output_module": "nodes/output_module.js",
-			"bridge_module": "nodes/bridge_module.js",
+            "bridge_module": "nodes/bridge_module.js",
             "can_receive": "nodes/can_receive.js",
             "can_send": "nodes/can_send.js",
             "read_memory": "nodes/read_memory.js",

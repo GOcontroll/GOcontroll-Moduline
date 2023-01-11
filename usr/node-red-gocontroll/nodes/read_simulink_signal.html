@@ -41,7 +41,10 @@
                 options.typedInput('value',node.signals);
 
             })
-            .catch((err) => console.error('Fetch problem: ' + err.message));
+            .catch((err) => {
+                console.error('Fetch problem: ' + err.message);
+                node.status({fill:"red", shape:"dot", text:"An error occured fetching signals.json"});
+            });
         },
         oneditsave: function() {
             this.signals = $('#node-input-signals').typedInput("value")        

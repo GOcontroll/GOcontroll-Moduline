@@ -1,7 +1,12 @@
 module.exports = function(RED) {
     "use strict"
     
-    const uiojs = require("uiojs");
+    try{
+        const uiojs = require("uiojs");
+    } catch {
+        node.status({fill:"red",shape:"dot",text:"could not load uiojs, module missing"});
+        exit(-1)
+    }
     const shell = require("shelljs");
     const fs = require("fs");
     
@@ -34,19 +39,26 @@ module.exports = function(RED) {
                 try{
                     //check if the address or size of the signal has changed due to a recompilation of the model
                     ParameterFile = fs.readFileSync("/usr/simulink/parameters.json");
-                    Signal = JSON.parse(ParameterFile);
-                    //get the desired signal from the list of signals
-                    Signal = findValueByPrefix(Signal, parameterName);
-                    if (Signal){
-                        asap_signal = new uiojs.asap_element(Signal.address, Signal.type, Signal.size);
-                    } else {
-                        throw new Error("The selected parameter could not be found in parameters.json");
-                    }
                 } catch(err) {
-                    node.warn(err);
-                    node.status({fill:"red", shape:"dot", text:"An error occured reading parameters.json"});
+                    node.warn("Error reading parameters.json, trying to parse the file...");
+                    var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
+                    if (!parseResult.stdout.includes("succesfully")){
+                        node.status({fill:"red", shape:"dot", text:"An error occured parsing gocontroll.a2l"});
+                        exit(-1);
+                    }
+                    check_model();
                     return;
                 }
+                var localSignals = JSON.parse(ParameterFile);
+                //get the desired parameter from the list of parameters
+                Signal = findValueByPrefix(localSignals, parameterName);
+                if (Signal){
+                    asap_signal = new uiojs.asap_element(Signal.address, Signal.type, Signal.size);
+                } else {
+                    node.status({fill:"red", shape:"dot", text:"The selected signal could not be found in parameters.json"});
+                    exit(-1);
+                }
+
                 pid = parseInt(pid1);
                 simulink = true;
                 intervalRead = setInterval(readSignal, parseInt(sampleTime));

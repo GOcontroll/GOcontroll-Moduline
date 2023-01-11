@@ -43,7 +43,9 @@
                 var keyin = $('#node-input-keyIn').typedInput({type:'str', types: ["str"]})
                 keyin.typedInput('value', node.keyIn);
             })
-            .catch((err) => console.error('Fetch problem: ' + err.message));
+            .catch((err) => {console.error('Fetch problem: ' + err.message);
+            node.status({fill:"red", shape:"dot", text:"An error occured fetching parameters.json"});
+            });
         },
         oneditsave: function() {
             this.parameter = $('#node-input-parameter').typedInput("value")  

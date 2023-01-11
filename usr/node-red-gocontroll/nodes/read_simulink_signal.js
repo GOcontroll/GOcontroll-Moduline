@@ -2,8 +2,13 @@ const { exit } = require("process");
 
 module.exports = function(RED) {
 "use strict"
+try{
+    const uiojs = require("uiojs");
+} catch {
+    node.status({fill:"red",shape:"dot",text:"could not load uiojs, module missing"});
+    exit(-1)
+}
 
-const uiojs = require("uiojs");
 const shell = require("shelljs");
 const fs = require("fs");
 
@@ -18,7 +23,6 @@ function GOcontrollReadSimulink(config) {
     var intervalRead,intervalCheck = null;
     const sampleTime = config.sampleTime;
     const Signals = config.signals.split(",")
-    console.log(Signals)
     var msgOut={};
     let pid = "";
     let pid1 = "";
@@ -40,26 +44,32 @@ function GOcontrollReadSimulink(config) {
         pid2 = shell.exec("ps -ef|grep gocontroll.elf | awk {'print $2'}");
         pid2 = pid2.stdout.split("\n")[0];
         if (pid1==pid2){
-            pid = parseInt(pid1);
-            simulink = true;
             try{
                 //check if the address or size of the signal has changed due to a recompilation of the model
                 SignalFile = fs.readFileSync("/usr/simulink/signals.json");
-                var localSignals = JSON.parse(SignalFile);
-                for (const sig in Signals) {
-                    //get the desired signal from the list of signals
-                    Signal = findValueByPrefix(localSignals, Signals[sig]);
-                    if (Signal){
-                        asap_signals.push(new uiojs.asap_element(Signal.address, Signal.type, Signal.size));
-                    } else {
-                        throw new Error("The selected signal could not be found in signals.json");
-                    }
-                }
             } catch(err) {
-                node.warn(err);
-                node.status({fill:"red", shape:"dot", text:"An error occured reading signals.json"});
+                node.warn("Error reading signals.json, trying to parse the file...");
+                var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
+                if (!parseResult.stdout.includes("succesfully")){
+                    node.status({fill:"red", shape:"dot", text:"An error occured parsing gocontroll.a2l"});
+                    exit(-1);
+                }
+                check_model();
                 return;
             }
+            var localSignals = JSON.parse(SignalFile);
+            for (const sig in Signals) {
+                //get the desired signal from the list of signals
+                Signal = findValueByPrefix(localSignals, Signals[sig]);
+                if (Signal){
+                    asap_signals.push(new uiojs.asap_element(Signal.address, Signal.type, Signal.size));
+                } else {
+                    node.status({fill:"red", shape:"dot", text:"The selected signal could not be found in signals.json"});
+                    exit(-1);
+                }
+            }
+            pid = parseInt(pid1);
+            simulink = true;
             intervalRead = setInterval(readSignal, parseInt(sampleTime));
             clearInterval(intervalCheck);
             console.log("simulink model started")
