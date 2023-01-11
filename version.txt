@@ -1,6 +1,12 @@
-V1.9.28
+V1.9.29
 
 ########
+11-1-2023 V1.9.29
+fixed output module bugs in node-red, incorrect documentation and peak time bug for peak and hold.
+fixed the bluetooth name generated in first-install
+user feedback improvements for the simulink read/write nodes in node-red
+updated uiojs from 1.0.4 to 1.0.5
+
 22-12-2022 V1.9.28
 fixed faulty control of the IR module refueling LED control
 
