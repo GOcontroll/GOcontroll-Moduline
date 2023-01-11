@@ -356,7 +356,7 @@ module.exports = function(RED) {
 		for(var s =0; s <values; s++)
 		{
 		sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
-		sendBuffer.writeUInt16LE(outputTime[s], 26+(s*2));
+		sendBuffer.writeUInt16LE(outputTime[s], 18+(s*2));
 		}
 						
 		sendBuffer[MESSAGELENGTH-1] = OutputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
