@@ -6,8 +6,6 @@ import os
 import zipfile
 import glob
 from packaging import version
-import sys
-
 
 #checks if the controller is connected to the internet
 def check_connection(timeout=1):

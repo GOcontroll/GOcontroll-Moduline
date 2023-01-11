@@ -29,7 +29,7 @@ apt -y install git
 fi
 
 echo -e "${YELLOW}-Update debian sources ${NORMAL}"
-apt-get update -y > /dev/null
+apt update -y > /dev/null
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
 git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
@@ -183,13 +183,13 @@ hw=$(tr -d '\0' </sys/firmware/devicetree/base/hardware)
 case $hw in
 
 	*IV*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline IV-$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll Moduline IV_$mod" > /etc/machine-info
 		;;
 	*Mini*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini-$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini_$mod" > /etc/machine-info
 		;;
 	*Screen*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline Screen-$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll Moduline Screen_$mod" > /etc/machine-info
 esac
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
