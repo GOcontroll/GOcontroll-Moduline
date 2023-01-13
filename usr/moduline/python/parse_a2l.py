@@ -1,5 +1,6 @@
 from pyuio import asap_datatypes
 import json
+from subprocess import run
 
 reached_end = False
 reading_parameter = False
@@ -83,13 +84,9 @@ with open("/usr/simulink/gocontroll.a2l", "r") as a2l:
 json_parameters = json.dumps(parameters, indent=4)
 with open("/usr/simulink/parameters.json", "w") as parameterFile:
     parameterFile.write(json_parameters)
-with open("/usr/node-red-static/parameters.json", "w") as parameterFile:
-    parameterFile.write(json_parameters)
+run(["cp", "/usr/simulink/parameters.json", "/usr/node-red-static/parameters.json"])
 json_signals = json.dumps(signals, indent=4)
 with open("/usr/simulink/signals.json", "w") as signalFile:
     signalFile.write(json_signals)
-with open("/usr/node-red-static/signals.json", "w") as signalFile:
-    signalFile.write(json_signals)
+run(["cp", "/usr/simulink/signals.json", "/usr/node-red-static/signals.json"])
 print("a2l file parsed succesfully!")
-# print(json_parameters)
-# print(json_signals)

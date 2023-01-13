@@ -1,28 +1,23 @@
 module.exports = function(RED) {
     "use strict"
     
-    try{
-        const uiojs = require("uiojs");
-    } catch {
-        node.status({fill:"red",shape:"dot",text:"could not load uiojs, module missing"});
-        exit(-1)
-    }
     const shell = require("shelljs");
     const fs = require("fs");
     
     function GOcontrollWriteSimulink(config) {
         RED.nodes.createNode(this,config);
+        var node = this;
+
+        import("uiojs").then(uiojs=>{
+
         let simulink = false;
         let res, Signal, asap_signal, ParameterFile;
         var intervalRead,intervalCheck = null;
-        var node = this;
         const sampleTime = config.sampleTime;
         const inputKey = config.KeyIn;
         const parameterName = config.parameter;
         var msgOut={};
         let pid = "";
-        let pid1 = "";
-        let pid2 = "";
         node.status({fill:"yellow",shape:"dot",text:"Initializing node..."})
     
         intervalCheck = setInterval(check_model,2000);
@@ -31,11 +26,9 @@ module.exports = function(RED) {
     
         //Check if the simulink model is running and get its PID
         function check_model() {
-            pid1 = shell.exec("ps -ef|grep gocontroll.elf | awk {'print $2'}");
-            pid1 = pid1.stdout.split("\n")[0];
-            pid2 = shell.exec("ps -ef|grep gocontroll.elf | awk {'print $2'}");
-            pid2 = pid2.stdout.split("\n")[0];
-            if (pid1==pid2){
+            var pidof = shell.exec("pidof gocontroll.elf");
+            pid = pidof.stdout.split("\n")[0];
+            if (!pidof.code){
                 try{
                     //check if the address or size of the signal has changed due to a recompilation of the model
                     ParameterFile = fs.readFileSync("/usr/simulink/parameters.json");
@@ -59,7 +52,7 @@ module.exports = function(RED) {
                     exit(-1);
                 }
 
-                pid = parseInt(pid1);
+                pid = parseInt(pid);
                 simulink = true;
                 intervalRead = setInterval(readSignal, parseInt(sampleTime));
                 clearInterval(intervalCheck);
@@ -106,12 +99,16 @@ module.exports = function(RED) {
         node.on("input", function(msg){
             if (simulink) {
                 try{
-                    uiojs.process_write(pid, asap_signal, msg[inputKey]);
-                } catch {
+                    uiojs.process_write(pid, asap_signal, msg[config.keyIn]);
+                } catch(err) {
                     simulink=false;
-                    node.warn("failed to write simulink parameter.")
+                    node.warn("failed to write simulink parameter." + err)
                 }
             }
+        });
+        }).catch(err=>{
+            node.status({fill:"red",shape:"dot",text:"could not load uiojs, module missing"});
+            return;
         });
     }
     

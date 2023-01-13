@@ -1,6 +1,12 @@
-V1.9.29
+V1.9.30
 
 ########
+13-1-2023 V1.9.30
+fixed bugs in read-simulink-signal and write-simulink-parameter nodes, uiojs import check was broken and is now fixed.
+improved detection of whether the simulink model is running.
+fixed the parameter writing key.
+small improvement to parse_a2l.py.
+
 11-1-2023 V1.9.29
 fixed output module bugs in node-red, incorrect documentation and peak time bug for peak and hold.
 fixed the bluetooth name generated in first-install
