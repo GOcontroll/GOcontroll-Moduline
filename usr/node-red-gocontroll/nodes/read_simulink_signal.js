@@ -7,8 +7,8 @@ const fs = require("fs");
 function GOcontrollReadSimulink(config) {
     RED.nodes.createNode(this,config);
     var node = this;
-    // node.send(config)
 
+    //import like this to catch the error if it is not installed on the controller.
     import("uiojs").then(uiojs=>{
 
     let simulink = false;
@@ -81,7 +81,6 @@ function GOcontrollReadSimulink(config) {
                 node.send(msgOut);  
             } catch(err) {
                 simulink = false;
-                console.log(err);
             }
         } else {
             intervalCheck = setInterval(check_model,2000);

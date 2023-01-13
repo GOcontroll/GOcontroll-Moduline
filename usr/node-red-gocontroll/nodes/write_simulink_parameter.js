@@ -8,6 +8,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node = this;
 
+        //import like this to catch the error if it is not installed on the controller.
         import("uiojs").then(uiojs=>{
 
         let simulink = false;
