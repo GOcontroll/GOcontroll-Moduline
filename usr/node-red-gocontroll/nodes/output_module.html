@@ -42,16 +42,16 @@
 			current8 : {value: "4000"},
 			current9 : {value: "4000"},
 			current10 : {value: "4000"},
-			duty1 : {value: "800"},
-			duty2 : {value: "800"},
-			duty3 : {value: "800"},
-			duty4 : {value: "800"},
-			duty5 : {value: "800"},
-			duty6 : {value: "800"},
-			duty7 : {value: "800"},
-			duty8 : {value: "800"},
-			duty9 : {value: "800"},
-			duty10 : {value: "800"},
+			peakcurrent1 : {value: "800"},
+			peakcurrent2 : {value: "800"},
+			peakcurrent3 : {value: "800"},
+			peakcurrent4 : {value: "800"},
+			peakcurrent5 : {value: "800"},
+			peakcurrent6 : {value: "800"},
+			peakcurrent7 : {value: "800"},
+			peakcurrent8 : {value: "800"},
+			peakcurrent9 : {value: "800"},
+			peakcurrent10 : {value: "800"},
 			time1 : {value: "500"},
 			time2 : {value: "500"},
 			time3 : {value: "500"},
@@ -233,7 +233,7 @@ x += "<fieldset id=\"channel"+i+"\"> \
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option> \
             <option value=5>Low side switch on – off</option> \
             <option value=6>High side switch on – off</option> \
-			<option value=7>Peak and hold 0 – 100% (0-1000)</option> \
+			<option value=7>Peak and hold current mode (half bridge)</option> \
 			<option value=8>Frequency output 0 - 500 Hz (0-500)</option> \
         </select> \
     </div> \
@@ -245,11 +245,11 @@ x += "<fieldset id=\"channel"+i+"\"> \
 	<div class=\"form-row\"  id=\"peak-hold-"+i+"\"> \
 	<p><I>Peak and hold parameters channel "+i+":</I></p> \
 		<div class=\"form-row\"> \
-			<label for=\"node-input-duty"+i+"\"><i class=\"fa fa-percent\"></i> Duty-Cycle</label> \
-			<input type=\"text\" id=\"node-input-duty"+i+"\" style=\"width:300px\"> \
+			<label for=\"node-input-peakcurrent"+i+"\"><i class=\"fa fa-line-chart\"></i> Current (mA)</label> \
+			<input type=\"text\" id=\"node-input-peakcurrent"+i+"\" style=\"width:300px\"> \
 		</div> \
 		<div class=\"form-row\"> \
-			<label for=\"node-input-time"+i+"\"><i class=\"fa fa-clock-o\"></i> Time</label> \
+			<label for=\"node-input-time"+i+"\"><i class=\"fa fa-clock-o\"></i> Time (ms)</label> \
 			<input type=\"text\" id=\"node-input-time"+(i++)+"\" style=\"width:300px\"> \
 		</div> \
 	</div> \
@@ -268,7 +268,7 @@ x += "<fieldset id=\"channel"+i+"\"> \
             <option value=4>High side switch duty cycle controlled 0 – 100% (0-1000)</option> \
             <option value=5>Low side switch on – off</option> \
             <option value=6>High side switch on – off</option> \
-			<option value=7>Peak and hold 0 – 100% (0-1000)</option> \
+			<option value=7>Peak and hold current mode (half bridge)</option> \
 			<option value=8>Frequency output 0 - 500 Hz (0-500)</option> \
         </select> \
     </div> \
@@ -280,11 +280,11 @@ x += "<fieldset id=\"channel"+i+"\"> \
 	<div class=\"form-row\"  id=\"peak-hold-"+i+"\"> \
 	<p><I>Peak and hold parameters channel "+i+":</I></p> \
 		<div class=\"form-row\"> \
-			<label for=\"node-input-duty"+i+"\"><i class=\"fa fa-percent\"></i> Duty-Cycle</label> \
-			<input type=\"text\" id=\"node-input-duty"+i+"\" style=\"width:300px\"> \
+			<label for=\"node-input-peakcurrent"+i+"\"><i class=\"fa fa-line-chart\"></i> Current (mA)</label> \
+			<input type=\"text\" id=\"node-input-peakcurrent"+i+"\" style=\"width:300px\"> \
 		</div> \
 		<div class=\"form-row\"> \
-			<label for=\"node-input-time"+i+"\"><i class=\"fa fa-clock-o\"></i> Time</label> \
+			<label for=\"node-input-time"+i+"\"><i class=\"fa fa-clock-o\"></i> Time (ms)</label> \
 			<input type=\"text\" id=\"node-input-time"+i+"\" style=\"width:300px\"> \
 		</div> \
 	</div> \
@@ -351,10 +351,10 @@ document.getElementById("Module-Settings").innerHTML = x;
 <p>This example shows the data coming from an output node during operation.</p>
 <p>{&ldquo;moduleTemperature&rdquo; : 28,</p>
 <p>&ldquo;moduleGroundShift&rdquo; : 0,</p>
-<p>&ldquo;<channel key>Current&rdquo; : 135,</p>
-<p>&ldquo;<channel key>Current&rdquo; : 122,</p>
-<p>&ldquo;<channel key>Current&rdquo; : 254,</p>
-<p>&ldquo;<channel key>Current&rdquo; : 126,</p>
-<p>&ldquo;<channel key>Current&rdquo; : 450,</p>
-<p>&ldquo;<channel key>Current&rdquo; : 655}</p>
+<p>&ldquo;currentChannel1&rdquo; : 135,</p>
+<p>&ldquo;currentChannel2&rdquo; : 122,</p>
+<p>&ldquo;currentChannel3&rdquo; : 254,</p>
+<p>&ldquo;currentChannel4&rdquo; : 126,</p>
+<p>&ldquo;currentChannel5&rdquo; : 450,</p>
+<p>&ldquo;currentChannel6&rdquo; : 655}</p>
 </script>

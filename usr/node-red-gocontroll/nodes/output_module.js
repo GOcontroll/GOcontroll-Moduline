@@ -57,17 +57,17 @@ module.exports = function(RED) {
 		outputCurrent[4] = config.current5;
 		outputCurrent[5] = config.current6;
 		
-		var outputDuty = {};
-		outputDuty[0] = config.duty1;
-		outputDuty[1] = config.duty2;
-		outputDuty[2] = config.duty3;
-		outputDuty[3] = config.duty4;
-		outputDuty[4] = config.duty5;
-		outputDuty[5] = config.duty6;
-		outputDuty[6] = config.duty7;
-		outputDuty[7] = config.duty8;
-		outputDuty[8] = config.duty9;
-		outputDuty[9] = config.duty10;
+		var peakcurrent = {};
+		peakcurrent[0] = config.peakcurrent1;
+		peakcurrent[1] = config.peakcurrent2;
+		peakcurrent[2] = config.peakcurrent3;
+		peakcurrent[3] = config.peakcurrent4;
+		peakcurrent[4] = config.peakcurrent5;
+		peakcurrent[5] = config.peakcurrent6;
+		peakcurrent[6] = config.peakcurrent7;
+		peakcurrent[7] = config.peakcurrent8;
+		peakcurrent[8] = config.peakcurrent9;
+		peakcurrent[9] = config.peakcurrent10;
 		
 		var outputTime = {};
 		outputTime[0] = config.time1;
@@ -355,7 +355,7 @@ module.exports = function(RED) {
 			
 		for(var s =0; s <values; s++)
 		{
-		sendBuffer.writeUInt16LE(outputDuty[s], 6+(s*2));
+		sendBuffer.writeUInt16LE(peakcurrent[s], 6+(s*2));
 		sendBuffer.writeUInt16LE(outputTime[s], 18+(s*2));
 		}
 						
