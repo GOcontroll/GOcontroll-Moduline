@@ -83,18 +83,18 @@
 </script>
 
 <script type="text/x-red" data-help-name="Read-Simulink-Signal">
-    <p>The Read Simulink Signal block is used to read the value of a globally exported signal in simulink. Select the desired signal and sample time and it will output its value.</p>
+    <p>The Read Simulink Signal block is used to read the value of globally exported signals in simulink. Select the desired signals and sample time and it will output their values.</p>
     <h2>Configuration</h2>
     <p><strong><em>Simulink signal:</em></strong></p>
     <p>Select the desired Simulink signal.</p>
     <p><strong><em>Sample time:</em></strong></p>
     <p>Specify the sample time at which to read the Simulink signal.</p>
     <h2><strong>Data format</strong></h2>
-    <p>The data coming from the Node is pushed out of the node in a JSON string format holding 1 key and 1 value which could be an array of values. The key can be customized to descriptive input signal names. This improves the readability from signals in the model.</p>
+    <p>The data coming from the Node is pushed out of the node in a JSON string format holding any number of keys and values. The keys will be the same as the selected signal names.</p>
     <p>&nbsp;</p>
     <h2><strong>Example</strong></h2>
     <p>This example shows the data from a read simulink signal node during operation.</p>
-    <p>{"Output key" : 2766 }</p>
+    <p>{"signal name" : 2766, "second signal name" : 5001 }</p>
     <p>or in case the signal is an array</p>
-    <p>{"Output key" : [100, 65, 300]}</p> 
+    <p>{"signal name" : [100, 65, 300]}</p> 
 </script>

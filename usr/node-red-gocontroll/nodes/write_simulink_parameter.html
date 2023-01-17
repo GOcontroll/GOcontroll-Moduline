@@ -100,13 +100,13 @@
     <p><strong><em>Sample time:</em></strong></p>
     <p>Specify the sample time at which to read the Simulink parameter.</p>
     <h2><strong>Data format</strong></h2>
-    <p>The data coming from the Node is pushed out of the node in a JSON string format holding 1 key and 1 values. The key can be customized to descriptive output signal names. This improves the readability from signals in the model.</p>
+    <p>The data coming from the Node is pushed out of the node in a JSON string format holding 1 key and 1 values. The key is the same as the selected parameter name.</p>
     <p>&nbsp;</p>
     <h2><strong>Example</strong></h2>
     <p>This example shows the output data from a write simulink parameter node during operation:</p>
-    <p>{"Output key" : 2766 }</p>
+    <p>{"Parameter name" : 2766 }</p>
     <p>or in case the parameter is an array</p>
-    <p>{"Output key" : [100, 65, 300]}</p> 
+    <p>{"Parameter name" : [100, 65, 300]}</p> 
     <p>&nbsp;</p>
     <p>Input example:</p>
     <p>{"Input Key" : 800}</p>
