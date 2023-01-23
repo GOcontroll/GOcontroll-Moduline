@@ -1,7 +1,18 @@
 #!/bin/sh
 
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Screen"* ]]; then
+
+echo -e "${YELLOW}-Setting up bluetooth for the Moduline screen ${NORMAL}"
+
+hciattach /dev/ttymxc1 bcm43xx 921600 flow
+
+else
+
+echo -e "${YELLOW}-Setting up bluetooth for the Moduline controller ${NORMAL}"
 
 hciattach /dev/ttymxc0 bcm43xx 921600 flow
+
+fi
 
 bluetoothctl power on
 

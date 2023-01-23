@@ -1,6 +1,10 @@
-V1.9.30
+V1.9.31
 
 ########
+23-1-2023 V1.9.31
+fixed the bluetooth name in the first install script.
+fixed the bluetooth startup for the GOcontroll display controller.
+
 13-1-2023 V1.9.30
 fixed bugs in read-simulink-signal and write-simulink-parameter nodes, uiojs import check was broken and is now fixed.
 improved detection of whether the simulink model is running.

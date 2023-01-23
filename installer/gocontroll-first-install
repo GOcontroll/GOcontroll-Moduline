@@ -183,13 +183,13 @@ hw=$(tr -d '\0' </sys/firmware/devicetree/base/hardware)
 case $hw in
 
 	*IV*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline IV_$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll-Moduline IV_$mod" > /etc/machine-info
 		;;
 	*Mini*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline Mini_$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll-Moduline Mini_$mod" > /etc/machine-info
 		;;
 	*Screen*)
-		echo PRETTY_HOSTNAME="GOcontroll Moduline Screen_$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen_$mod" > /etc/machine-info
 esac
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
