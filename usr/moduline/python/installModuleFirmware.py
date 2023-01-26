@@ -1,6 +1,6 @@
-import subprocess
+from subprocess import run, PIPE
 from multiprocessing import Pool
-import glob
+from glob import glob
 from packaging import version
 
 OKGREEN = '\033[92m'
@@ -12,19 +12,19 @@ WARNING = '\033[93m'
 def upload_firmware(args):
 	slot = args[0]
 	new_firmware = args[1]
-	stdout = subprocess.run(["node", "/usr/moduline/nodejs/upload-new-module-firmware.js", str(slot), new_firmware], stdout=subprocess.PIPE, text=True)
+	stdout = run(["node", "/usr/moduline/nodejs/upload-new-module-firmware.js", str(slot), new_firmware], stdout=PIPE, text=True)
 	return [str(slot), stdout.stdout]
 
 #check if simulink or nodered is running and stop them.
-simulink_status = subprocess.run(["systemctl", "is-active", "go-simulink"], stdout=subprocess.PIPE, text=True)
-nodered_status = subprocess.run(["systemctl", "is-active", "nodered"], stdout=subprocess.PIPE, text=True)
+simulink_status = run(["systemctl", "is-active", "go-simulink"], stdout=PIPE, text=True)
+nodered_status = run(["systemctl", "is-active", "nodered"], stdout=PIPE, text=True)
 simulink_status = simulink_status.stdout
 nodered_status = nodered_status.stdout
-subprocess.run(["systemctl", "stop", "go-simulink"])
-subprocess.run(["systemctl", "stop", "nodered"])
+run(["systemctl", "stop", "go-simulink"])
+run(["systemctl", "stop", "nodered"])
 
 #gather the current controller module configuration
-subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])	
+run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])	
 
 #get the configuration from the resulting file
 with open("/usr/module-firmware/modules.txt", "r") as modules:
@@ -34,14 +34,14 @@ if info[-1]=="\n":
     info = info[:-1]
 
 #get the newest available firmwares on the controller into an array
-available_firmwares = glob.glob("/usr/module-firmware/" + "*.srec")
+available_firmwares = glob("/usr/module-firmware/" + "*.srec")
 newest_firmwares = []
 hw_versions = []
 for firmware in available_firmwares:
     hw_version = firmware.split("/")[-1]
     hw_versions.append("-".join(hw_version.split("-")[0:4]))
 for hw_version in hw_versions:
-    firmwares_per_hw = glob.glob("/usr/module-firmware/" + hw_version + "*.srec")
+    firmwares_per_hw = glob("/usr/module-firmware/" + hw_version + "*.srec")
     if len(firmwares_per_hw)>1:
         firmwares_per_hw.sort()
         newest_firmwares.append(firmwares_per_hw[-1])
@@ -95,6 +95,6 @@ else:
 
 #restart simulink or nodered if they were turned on before the script
 if not "in" in simulink_status:
-    subprocess.run(["systemctl", "start", "go-simulink"])
+    run(["systemctl", "start", "go-simulink"])
 if not "in" in nodered_status:
-    subprocess.run(["systemctl", "start", "nodered"])
+    run(["systemctl", "start", "nodered"])

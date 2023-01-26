@@ -1,6 +1,8 @@
 from pyuio import asap_datatypes
-import json
+from json import dumps as dump_json
 from subprocess import run
+from glob import glob
+from os import path
 
 reached_end = False
 reading_parameter = False
@@ -9,7 +11,16 @@ parameters = {}
 signals = {}
 size = 1
 
-with open("/usr/simulink/gocontroll.a2l", "r") as a2l:
+a2lLoc = glob("/usr/simulink/*.a2l")
+
+try:
+    a2lLoc = max(a2lLoc, key=path.getctime)
+except:
+    print("No a2l file present in /usr/simulink")
+    exit()
+
+
+with open(a2lLoc, "r") as a2l:
     while not reached_end:
         line = a2l.readline()
         if reading_parameter or reading_signal:
@@ -81,11 +92,11 @@ with open("/usr/simulink/gocontroll.a2l", "r") as a2l:
             elif "COMPU_METHOD" in line:
                 reached_end=True
 
-json_parameters = json.dumps(parameters, indent=4)
+json_parameters = dump_json(parameters, indent=4)
 with open("/usr/simulink/parameters.json", "w") as parameterFile:
     parameterFile.write(json_parameters)
 run(["cp", "/usr/simulink/parameters.json", "/usr/node-red-static/parameters.json"])
-json_signals = json.dumps(signals, indent=4)
+json_signals = dump_json(signals, indent=4)
 with open("/usr/simulink/signals.json", "w") as signalFile:
     signalFile.write(json_signals)
 run(["cp", "/usr/simulink/signals.json", "/usr/node-red-static/signals.json"])

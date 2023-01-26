@@ -11,7 +11,11 @@ fi
 
 cd /tmp/GOcontroll-*
 
-cp -r -v --force --backup ./ / > "$FILE"
+cp -r -v --force --backup ./etc/controller_update/ /etc/ > "$FILE"
+
+rm -r ./etc/
+
+cp -r -v --force --backup ./ / >> "$FILE"
 
 echo 'files moved registering backup'
 

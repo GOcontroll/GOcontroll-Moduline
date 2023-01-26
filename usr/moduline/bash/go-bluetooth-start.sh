@@ -4,13 +4,13 @@ if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Screen
 
 echo -e "${YELLOW}-Setting up bluetooth for the Moduline screen ${NORMAL}"
 
-hciattach /dev/ttymxc1 bcm43xx 921600 flow
+hciattach /dev/ttymxc1 bcm43xx 921600 flow nosleep macplaceholder
 
 else
 
 echo -e "${YELLOW}-Setting up bluetooth for the Moduline controller ${NORMAL}"
 
-hciattach /dev/ttymxc0 bcm43xx 921600 flow
+hciattach /dev/ttymxc0 bcm43xx 921600 flow nosleep macplaceholder
 
 fi
 

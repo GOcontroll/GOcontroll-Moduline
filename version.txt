@@ -1,6 +1,11 @@
-V1.9.31
+V1.9.32
 
 ########
+26-1-2023 V1.9.32 Release 0.3.14
+fixed the MAC address of the bluetooth module
+fixed update scripts to handle added files better and to not overwrite configurations in /etc/
+added current based peak and hold for the output module in firmware 1.3.2
+
 23-1-2023 V1.9.31
 fixed the bluetooth name in the first install script.
 fixed the bluetooth startup for the GOcontroll display controller.
