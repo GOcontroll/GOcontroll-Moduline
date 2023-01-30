@@ -1,6 +1,10 @@
-V1.9.32
+V1.10.32
 
 ########
+V1.10.32
+stopping the go-bluetooth service now turns off the indicating LED.
+added kl15_monitor service to automatically turn off the controller when the kl15s are low.
+
 26-1-2023 V1.9.32 Release 0.3.14
 fixed the MAC address of the bluetooth module
 fixed update scripts to handle added files better and to not overwrite configurations in /etc/

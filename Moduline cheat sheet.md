@@ -48,6 +48,8 @@ systemctl start go-wwan
 ### Start Bluetooth service (if present)
 systemctl start go-bluetooth
 
+### go-auto-shutdown service
+systemctl start go-auto-shutdown
 
 
 ## Other handy commands
