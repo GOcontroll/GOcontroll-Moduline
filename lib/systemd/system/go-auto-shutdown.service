@@ -5,7 +5,7 @@ Description=GOcontroll KL15 monitoring service
 Type=exec
 RemainAfterExit=no
 
-ExecStart=/usr/moduline/bin/kl15_monitor
+ExecStart=/usr/moduline/bin/kl15_monitor controllerType
 
 [Install]
 WantedBy=multi-user.target

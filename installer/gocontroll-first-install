@@ -177,19 +177,22 @@ echo -e "${YELLOW}-Gathering module configuration and updating outdated modules 
 
 python3 /usr/moduline/python/installModuleFirmware.py
 
-echo -e "${YELLOW}-Setting the bluetooth name${NORMAL}"
+echo -e "${YELLOW}-Setting the bluetooth name and patching the go-auto-shutdown service${NORMAL}"
 
 hw=$(tr -d '\0' </sys/firmware/devicetree/base/hardware)
 case $hw in
 
 	*IV*)
-		echo PRETTY_HOSTNAME="GOcontroll-Moduline IV_$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll-Moduline IV $mod" > /etc/machine-info
+		sed -i "s/controllerType/0/g" /lib/systemd/system/go-auto-shutdown.service
 		;;
 	*Mini*)
-		echo PRETTY_HOSTNAME="GOcontroll-Moduline Mini_$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll-Moduline Mini $mod" > /etc/machine-info
+		sed -i "s/controllerType/1/g" /lib/systemd/system/go-auto-shutdown.service
 		;;
 	*Screen*)
-		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen_$mod" > /etc/machine-info
+		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen $mod" > /etc/machine-info
+		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 esac
 
 
