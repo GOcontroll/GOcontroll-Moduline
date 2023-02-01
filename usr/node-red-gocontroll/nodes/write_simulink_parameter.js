@@ -27,7 +27,7 @@ module.exports = function(RED) {
     
         //Check if the simulink model is running and get its PID
         function check_model() {
-            var pidof = shell.exec("pidof gocontroll.elf");
+            var pidof = shell.exec("pidof GOcontroll_Linux.elf");
             pid = pidof.stdout.split("\n")[0];
             if (!pidof.code){
                 try{
