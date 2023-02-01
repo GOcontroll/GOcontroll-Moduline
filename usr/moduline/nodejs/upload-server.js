@@ -49,7 +49,7 @@
 			}
 
 			/* The MV stores the incomming file to the server */ 
-			elfFile.mv('/usr/simulink/gocontroll.elf', function(err) {
+			elfFile.mv('/usr/simulink/GOcontroll_Linux.elf', function(err) {
 			if (err) return res.status(500).send(err);
 			res.send('File uploaded! You can now close this tab/window.');
 			
@@ -81,7 +81,7 @@
 			}
 			let a2lFile = req.files.a2lFile;
 
-			a2lFile.mv('/usr/simulink/gocontroll.a2l', function(err) {
+			a2lFile.mv('/usr/simulink/GOcontroll_Linux.a2l', function(err) {
 				if (err) return res.status(500).send(err);
 				res.send('File uploaded! You can now close this tab/window.\n'+shell.exec("python3 /usr/moduline/python/parse_a2l.py"));
 			});
