@@ -199,6 +199,12 @@ esac
 echo -e "${YELLOW}-Fixing the bluetooth mac address ${NORMAL}"
 
 sed -i "s/macplaceholder/43:43:A1:12:1F:$(openssl rand -hex 1)/g" /usr/moduline/bash/go-bluetooth-start.sh
+
+cd
+
+sync
+
+rm -r /root/GOcontroll
  
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
 echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"

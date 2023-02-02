@@ -1,6 +1,10 @@
-V1.10.32
+V1.10.33
 
 ########
+2-2-2023 V1.10.33
+added sync in a lot of update scripts, to clear out the delayed allocation buffer and not lose data upon suddon poweroff.
+
+
 V1.10.32
 stopping the go-bluetooth service now turns off the indicating LED.
 added kl15_monitor service to automatically turn off the controller when the kl15s are low.

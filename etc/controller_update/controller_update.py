@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from glob import glob
 from shutil import rmtree
+from subprocess import run
 try:
     rmtree(glob("/tmp/GOcontroll-*")[0])
 except:
@@ -18,4 +19,5 @@ for i, file in enumerate(files):
 
 with open("/etc/controller_update/backed-up-files.txt" , "w") as backup:
     backup.writelines(files)
-#
+
+run(["sync"])

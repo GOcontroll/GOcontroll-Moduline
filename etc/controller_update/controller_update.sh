@@ -48,5 +48,6 @@ cd
 
 pip3 list | grep -F pyuio || pip3 install pyuio
 
+sync
 
 python3 /etc/controller_update/controller_update.py
