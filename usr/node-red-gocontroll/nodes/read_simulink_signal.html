@@ -14,11 +14,8 @@
         label: function() {
             if(this.name != ""){
                 return this.name;
-            }
-            if(this.SignalKey == ""){
-                return this.SignalKey;
             } else {
-                return "Select a Signal to read";
+                return "Read from Simulink";
             }
         },
 
@@ -62,13 +59,8 @@
 
 <script type="text/x-red" data-template-name="Read-Simulink-Signal" id="Read-Simulink-Signal-Configuration">
     <div class="form-row">
-        <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time</label>
-        <select id="node-input-sampleTime" style="width:300px" title="The sample time sets the period on which the signals are retrieved">
-            <option value="1000">1 s</option>
-            <option value="200">200 ms</option>
-            <option value="100">100 ms</option>
-			<option value="50">50 ms</option>
-        </select>
+        <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time (ms)</label>
+        <input type="text" id="node-input-sampleTime" placeholder="sample time (ms)">
     </div>
 
     <div class="form-row">
@@ -88,13 +80,15 @@
     <p><strong><em>Simulink signal:</em></strong></p>
     <p>Select the desired Simulink signal.</p>
     <p><strong><em>Sample time:</em></strong></p>
-    <p>Specify the sample time at which to read the Simulink signal.</p>
+    <p>Specify the sample time at which to read the Simulink signal in milliseconds.</p>
     <h2><strong>Data format</strong></h2>
-    <p>The data coming from the Node is pushed out of the node in a JSON string format holding any number of keys and values. The keys will be the same as the selected signal names.</p>
+    <p>The data coming from the Node is pushed out of the node in a JSON string format holding any number of keys and values. The keys will be the same as the selected signal names plus a TimeStamp field which gives the unix-time in milliseconds.</p>
     <p>&nbsp;</p>
     <h2><strong>Example</strong></h2>
     <p>This example shows the data from a read simulink signal node during operation.</p>
-    <p>{"signal name" : 2766, "second signal name" : 5001 }</p>
+    <p>msg.payload : Object</p>
+    <p>{"TimeStamp" : 1234412412, "signal name" : 2766, "second signal name" : 5001, ... }</p>
     <p>or in case the signal is an array</p>
-    <p>{"signal name" : [100, 65, 300]}</p> 
+    <p>msg.payload : Object</p>
+    <p>{"TimeStamp" : 1234412412, "signal name" : [100, 65, 300], ...}</p> 
 </script>

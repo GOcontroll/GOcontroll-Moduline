@@ -92,11 +92,11 @@ with open(a2lLoc, "r") as a2l:
             elif "COMPU_METHOD" in line:
                 reached_end=True
 
-json_parameters = dump_json(parameters, indent=4)
+json_parameters = dump_json(dict(sorted(parameters.items())), indent=4)
 with open("/usr/simulink/parameters.json", "w") as parameterFile:
     parameterFile.write(json_parameters)
 run(["cp", "/usr/simulink/parameters.json", "/usr/node-red-static/parameters.json"])
-json_signals = dump_json(signals, indent=4)
+json_signals = dump_json(dict(sorted(signals.items())), indent=4)
 with open("/usr/simulink/signals.json", "w") as signalFile:
     signalFile.write(json_signals)
 run(["cp", "/usr/simulink/signals.json", "/usr/node-red-static/signals.json"])

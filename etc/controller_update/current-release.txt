@@ -1,4 +1,15 @@
-0.3.14
+0.4.14
+
+0.4.14
+repo ver V1.10.34
+stopping the go-bluetooth service now turns off the indicating LED.
+added kl15_monitor service to automatically turn off the controller when the kl15s are low.
+added sync in a lot of update scripts, to clear out the delayed allocation buffer and not lose data upon suddon poweroff.
+added aliases for gocontroll scripts to the update script
+parse_a2l now sorts the signals and parameters so the list is easier to interact with in node-red
+read_simulink_signal and write_simulink_parameter now run the parse_a2l script when the node is starting up
+to prevent them from reading from outdated memory locations
+read simulink signal now sends out its message in the form of msg.payload.signalNames and has an additional timestamp added as msg.payload.TimeStamp.
 
 0.3.14
 repo ver V1.9.32

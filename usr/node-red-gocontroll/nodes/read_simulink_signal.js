@@ -18,6 +18,7 @@ function GOcontrollReadSimulink(config) {
     const sampleTime = config.sampleTime;
     const Signals = config.signals.split(",")
     var msgOut={};
+    var payload={};
     let pid = "";
     if (!Signals) {
         node.warn("No signals were selected, exiting")
@@ -25,28 +26,27 @@ function GOcontrollReadSimulink(config) {
     }
     node.status({fill:"yellow",shape:"dot",text:"Initializing node..."})
 
+    var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
+    if (!parseResult.stdout.includes("succesfully")){
+        node.status({fill:"red", shape:"dot", text:"An error occured parsing GOcontroll_Linux.a2l"});
+        exit(-1);
+    }
+
     intervalCheck = setInterval(check_model,2000);
-    
-    
 
     //Check if the simulink model is running and get its PID
     function check_model() {
         asap_signals = [];
-        var pidof = shell.exec("pidof GOcontroll_Linux.elf");
+        var pidof = shell.exec("pidof -s GOcontroll_Linux.elf");
         pid = pidof.stdout.split("\n")[0];
         if (!pidof.code){
             try{
                 //check if the address or size of the signal has changed due to a recompilation of the model
                 SignalFile = fs.readFileSync("/usr/simulink/signals.json");
             } catch(err) {
-                node.warn("Error reading signals.json, trying to parse the file...");
-                var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
-                if (!parseResult.stdout.includes("succesfully")){
-                    node.status({fill:"red", shape:"dot", text:"An error occured parsing gocontroll.a2l"});
-                    exit(-1);
-                }
-                check_model();
-                return;
+                node.warn("Error reading signals.json");
+                node.status({fill:"red", shape:"dot", text:"Unable to read from signals.json"});
+                exit(-1);
             }
             var localSignals = JSON.parse(SignalFile);
             for (const sig in Signals) {
@@ -76,10 +76,13 @@ function GOcontrollReadSimulink(config) {
             try{
                 for (const asap_signal in asap_signals){
                     res = uiojs.process_read(pid, asap_signals[asap_signal]);
-                    msgOut[Signals[asap_signal]] = res;
+                    payload[Signals[asap_signal]] = res;
                 }
-                node.send(msgOut);  
+                payload["TimeStamp"] = Date.now()
+                msgOut["payload"] = payload;
+                node.send(msgOut);
             } catch(err) {
+                // console.log(err);
                 simulink = false;
             }
         } else {
@@ -92,7 +95,7 @@ function GOcontrollReadSimulink(config) {
 
     function findValueByPrefix(object, prefix) {
         for (var property in object) {
-            if (object.hasOwnProperty(property) && 
+            if (object.hasOwnProperty(property) &&
             property.toString().startsWith(prefix)) {
             return object[property];
             }

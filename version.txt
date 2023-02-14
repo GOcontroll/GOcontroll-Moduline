@@ -1,9 +1,15 @@
-V1.10.33
+V1.10.34
 
 ########
+14-2-2023 V1.10.34 Release 0.4.14
+added aliases for gocontroll scripts to the update script
+parse_a2l now sorts the signals and parameters so the list is easier to interact with in node-red
+read_simulink_signal and write_simulink_parameter now run the parse_a2l script when the node is starting up
+to prevent them from reading from outdated memory locations
+read simulink signal now sends out its message in the form of msg.payload.signalNames and has an additional timestamp added as msg.payload.TimeStamp.
+
 2-2-2023 V1.10.33
 added sync in a lot of update scripts, to clear out the delayed allocation buffer and not lose data upon suddon poweroff.
-
 
 V1.10.32
 stopping the go-bluetooth service now turns off the indicating LED.
@@ -154,7 +160,7 @@ Added levelshifter enable to go-wwan start script for enabling the serial commun
 Added predefined sources list to upload during initial installation
 
 8-12-2021 V1.1.5
-Updated requested installation version of serialport to 0.15.0  and dashboard to 3.1.2 
+Updated requested installation version of serialport to 0.15.0  and dashboard to 3.1.2
 
 7-12-2021 V1.1.4
 Added new ADC conversion to Node-RED controll supply node. From Moduline IV HW3.06 an Moduline Mini HW1.05, the MCP 3004 is used for conversion.
@@ -169,5 +175,5 @@ Version read from settingsblock now only reads one line
 Plausablility check on the GOcontroll Node-RED read memory node. If there is a NaN, the key value pair is not send
 
 12-11-2021 V1.0.1
-Changed the memory write node. Values are now always written to memory. Before this changes, only changing values were 
+Changed the memory write node. Values are now always written to memory. Before this changes, only changing values were
 written again. This mechanism should be implemented manually in case it is desired.
