@@ -51,7 +51,6 @@ systemctl start go-bluetooth
 ### go-auto-shutdown service
 systemctl start go-auto-shutdown
 
-
 ## Other handy commands
 ### Check available space on the controller:
 df -h
@@ -84,3 +83,9 @@ nmcli dev wifi connect "net name" password "password" -- Connect to a wifi netwo
 mmcli --list-modems --Show the list of modems to get the modem number
  
 mmcli -K --modem="modemnumber"  --Show the details of this modem
+
+### display strings as qr codes in the terminal
+qrencode -t ansiutf8 "string" or qrencode -t ansiutf8 < /path/to/file
+
+### mount the boot partition to update a kernel image or dtb
+mount /dev/mmcblk0p1 /path/to/mount
