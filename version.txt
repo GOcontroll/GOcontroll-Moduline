@@ -2,7 +2,7 @@ V1.10.34
 
 ########
 14-2-2023 V1.10.34 Release 0.4.14
-added aliases for gocontroll scripts to the update script
+added aliases for GOcontroll scripts to the update script
 parse_a2l now sorts the signals and parameters so the list is easier to interact with in node-red
 read_simulink_signal and write_simulink_parameter now run the parse_a2l script when the node is starting up
 to prevent them from reading from outdated memory locations
