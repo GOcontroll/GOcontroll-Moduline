@@ -9,7 +9,7 @@
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
-cd 
+cd
 
 if [ -d GOcontroll ]
 then
@@ -21,18 +21,21 @@ echo -e "${YELLOW}-Create new GOcontroll folder ${NORMAL}"
 mkdir GOcontroll
 
 cd GOcontroll
-ls
 
 if ! [ -x "$(command -v git)" ]; then
 echo -e "${YELLOW}-Git is not yet installed so let's install first ${NORMAL}"
-apt -y install git 
+apt -y install git
 fi
 
 echo -e "${YELLOW}-Update debian sources ${NORMAL}"
 apt update -y > /dev/null
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
-git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
+# git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
+curl -L -k https://github.com/GOcontroll/GOcontroll-Moduline/tarball/$1 -o repo.tgz
+tar -xf repo.tgz
+rm repo.tgz
+
 
 echo -e "${YELLOW}-remove old GOcontroll stuff ${NORMAL}"
 
@@ -67,21 +70,21 @@ echo -e "${YELLOW}-Delete nodejs scripts ${NORMAL}"
 fi
 
 echo -e "${YELLOW}-Copy GOcontroll files to correct location ${NORMAL}"
-cp -avr /root/GOcontroll/GOcontroll-Moduline/lib / > /dev/null
-cp -avr /root/GOcontroll/GOcontroll-Moduline/etc / > /dev/null
-cp -avr /root/GOcontroll/GOcontroll-Moduline/usr / > /dev/null
-cp -avr /root/GOcontroll/GOcontroll-Moduline/root / > /dev/null
-cp -avr /root/GOcontroll/GOcontroll-Moduline/version.txt /root > /dev/null
+cp -avr /root/GOcontroll/GOcontroll*/lib / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll*/etc / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll*/usr / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll*/version.txt / > /dev/null
 
 if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
 
 echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
-patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll-Moduline/patch/bridge_module_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll-Moduline/patch/output_module_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_reset_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll-Moduline/patch/input_module_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll-Moduline/patch/can_receive_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll-Moduline/patch/can_send_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll*/patch/bridge_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll*/patch/output_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll*/patch/input_module_reset_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll*/patch/input_module_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll*/patch/can_receive_html.patch > /dev/null
+patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll*/patch/can_send_html.patch > /dev/null
 fi
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
@@ -94,6 +97,7 @@ chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
 chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
+chmod 555 /usr/moduline/python/testLeds.py
 
 echo -e "${YELLOW}-Set up aliasses for go-scripts ${NORMAL}"
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-reset-ap"* ]]; then
@@ -117,6 +121,10 @@ fi
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-parse-a2l"* ]]; then
 	echo "alias go-parse-a2l=\"python3 /usr/moduline/python/parse_a2l.py\"" >> ~/.bashrc
 fi
+if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-leds"* ]]; then
+	echo "alias go-test-leds=\"/usr/moduline/python/testLeds.py\"" >> ~/.bashrc
+fi
+
 
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
@@ -205,6 +213,6 @@ cd
 sync
 
 rm -r /root/GOcontroll
- 
+
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
 echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"

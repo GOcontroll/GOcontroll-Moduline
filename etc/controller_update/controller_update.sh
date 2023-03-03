@@ -27,6 +27,7 @@ chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
 chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
+chmod 555 /usr/moduline/python/testLeds.py
 
 cd
 
@@ -62,6 +63,9 @@ if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-can"* ]]; then
 fi
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-parse-a2l"* ]]; then
 	echo "alias go-parse-a2l=\"python3 /usr/moduline/python/parse_a2l.py\"" >> ~/.bashrc
+fi
+if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-leds"* ]]; then
+	echo "alias go-test-leds=\"/usr/moduline/python/testLeds.py\"" >> ~/.bashrc
 fi
 
 cd /usr/node-red-gocontroll/

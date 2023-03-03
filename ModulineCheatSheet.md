@@ -20,6 +20,8 @@ identify "-v" -- (points to identify.py) gives information about the controller 
 
 go-test-can -- (points to testcan.js) if a can test plug is attached to the controller this can be called to test if the can busses are functioning correctly
 
+go-test-leds -- (points to testLeds.py) if a controller has status leds this function can be called to check if all the leds are working correctly
+
 go-parse-a2l -- (points to parse_a2l.py) parses a /usr/simulink/gocontroll.a2l to a json string, this can then be used by other applications. \
 Normally this gets called automatically by upload-server.js, but can also be called manually in case the server was not used to transfer the file
 
@@ -39,7 +41,7 @@ go-overwrite-module "slot" "firmware.srec" "force update (1 for yes, empty or ot
 ### Service to start Node-RED
 systemctl start nodered
 
-### Run Simulink model that is uploaded to /usr/simulink 
+### Run Simulink model that is uploaded to /usr/simulink
 systemctl start go-simulink
 
 ### Start LTE modem and connect with 3/4G
@@ -61,27 +63,27 @@ ip a
 ### Show CAN messages on e.g. can0 interface
 candump can0
 
-### Create log from CAN message 
+### Create log from CAN message
 candump -l can0
 
 ### Check CAN bus load
 
 canbusload can"num"@"baudrate" ... -- Add other can busses at the end to monitor them at the same time
- 
+
 example: canbusload can0@250000 can1@250000
- 
+
 ### Network manager
 nmcli con           -- Show list of connections and their statusses
- 
+
 nmcli con show "con" -- See detailed information about a specific connection
- 
+
 nmcli dev wifi      -- Show available Wi-Fi networks
- 
+
 nmcli dev wifi connect "net name" password "password" -- Connect to a wifi network with the given name and password
 
 ### modem manager
 mmcli --list-modems --Show the list of modems to get the modem number
- 
+
 mmcli -K --modem="modemnumber"  --Show the details of this modem
 
 ### display strings as qr codes in the terminal
