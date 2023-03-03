@@ -4,6 +4,12 @@ module.exports = function(RED) {
     const shell = require("shelljs");
     const fs = require("fs");
 
+    const OUTPUTMODENEVER = "0";
+    const OUTPUTMODEONCE = "1";
+    const OUTPUTMODEINTERVAL = "2";
+    const INPUTMODELIST = true;
+    const INPUTMODEMESSAGE = false;
+
     function GOcontrollWriteSimulink(config) {
         RED.nodes.createNode(this,config);
         var node = this;
@@ -12,11 +18,15 @@ module.exports = function(RED) {
         import("uiojs").then(uiojs=>{
 
         let simulink = false;
-        let res, Signal, asap_signal, ParameterFile;
+        let res, parameter, ParameterFile, asap_parameter;
+        var asap_parameters = {};
         var intervalRead,intervalCheck = null;
+        var localParameters;
         const sampleTime = config.sampleTime;
-        const inputKey = config.KeyIn;
+        const inputKey = config.keyIn;
         const parameterName = config.parameter;
+        const inputMode = config.inputMode;     //true == predetermined key, false == use key(s) from input
+        const outputMode = config.outputMode;   //0 == never output, 1 == output once on input, 2 == output on interval
         var msgOut={};
         let pid = "";
         node.status({fill:"yellow",shape:"dot",text:"Initializing node..."})
@@ -42,23 +52,36 @@ module.exports = function(RED) {
                     node.status({fill:"red", shape:"dot", text:"Unable to read from parameters.json"});
                     exit(-1);
                 }
-                var localSignals = JSON.parse(ParameterFile);
-                //get the desired parameter from the list of parameters
-                Signal = findValueByPrefix(localSignals, parameterName);
-                if (Signal){
-                    asap_signal = new uiojs.asap_element(Signal.address, Signal.type, Signal.size);
-                } else {
-                    node.status({fill:"red", shape:"dot", text:"The selected signal could not be found in parameters.json"});
-                    exit(-1);
+                localParameters = JSON.parse(ParameterFile);
+
+                for (const localParameter in localParameters) {
+                    localParameters[localParameter]["asap_parameter"] = new uiojs.asap_element(localParameters[localParameter]["address"], localParameters[localParameter]["type"], localParameters[localParameter]["size"]);
+                }
+                if (inputMode == INPUTMODELIST){
+                    //get the desired parameter from the list of parameters
+                    // parameter = findValueByPrefix(localParameters, parameterName);
+                    try{
+                        asap_parameter = localParameters[parameterName].asap_parameter;
+                    } catch {
+                        node.status({fill:"red", shape:"dot", text:"The selected signal could not be found in parameters.json"});
+                        exit(-1);
+                    }
                 }
 
                 pid = parseInt(pid);
                 simulink = true;
-                intervalRead = setInterval(readSignal, parseInt(sampleTime));
-                clearInterval(intervalCheck);
-                console.log("simulink model started")
-                node.status({fill:"green",shape:"dot",text:"Writing/reading " + parameterName});
+                if (outputMode == OUTPUTMODEINTERVAL) {
+                    intervalRead = setInterval(readSignal, parseInt(sampleTime));
+                    clearInterval(intervalCheck);
+                }
+                // console.log("simulink model started")
+                if (inputMode == true){
+                    node.status({fill:"green",shape:"dot",text:"Writing/reading " + parameterName});
+                } else {
+                    node.status({fill:"green",shape:"dot",text:"Active model found, node ready."});
+                }
             } else {
+                simulink = false;
                 node.status({fill:"red",shape:"dot",text:"Simulink model stopped, looking for entry point..."})
             }
         }
@@ -67,7 +90,7 @@ module.exports = function(RED) {
         function readSignal() {
             if (simulink == true){
                 try{
-                    res = uiojs.process_read(pid, asap_signal);
+                    res = uiojs.process_read(pid, asap_parameter);
                     msgOut={[parameterName]:res};
                     node.send(msgOut);
                 } catch(err) {
@@ -75,20 +98,10 @@ module.exports = function(RED) {
                 }
             } else {
                 intervalCheck = setInterval(check_model,2000);
-                clearInterval(intervalRead);
+                if ( outputMode == OUTPUTMODEINTERVAL) { clearInterval(intervalRead) }
                 console.log("simulink model stopped")
                 node.status({fill:"red",shape:"dot",text:"Simulink model stopped, looking for entry point..."})
             }
-        }
-
-        function findValueByPrefix(object, prefix) {
-            for (var property in object) {
-                if (object.hasOwnProperty(property) &&
-                property.toString().startsWith(prefix)) {
-                return object[property];
-                }
-            }
-            return false;
         }
 
         node.on('close', function(done) {
@@ -96,14 +109,49 @@ module.exports = function(RED) {
             clearInterval(intervalCheck);
             done();
         });
+
         node.on("input", function(msg){
+            var payload = {};
             if (simulink) {
-                try{
-                    uiojs.process_write(pid, asap_signal, msg[config.keyIn]);
-                } catch(err) {
-                    simulink=false;
-                    node.warn("failed to write simulink parameter." + err)
+                //list based input
+                if (inputMode == INPUTMODELIST){
+                    try{
+                        uiojs.process_write(pid, asap_signal, msg[config.keyIn]);
+                    if (outputMode == OUTPUTMODEONCE){
+                            var newVal = uiojs.process_read(pid, asap_signal);
+                            payload[parameterName]=newVal;
+                        }
+                    } catch(err) {
+                        simulink=false;
+                        node.error("failed to read simulink parameter." + err)
+                        return;
+                    }
+                    msgOut["payload"] = payload;
+                    node.send(msgOut);
+
+                //message based input
+                } else {
+                    console.log("message based input on key " + inputKey);
+                    //for all keys in the incoming message
+                    for (const inputParameter in msg[inputKey]) {
+                        try {
+                            console.log("trying to find " + inputParameter);
+                            //try to read the asap_parameter linked to that key
+                            uiojs.process_write(pid, localParameters[inputParameter]["asap_parameter"], msg[inputKey][inputParameter]);
+                            if (outputMode == OUTPUTMODEONCE) {
+                                payload[inputParameter] = uiojs.process_read(pid, localParameters[inputParameter]["asap_parameter"]);
+                            }
+                        } catch (err) {
+                            simulink=false;
+                            node.error("failed to write simulink parameter." + err)
+                            return;
+                        }
+                    }
+                    msgOut["payload"] = payload;
+                    node.send(msgOut);
                 }
+            } else {
+                node.error("No simulink model running right now, unable to write the parameter(s).")
             }
         });
         }).catch(err=>{

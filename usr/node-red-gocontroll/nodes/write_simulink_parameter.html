@@ -8,6 +8,8 @@
             parameter: {value:""},
             keyIn: {value:""},
             data: {value:""},
+            inputMode: {value:"0"},
+            outputMode: {value:"0"},
         },
         inputs:1,
         outputs:1,
@@ -23,30 +25,61 @@
 
         oneditprepare: function() {
             var node = this;
+            //display the desired selection interfaces.
+            if (node.outputMode != "2"){
+                $("#sampleTime-div").hide()
+            }
+            if (node.inputMode == false) {
+                $("#parameter-select-div").hide()
+                $("#outputMode-interval").hide()
+            }
+
+            //fetch the currently available parameters from the server.
             fetch('parameters.json')
-            .then((Response) => {
-                if (!Response.ok) {
-                    throw new Error('HTTP error: ' + Response.status);
+                .then((Response) => {
+                    if (!Response.ok) {
+                        throw new Error('HTTP error: ' + Response.status);
+                    }
+                    return Response.json();
+                })
+                .then((json) => {
+                    var keys = Object.keys(json);
+                    var options = $('#node-input-parameter').typedInput({type:"Parameter", types:[{
+                        value: "Parameter",
+                        options: getOptions(keys)
+                    }]})
+                    options.typedInput('value',node.parameter);
+                    var keyin = $('#node-input-keyIn').typedInput({type:'str', types: ["str"]})
+                    keyin.typedInput('value', node.keyIn);
+                })
+                .catch((err) => {console.error('Fetch problem: ' + err.message);
+                node.status({fill:"red", shape:"dot", text:"An error occured fetching parameters.json"});
+                });
+
+            //register the listener for the outputmode (never, on input or interval)
+            $("#node-input-outputMode").on("change", function() {
+                var mode = $("#node-input-outputMode").val();
+                if (mode == "2") {$("#sampleTime-div").show()} else {$("#sampleTime-div").hide()}
+            })
+
+            //register the listener for the inputmode (select from list, or input contains the parameter name)
+            $("#node-input-inputMode").change(function() {
+                var mode = this.checked;
+                if (mode == true) {
+                    $('#parameter-select-div').show();
+                    $('#outputMode-interval').show();
+                    node.inputMode = true;
+                } else {
+                    $('#parameter-select-div').hide()
+                    $('#outputMode-interval').hide();
+                    node.inputMode = false;
                 }
-                return Response.json();
             })
-            .then((json) => {
-                var keys = Object.keys(json);
-                var options = $('#node-input-parameter').typedInput({type:"Parameter", types:[{
-                    value: "Parameter",
-                    options: getOptions(keys)
-                }]})
-                options.typedInput('value',node.parameter);
-                var keyin = $('#node-input-keyIn').typedInput({type:'str', types: ["str"]})
-                keyin.typedInput('value', node.keyIn);
-            })
-            .catch((err) => {console.error('Fetch problem: ' + err.message);
-            node.status({fill:"red", shape:"dot", text:"An error occured fetching parameters.json"});
-            });
         },
         oneditsave: function() {
-            this.parameter = $('#node-input-parameter').typedInput("value")  
+            this.parameter = $('#node-input-parameter').typedInput("value")
             this.keyIn = $('#node-input-keyIn').typedInput("value")
+            //this.inputMode = $("#node-input-inputMode").checked;
         },
     });
 
@@ -66,47 +99,71 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time</label>
-        <select id="node-input-sampleTime" style="width:300px" title="The sample time sets the period on which the signals are retrieved">
-            <option value="1000">1 s</option>
-            <option value="200">200 ms</option>
-            <option value="100">100 ms</option>
-			<option value="50">50 ms</option>
+        <label for="node-input-outputMode"><i class="fa fa-repeat"></i> Output mode</label>
+        <select id="node-input-outputMode" width="320px" title="When to output the current value of the parameter.">
+            <option value="0">never</option>
+            <option value="1">on input</option>
+            <option value="2" id="outputMode-interval">interval</option>
         </select>
     </div>
 
-    <div class="form-row">
+    <div class="form-row" id="sampleTime-div">
+        <label for="node-input-sampleTime"><i class="fa fa-repeat"></i> Sample time (ms)</label>
+        <input type="text" id="node-input-sampleTime" placeholder="sample time (ms)">
+    </div>
+
+    <div class="form-row" style="display: flex;justify-content: center;align-content: center;">
+        <label for="node-input-inputMode" style="width: auto;display: block;"> Pre select a Simulink parameter from the list test</label>
+        <input type="checkbox" id="node-input-inputMode" name="inputMode" value="false" style="width: auto;display: block;margin: auto;" autocomplete="off">
+    </div>
+
+    <div class="form-row" id="parameter-select-div">
         <label for="node-input-parameter"><i class="icon-tag"></i> Parameter</label>
         <input type="text" id="node-input-parameter">
     </div>
 
-    <div class="form-row"> 
+    <div class="form-row" id="inputkey-div">
         <label for="node-input-keyIn"><i class="fa fa-id-card"></i> Input key</label>
         <input type="text" id="node-input-keyIn">
     </div>
-	
-	
+
+
 <div id="read-simulink-settings"></div>
 </script>
 
 <script type="text/x-red" data-help-name="Write-Simulink-Parameter">
-    <p>The Write Simulink Parameter block is used to overwrite the value of a globally exported parameter in simulink. Select the desired parameter and sample time. It will output its current value at the interval of the sample time, and overwrite the value when it receives a signal on the input.</p>
+    <p>The Write Simulink Parameter block is used to overwrite the value of globally exported parameter(s) in simulink.</p>
     <h2>Configuration</h2>
-    <p><strong><em>Simulink signal:</em></strong></p>
-    <p>Select the desired Simulink parameter.</p>
+    <p><strong><em>Output mode:</em></strong></p>
+    <p>Specify the desired output mode, either never output, output when a message is received on the input or output at an interval if the desired parameter is selected from the list (see input method).</p>
     <p><strong><em>Sample time:</em></strong></p>
-    <p>Specify the sample time at which to read the Simulink parameter.</p>
+    <p>If the output mode is set to interval. Specify the sample time at which to read the Simulink parameter.</p>
+    <p><strong><em>Input mode:</em></strong></p>
+    <p>If the checkbox is selected the block will only write to one specific parameter selected from a dropdown list, otherwise the parameter(s) must be specified in the incoming message (see data format). In this second format the output cannot be set to interval mode.</p>
+    <p><strong><em>Simulink parameter:</em></strong></p>
+    <p>Select the desired Simulink parameter.</p>
+    <p><strong><em>Input key:</em></strong></p>
+    <p>This is the key that the block will read its input from.</p>
     <h2><strong>Data format</strong></h2>
-    <p>The data coming from the Node is pushed out of the node in a JSON string format holding 1 key and 1 values. The key is the same as the selected parameter name.</p>
+    <p>The data coming from the Node is pushed out of the node in a JSON string format in key value pairs of the name of the parameter and its current value in memory.</p>
     <p>&nbsp;</p>
-    <h2><strong>Example</strong></h2>
+    <h2><strong>Example for output</strong></h2>
     <p>This example shows the output data from a write simulink parameter node during operation:</p>
-    <p>{"Parameter name" : 2766 }</p>
-    <p>or in case the parameter is an array</p>
-    <p>{"Parameter name" : [100, 65, 300]}</p> 
+    <p>{payload:paramaterName: 2766 }</p>
     <p>&nbsp;</p>
-    <p>Input example:</p>
-    <p>{"Input Key" : 800}</p>
     <p>or in case the parameter is an array</p>
-    <p>{"Input Key" : [300, 400, 500]}</p>
+    <p>{payload: parameterName: [100, 65, 300]}</p>
+    <p>&nbsp;</p>
+    <p>If the parameter is not set from the list it can output multiple values:</p>
+    <p>{payload:paramaterName: 2766 , parameterName2: 500 ... }</p>
+    <p>&nbsp;</p>
+    <h2><strong>Example for input</strong></h2>
+    <p>Input example with selection from list:</p>
+    <p>{InputKey : 800}</p>
+    <p>&nbsp;</p>
+    <p>or in case the parameter is an array</p>
+    <p>{InputKey : [300, 400, 500]}</p>
+    <p>&nbsp;</p>
+    <p>Input example with selection from list:</p>
+    <p>{InputKey: ParameterName: 100 , ParameterName2: 200 ...}</p>
 </script>
