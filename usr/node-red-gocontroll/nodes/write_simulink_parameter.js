@@ -34,7 +34,7 @@ module.exports = function(RED) {
         var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
         if (!parseResult.stdout.includes("succesfully")){
             node.status({fill:"red", shape:"dot", text:"An error occured parsing GOcontroll_Linux.a2l"});
-            exit(-1);
+            return;
         }
 
         intervalCheck = setInterval(check_model,2000);
@@ -50,7 +50,7 @@ module.exports = function(RED) {
                 } catch(err) {
                     node.warn("Error reading parameters.json");
                     node.status({fill:"red", shape:"dot", text:"Unable to read from parameters.json"});
-                    exit(-1);
+                    return;
                 }
                 localParameters = JSON.parse(ParameterFile);
 
@@ -64,7 +64,7 @@ module.exports = function(RED) {
                         asap_parameter = localParameters[parameterName].asap_parameter;
                     } catch {
                         node.status({fill:"red", shape:"dot", text:"The selected signal could not be found in parameters.json"});
-                        exit(-1);
+                        return;
                     }
                 }
 
@@ -115,15 +115,19 @@ module.exports = function(RED) {
             if (simulink) {
                 //list based input
                 if (inputMode == INPUTMODELIST){
+                    if (msg[config.keyIn]===undefined) {
+                        node.error("wrong key received on input, check your configurations.");
+                        return;
+                    }
                     try{
-                        uiojs.process_write(pid, asap_signal, msg[config.keyIn]);
+                        uiojs.process_write(pid, asap_parameter, msg[config.keyIn]);
                     if (outputMode == OUTPUTMODEONCE){
-                            var newVal = uiojs.process_read(pid, asap_signal);
+                            var newVal = uiojs.process_read(pid, asap_parameter);
                             payload[parameterName]=newVal;
                         }
                     } catch(err) {
                         simulink=false;
-                        node.error("failed to read simulink parameter." + err)
+                        node.error("failed to write simulink parameter." + err)
                         return;
                     }
                     msgOut["payload"] = payload;

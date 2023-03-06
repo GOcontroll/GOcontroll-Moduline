@@ -22,14 +22,14 @@ function GOcontrollReadSimulink(config) {
     let pid = "";
     if (!Signals) {
         node.warn("No signals were selected, exiting")
-        exit(-1)
+        return
     }
     node.status({fill:"yellow",shape:"dot",text:"Initializing node..."})
 
     var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
     if (!parseResult.stdout.includes("succesfully")){
         node.status({fill:"red", shape:"dot", text:"An error occured parsing GOcontroll_Linux.a2l"});
-        exit(-1);
+        return;
     }
 
     intervalCheck = setInterval(check_model,2000);
@@ -46,7 +46,7 @@ function GOcontrollReadSimulink(config) {
             } catch(err) {
                 node.warn("Error reading signals.json");
                 node.status({fill:"red", shape:"dot", text:"Unable to read from signals.json"});
-                exit(-1);
+                return;
             }
             var localSignals = JSON.parse(SignalFile);
             for (const sig in Signals) {
@@ -56,7 +56,7 @@ function GOcontrollReadSimulink(config) {
                     asap_signals.push(new uiojs.asap_element(Signal.address, Signal.type, Signal.size));
                 } else {
                     node.status({fill:"red", shape:"dot", text:"The selected signal could not be found in signals.json"});
-                    exit(-1);
+                    return;
                 }
             }
             pid = parseInt(pid);
