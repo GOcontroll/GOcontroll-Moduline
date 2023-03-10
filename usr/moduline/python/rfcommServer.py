@@ -1230,7 +1230,7 @@ def when_client_disconnects():
 s = BluetoothServer(data_received, True, "hci0", 1, None, False, when_client_connects, when_client_disconnects)
 global address
 address = 20 #address of the led driver on the i2c bus
-ser = serial.Serial(port='/dev/ttymxc1', 
-	baudrate=115200) #serial port for communicating with the modem
+if fe.WWAN_SETTINGS:
+	ser = serial.Serial(port='/dev/ttymxc1', baudrate=115200) #serial port for communicating with the modem
 
 pause()
