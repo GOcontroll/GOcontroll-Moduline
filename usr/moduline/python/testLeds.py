@@ -4,6 +4,10 @@ from smbus2 import SMBus
 
 from time import sleep
 
+def initLeds():
+    bus.write_i2c_block_data(address,23,[255])
+    bus.write_i2c_block_data(address,0,[64])
+
 def clearLeds():
     bus.write_i2c_block_data(address,ledBaseAddress,[0]*12)
 
@@ -38,6 +42,8 @@ ledCount = 12
 with SMBus(2) as bus:
     # get the old state
     oldLedstates = bus.read_i2c_block_data(address, ledBaseAddress, ledCount)
+    # init leds
+    initLeds()
     # clear all the leds
     clearLeds()
     # turn on the red leds

@@ -122,7 +122,7 @@ if [[ $(tr -d '\0' < ~/.bashrc) != *"go-parse-a2l"* ]]; then
 	echo "alias go-parse-a2l=\"python3 /usr/moduline/python/parse_a2l.py\"" >> ~/.bashrc
 fi
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-leds"* ]]; then
-	echo "alias go-test-leds=\"/usr/moduline/python/testLeds.py\"" >> ~/.bashrc
+	echo "alias go-test-leds=\"python3 /usr/moduline/python/testLeds.py\"" >> ~/.bashrc
 fi
 
 
