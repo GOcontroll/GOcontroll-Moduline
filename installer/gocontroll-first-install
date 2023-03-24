@@ -138,7 +138,7 @@ mkdir /usr/mem-sim
 
 echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
-modpobe brcmfmac
+modprobe brcmfmac
 
 echo -e "${YELLOW}-Set up UIO interrupts if available ${NORMAL}"
 modprobe uio_pdrv_genirq of_id="go-interrupt,generic-uio,ui_pdrv"
