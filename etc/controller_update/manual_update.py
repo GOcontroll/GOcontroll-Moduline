@@ -84,6 +84,8 @@ if (check_connection(0.5)):
                         zip_url = release.zipball_url
                         update_controller_local(zip_url)
                         exit(0)
+            else:
+                print("No new Stable build found, your controller is up-to-date!")
         except:
             print("Controller was not able to access github and/or find the right release.")
             exit()
