@@ -75,7 +75,7 @@ try {
     });
     channel0.start();
     thread_can0 = true;
-}catch(ex) { 
+}catch(ex) {
     error_log += "CAN not found:0\n";
     thread_can0 = false;
     test_failed(0)
@@ -112,7 +112,7 @@ if(canBusCount >= 4) {
         });
         channel2.start();
         thread_can2 = true;
-    }catch(ex) { 
+    }catch(ex) {
         error_log += "CAN not found:2\n";
         thread_can2 = false;
         test_failed(2)
@@ -126,7 +126,7 @@ if(canBusCount >= 4) {
             channel3.addListener("onMessage", channel3.send, channel3);
             channel3.start();
         }
-    }catch(ex) { 
+    }catch(ex) {
         error_log += "CAN not found:3\n";
         thread_can2 = false;
         test_failed(3);
@@ -183,8 +183,11 @@ function test_failed(number) {
     if (finished_tests>= canBusCount) {
         console.log("FAIL: some can bus(ses) did not pass the test.")
         console.log(error_log);
-        setTimeout(end_test, 5000, -2);
-        //process.exit(-2);
+        if (i2c_bus_state){
+            setTimeout(end_test, 5000, 0);
+        } else {
+            process.exit(-2);
+        }
     }
 }
 
@@ -195,13 +198,19 @@ function test_succeeded(number) {
         if (failed_tests > 0) {
             console.log("FAIL: some can bus(ses) did not pass the test.")
             console.log(error_log);
-            setTimeout(end_test, 5000, -1);
-            //process.exit(-1);
+            if (i2c_bus_state){
+                setTimeout(end_test, 5000, 0);
+            } else {
+                process.exit(-1);
+            }
         }
         console.log("PASS: All canbusses are functioning")
         console.log(error_log);
-        setTimeout(end_test, 5000, 0);
-        //process.exit(0);
+        if (i2c_bus_state){
+            setTimeout(end_test, 5000, 0);
+        } else {
+            process.exit(0);
+        }
     }
 }
 
@@ -236,9 +245,9 @@ function set_led(num, colour){
 
     	/* Create dataholder for I2C object */
 	var i2c1;
-	
+
 	var	sendBuffer = Buffer.alloc(10);
-	
+
 	var ADDRESS = 0x14;
 
     /* Open specific I2C port */
@@ -249,7 +258,7 @@ function set_led(num, colour){
     {
     sendBuffer[0] = ledRed;
     sendBuffer[1] = 127;
-    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);    
+    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
     sendBuffer[0] = ledBlue;
     sendBuffer[1] = 0;
     i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
@@ -257,7 +266,7 @@ function set_led(num, colour){
     sendBuffer[1] = 0;
     i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
     }
-    
+
     if (colour=="green")
     {
     sendBuffer[0] = ledGreen;
@@ -268,7 +277,7 @@ function set_led(num, colour){
     i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
     sendBuffer[0] = ledRed;
     sendBuffer[1] = 0;
-    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer); 
+    i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
     }
 
     if (colour == "blue")
@@ -296,26 +305,26 @@ function set_led(num, colour){
     sendBuffer[1] = 0;
     i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
     }
-    
-    /* Close the I2C port */	
+
+    /* Close the I2C port */
     i2c1.closeSync();
 }
 
 function led_init() {
     var i2c1;
-	
+
 	var	sendBuffer = Buffer.alloc(10);
-	
+
 	var ADDRESS = 0x14;
 
     /* Open specific I2C port */
 	i2c1 = i2c.openSync(2);
-	
+
 	/* First, reset the device */
 	sendBuffer[0] = 0x17;
 	sendBuffer[1] = 0xFF;
 	i2c1.i2cWriteSync(ADDRESS, 2, sendBuffer);
-	
+
 	/* Second, enable the device (Chip_EN)*/
 	sendBuffer[0] = 0x00;
 	sendBuffer[1] = 0x40;

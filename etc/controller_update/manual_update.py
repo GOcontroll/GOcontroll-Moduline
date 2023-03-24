@@ -16,7 +16,7 @@ def check_connection(timeout=1):
 		print(f"second test {stdout.stdout}")
 		return bool(stdout.stdout)
 	return bool(stdout.stdout)
-			
+
 def install_update():
     with zipfile.ZipFile("/tmp/temporary.zip", "r") as zip_ref:
         zip_ref.extractall("/tmp")
@@ -27,7 +27,7 @@ def install_update():
     print("Update finished.")
     install_script = glob.glob("/tmp/GOcontroll-*/etc/controller_update/controller_update.sh")
     subprocess.run(["bash", install_script[0]])
-    
+
 
 #update the controller through its own network connection
 def update_controller_local(zip_url):
@@ -71,11 +71,11 @@ if (check_connection(0.5)):
             token = file.readline()
         if token[-1] == "\n":
             token = token[:-1]
-    
+
         try:
             g = Github(token)
             r = g.get_repo("GOcontroll/GOcontroll-Moduline")
-            
+
             releases = r.get_releases()
             for release in releases:
                 latest_release = release.tag_name[1:]
@@ -83,10 +83,11 @@ if (check_connection(0.5)):
                     if version.parse(latest_release) > version.parse(current_release):
                         zip_url = release.zipball_url
                         update_controller_local(zip_url)
+                        exit(0)
         except:
             print("Controller was not able to access github and/or find the right release.")
             exit()
-    else: 
+    else:
         update_controller_local("https://github.com/GOcontroll/GOcontroll-Moduline/archive/refs/heads/master.zip")
 else:
     print("Controller has no internet access.")

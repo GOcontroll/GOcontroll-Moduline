@@ -13,7 +13,7 @@ var ledBlue 	= 0x0D;
 
 /* Create dataholder for I2C object */
 var i2c1;
-	
+
 var	sendBuffer = Buffer.alloc(10);
 
 var ADDRESS = 0x14;
@@ -36,7 +36,7 @@ try {
     /* Close the I2C port */
     i2c1.closeSync();
 } catch(err) {
-    i2c_present = false
+    process.exit(-1);
 }
 
 if (i2c_present){

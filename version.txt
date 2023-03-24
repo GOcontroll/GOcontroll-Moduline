@@ -1,6 +1,19 @@
-V1.11.34
+V1.11.35
 
 ########
+24-3-2023 V1.11.35
+removed exit() calls from read and write simulink nodes
+write parameter now no longer writes undefined to memory if an incorrect key is received, in the list input mode.
+rfcommServer.py: initialising the serial bus that is normally the celular modem breaks the bluetooth server on the moduline screen because ttymxc1 is the bluetooth adapter on this controller.
+testLeds.py: added chip initialisation sequence and added it to rootfs.
+controller_update.sh: no longer overwrites go-bluetooth-start.sh and rfcommServerConfig.py, now can do controller specific actions.
+manual_update.py: no longer goes down the complete list to end up only updating one version.
+gocontroll-first-install: wifi was made into a kernel module, install script now deploys this module.
+flash-led.js: now exits if no leds are present on the controller.
+testcan.js: now exits immediately after the test is done if no leds are present on the controller.
+added the go-rollback-update alias for /etc/controller_update/controller_update_rollback.py
+controller_update_rollback.py: added safety check for the user to reaffirm their decision.
+
 3-3-2023 V1.11.34
 added go-test-leds
 improvements to install script

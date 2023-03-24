@@ -115,6 +115,9 @@ fi
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-manual-update"* ]]; then
 	echo "alias go-manual-update=\"python3 /etc/controller_update/manual_update.py\"" >> ~/.bashrc
 fi
+if [[ $(tr -d '\0' < ~/.bashrc) != *"go-update-rollback"* ]]; then
+	echo "alias go-update-rollback=\"python3 /etc/controller_update/controller_update_rollback.py\"" >> ~/.bashrc
+fi
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-can"* ]]; then
 	echo "alias go-test-can=\"node /usr/moduline/nodejs/testcan.js\"" >> ~/.bashrc
 fi
@@ -135,6 +138,7 @@ mkdir /usr/mem-sim
 
 echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
+modpobe brcmfmac
 
 echo -e "${YELLOW}-Set up UIO interrupts if available ${NORMAL}"
 modprobe uio_pdrv_genirq of_id="go-interrupt,generic-uio,ui_pdrv"
@@ -216,3 +220,5 @@ rm -r /root/GOcontroll
 
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
 echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"
+
+qrencode -t ansiutf8 < /sys/class/net/eth0/address

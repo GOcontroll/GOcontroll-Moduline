@@ -24,7 +24,7 @@ run(["systemctl", "stop", "go-simulink"])
 run(["systemctl", "stop", "nodered"])
 
 #gather the current controller module configuration
-run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])	
+run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])
 
 #get the configuration from the resulting file
 with open("/usr/module-firmware/modules.txt", "r") as modules:
