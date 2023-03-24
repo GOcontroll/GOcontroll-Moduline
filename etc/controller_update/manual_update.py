@@ -24,7 +24,7 @@ def install_update():
         os.remove("/tmp/temporary.zip")
     except:
         print("file was not yet created")
-    print("Update finished.")
+    print("Update finished downloading.")
     install_script = glob.glob("/tmp/GOcontroll-*/etc/controller_update/controller_update.sh")
     subprocess.run(["bash", install_script[0]])
 

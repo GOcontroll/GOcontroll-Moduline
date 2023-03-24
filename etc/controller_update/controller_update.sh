@@ -44,7 +44,7 @@ case $hw in
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 esac
 
-echo 'files moved registered backup'
+echo 'files moved and registered backup for rollback'
 
 chmod 555 /usr/moduline/bash/go-simulink.sh
 chmod 555 /usr/moduline/bash/go-wwan-start.sh
