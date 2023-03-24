@@ -86,6 +86,7 @@ if (check_connection(0.5)):
                         exit(0)
             else:
                 print("No new Stable build found, your controller is up-to-date!")
+                print(f"Current release: {current_release}")
         except:
             print("Controller was not able to access github and/or find the right release.")
             exit()
