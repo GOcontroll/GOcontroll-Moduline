@@ -205,6 +205,7 @@ case $hw in
 	*Screen*)
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen $mod" > /etc/machine-info
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
+		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py
 esac
 
 

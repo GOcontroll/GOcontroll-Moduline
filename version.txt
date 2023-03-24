@@ -1,6 +1,9 @@
-V1.11.35
+V1.11.36
 
 ########
+24-3-2023 V1.11.36
+first-install and controller_update now make sure WWAN_SETTINGS=False in rfcommServerConfig.py
+
 24-3-2023 V1.11.35
 removed exit() calls from read and write simulink nodes
 write parameter now no longer writes undefined to memory if an incorrect key is received, in the list input mode.

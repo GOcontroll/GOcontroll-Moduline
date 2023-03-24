@@ -42,6 +42,7 @@ case $hw in
 		;;
 	*Screen*)
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
+		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py
 esac
 
 echo 'files moved and registered backup for rollback'
