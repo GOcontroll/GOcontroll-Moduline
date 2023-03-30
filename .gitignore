@@ -1,1 +1,3 @@
-/usr/node-red-gocontroll
+/usr/node-red-gocontroll/node_modules
+/usr/moduline/nodejs/node_modules
+package-lock.json

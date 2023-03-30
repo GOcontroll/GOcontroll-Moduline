@@ -47,13 +47,13 @@ def update_controller_local(zip_url):
 #execution starts here
 
 #get update mode
-input = input("give update type, development or stable:\n")
+input = input("give update type, development or stable: ")
 if input in "stable":
     mode = "s"
 elif input in "development":
     mode = "d"
 else:
-    print("invalid mode enterent, terminating...")
+    print("invalid mode entered, terminating...")
     exit()
 
 
