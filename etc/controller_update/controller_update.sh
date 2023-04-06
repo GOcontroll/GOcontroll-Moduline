@@ -88,6 +88,8 @@ if [[ $(tr -d '\0' < ~/.bashrc) != *"go-update-rollback"* ]]; then
 	echo "alias go-update-rollback=\"python3 /etc/controller_update/controller_update_rollback.py\"" >> ~/.bashrc
 fi
 
+nmcli con mod GO-celular connection.autoconnect-retries 0
+
 cd /usr/node-red-gocontroll/
 npm list | grep uiojs || npm install uiojs --no-shrinkwrap
 

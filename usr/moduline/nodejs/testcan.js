@@ -179,7 +179,7 @@ function SendCan_DataOut(){
 
 function test_failed(number) {
     set_led(number, "red")
-    finished_tests ++;
+    failed_tests ++;
     if (finished_tests>= canBusCount) {
         console.log("FAIL: some can bus(ses) did not pass the test.")
         console.log(error_log);
@@ -205,7 +205,6 @@ function test_succeeded(number) {
             }
         }
         console.log("PASS: All canbusses are functioning")
-        console.log(error_log);
         if (i2c_bus_state){
             setTimeout(end_test, 5000, 0);
         } else {

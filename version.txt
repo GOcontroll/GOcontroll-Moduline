@@ -1,7 +1,12 @@
-V1.11.36
+V1.11.37
 
 ########
-24-3-2023 V1.11.36
+6-4-2023 V1.11.37 Release 0.4.16
+kl15_monitor now no longer overflows a buffer at high voltages causing it to shut down above 25.5V~
+testcan.js fixed a typo
+first-install fixed the apt update location and fixed the wwan connection with connection.autoconnect-retries 0
+
+24-3-2023 V1.11.36 Release 0.4.15
 first-install and controller_update now make sure WWAN_SETTINGS=False in rfcommServerConfig.py
 
 24-3-2023 V1.11.35

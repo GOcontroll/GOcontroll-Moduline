@@ -22,17 +22,9 @@ mkdir GOcontroll
 
 cd GOcontroll
 
-if ! [ -x "$(command -v git)" ]; then
-echo -e "${YELLOW}-Git is not yet installed so let's install first ${NORMAL}"
-apt -y install git
-fi
-
-echo -e "${YELLOW}-Update debian sources ${NORMAL}"
-apt update -y > /dev/null
-
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
 # git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
-curl -L -k https://github.com/GOcontroll/GOcontroll-Moduline/tarball/$1 -o repo.tgz
+curl -L -k -s https://github.com/GOcontroll/GOcontroll-Moduline/tarball/$1 -o repo.tgz
 tar -xf repo.tgz
 rm repo.tgz
 
@@ -128,7 +120,8 @@ if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-leds"* ]]; then
 	echo "alias go-test-leds=\"python3 /usr/moduline/python/testLeds.py\"" >> ~/.bashrc
 fi
 
-
+echo -e "${YELLOW}-Update debian sources ${NORMAL}"
+apt update -y > /dev/null
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf
@@ -182,7 +175,7 @@ nmcli con add type wifi con-name "GOcontroll-AP" ifname wlan0 ssid GOcontroll-AP
 
 if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
 then
-	nmcli con add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000
+	nmcli con add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000 connection.autoconnect-retries 0
 fi
 
 echo -e "${YELLOW}-Gathering module configuration and updating outdated modules ${NORMAL}"
@@ -206,6 +199,7 @@ case $hw in
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen $mod" > /etc/machine-info
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py
+		nmcli con delete GO-celular
 esac
 
 
