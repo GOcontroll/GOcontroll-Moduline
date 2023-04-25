@@ -1,0 +1,31 @@
+10,18d9
+< # The primary network interface
+< #allow-hotplug eth0
+< #iface eth0 inet dhcp
+< 
+< #allow-hotplug wlan0
+< #iface wlan0 inet static manual
+< #address 192.168.19.85
+< #netmask 255.255.255.0
+< 
+32,50d22
+< 
+< auto can2
+< iface can2 inet manual
+< pre-up /sbin/ip link set $IFACE type can bitrate 250000 triple-sampling on loopback off #can2
+< pre-up /sbin/ip link set $IFACE txqueuelen 20
+< #	up /sbin/ifconfig $IFACE up
+< #    down /sbin/ifconfig $IFACE down
+< 	
+< auto can3
+< iface can3 inet manual
+< pre-up /sbin/ip link set $IFACE type can bitrate 250000 triple-sampling on loopback off #can3
+< pre-up /sbin/ip link set $IFACE txqueuelen 20
+< #	up /sbin/ifconfig $IFACE up
+< #    down /sbin/ifconfig $IFACE down
+< 
+< # auto wwan0
+< # iface wwan0 inet manual
+< #	 pre-up qmi-network-raw /dev/cdc-wdm0 start
+< #     post-down /usr/local/bin/qmi-network-raw /dev/cdc-wdm0 stop
+\ No newline at end of file

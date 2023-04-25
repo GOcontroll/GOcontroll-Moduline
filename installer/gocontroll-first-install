@@ -68,17 +68,6 @@ cp -avr /root/GOcontroll/GOcontroll*/usr / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/version.txt / > /dev/null
 
-if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then
-
-echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
-patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll*/patch/bridge_module_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll*/patch/output_module_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll*/patch/input_module_reset_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll*/patch/input_module_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll*/patch/can_receive_html.patch > /dev/null
-patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll*/patch/can_send_html.patch > /dev/null
-fi
-
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 555 /usr/moduline/bash/go-simulink.sh
 chmod 555 /usr/moduline/bash/go-wwan-start.sh
@@ -194,12 +183,21 @@ case $hw in
 	*Mini*)
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline Mini $mod" > /etc/machine-info
 		sed -i "s/controllerType/1/g" /lib/systemd/system/go-auto-shutdown.service
+		echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
+		patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll*/patch/bridge_module_html.patch > /dev/null
+		patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll*/patch/output_module_html.patch > /dev/null
+		patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll*/patch/input_module_reset_html.patch > /dev/null
+		patch /usr/node-red-gocontroll/nodes/input_module.html ~/GOcontroll/GOcontroll*/patch/input_module_html.patch > /dev/null
+		patch /usr/node-red-gocontroll/nodes/can_receive.html ~/GOcontroll/GOcontroll*/patch/can_receive_html.patch > /dev/null
+		patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll*/patch/can_send_html.patch > /dev/null
+		patch /etc/network/interfaces ~/GOcontroll/GOcontroll*/patch/interfaces.patch > /dev/null
 		;;
 	*Screen*)
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen $mod" > /etc/machine-info
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py
 		nmcli con delete GO-celular
+		patch /etc/network/interfaces ~/GOcontroll/GOcontroll*/patch/interfaces.patch > /dev/null
 esac
 
 

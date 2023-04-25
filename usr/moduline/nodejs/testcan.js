@@ -180,6 +180,7 @@ function SendCan_DataOut(){
 function test_failed(number) {
     set_led(number, "red")
     failed_tests ++;
+    finished_tests ++;
     if (finished_tests>= canBusCount) {
         console.log("FAIL: some can bus(ses) did not pass the test.")
         console.log(error_log);

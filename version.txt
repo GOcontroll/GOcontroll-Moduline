@@ -1,6 +1,10 @@
-V1.11.37
+V1.11.38
 
 ########
+25-4-2023 V1.11.38
+added a patch to the interfaces file to clean up the networking daemon error on the mini/screen
+fixed a bug where testcan.js would get stuck if a faulty can bus was detected
+
 6-4-2023 V1.11.37 Release 0.4.16
 kl15_monitor now no longer overflows a buffer at high voltages causing it to shut down above 25.5V~
 testcan.js fixed a typo
