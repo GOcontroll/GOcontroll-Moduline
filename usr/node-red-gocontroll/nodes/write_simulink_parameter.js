@@ -139,7 +139,7 @@ module.exports = function(RED) {
                     //for all keys in the incoming message
                     for (const inputParameter in msg[inputKey]) {
                         try {
-                            console.log("trying to find " + inputParameter);
+                            //console.log("trying to find " + inputParameter);
                             //try to read the asap_parameter linked to that key
                             uiojs.process_write(pid, localParameters[inputParameter]["asap_parameter"], msg[inputKey][inputParameter]);
                             if (outputMode == OUTPUTMODEONCE) {

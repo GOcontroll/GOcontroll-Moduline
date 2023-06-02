@@ -1,6 +1,11 @@
-V1.11.38
+V1.11.39
 
 ########
+2-6-2023 V1.11.39
+removed leftover debug print from write_simulink_parameter.js
+CAN busses now reset when they go down for some reason
+starting the go-simulink now also resets node-red to force a reload of the parsed a2l file
+
 25-4-2023 V1.11.38
 added a patch to the interfaces file to clean up the networking daemon error on the mini/screen
 fixed a bug where testcan.js would get stuck if a faulty can bus was detected
