@@ -1,6 +1,11 @@
-V1.11.39
+V1.12.39
 
 ########
+24-6-2023 V1.12.39
+Added 4-20 mA input module to identify script
+Added 4-20 mA input module firmware v0.0.1 to module firmware folder
+
+
 2-6-2023 V1.11.39
 removed leftover debug print from write_simulink_parameter.js
 CAN busses now reset when they go down for some reason

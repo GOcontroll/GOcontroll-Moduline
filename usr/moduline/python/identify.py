@@ -87,6 +87,8 @@ if mode=="-v":
             toAppend.append("6 channel input")
         elif "20-10-2" in module:
             toAppend.append("10 channel input")
+        elif "20-10-3" in module:
+            toAppend.append("4 - 20mA input")
         elif "20-20-1" in module:
             toAppend.append("2 channel power bridge")
         elif "20-20-2" in module:
@@ -110,6 +112,8 @@ else:
             toAppend.append("6 channel input")
         elif "20-10-2" in module:
             toAppend.append("10 channel input")
+        elif "20-10-3" in module:
+            toAppend.append("4 - 20mA input")
         elif "20-20-1" in module:
             toAppend.append("2 channel power bridge")
         elif "20-20-2" in module:
