@@ -1,6 +1,3 @@
-from xmlrpc.client import SERVER_ERROR
-
-
 VERIFY_DEVICE = 0
 UPDATE_CONTROLLER = 1
 FILE_TRANSFER = 2

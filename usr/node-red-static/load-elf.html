@@ -65,7 +65,7 @@ img {
 
 <script>
 function getFileData(myFile){
-   var file = myFile.files[0]; 
+   var file = myFile.files[0];
     document.getElementById("text").innerHTML = file.name;
     document.getElementById("uploadForm").action = 'http://'+ document.location.hostname + ':8001/upload';
    return true;
@@ -76,16 +76,16 @@ function getFileData(myFile){
 </head>
 <body>
 
-<img src="GOcontroll.png" </img>
+<img src="GOcontroll.png">
 
     <form
-      id="uploadForm" 
-      action="" 
-      method="POST" 
+      id="uploadForm"
+      action=""
+      method="POST"
       encType="multipart/form-data">
         <input id = "file" type="file" name="elfFile" onchange="getFileData(this);"/>
-		<p id = "text">Drag and drop you Simulink .elf file here</p>
+		<p id = "text">Drag and drop your Simulink .elf file here</p>
         <button type="submit">Upload</button>
-    </form>     
+    </form>
   </body>
 </html>

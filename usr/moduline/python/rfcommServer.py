@@ -20,6 +20,7 @@ import glob
 from packaging import version
 import signal
 import traceback
+import json
 
 #calculates the sha1 checksum of a file
 def sha1(fname):
@@ -43,12 +44,12 @@ def get_line(path, search_term):
 def check_connection(timeout=1):
 	stdout = subprocess.run(["timeout", "-k", str(timeout), str(timeout), "ping", "google.com"], stdout=subprocess.PIPE, text=True)
 	if not bool(stdout.stdout):
-		print(f"google was not reached{stdout.stdout}")
+		# print(f"google was not reached{stdout.stdout}")
 		stdout = subprocess.run(["timeout", "-k", str(timeout), str(timeout), "ping", "github.com"], stdout=subprocess.PIPE, text=True)
-		print(f"second test {stdout.stdout}")
+		# print(f"second test {stdout.stdout}")
 		return bool(stdout.stdout)
 	return bool(stdout.stdout)
-	
+
 
 #thread that makes a led fade in and out in the colour blue
 def status_led_on():
@@ -85,7 +86,7 @@ def status_led_gocontroll():
 				bus.write_i2c_block_data(address, 0x0B, [0])
 				bus.write_i2c_block_data(address, 0x0C, [0])
 		except:
-			print("unable to send i2c message")
+			# print("unable to send i2c message")
 			break
 		time.sleep(0.5)
 		if(kill_threads_shutdown):
@@ -126,7 +127,7 @@ def verify_device(commandnmbr, arg):
 		else:
 			request_verification(commands.DEVICE_VERIFICATION_INCORRECT_PASSKEY)
 
-	
+
 	elif (level1 == commands.DEVICE_VERIFICATION_EXCHANGE_KEY):
 		try:
 			with open("/etc/bluetooth/trusted_devices.txt", "r") as trusted_devices:
@@ -139,7 +140,7 @@ def verify_device(commandnmbr, arg):
 			subprocess.run(["python3", "/usr/moduline/python/btKeyGen.py"])
 			request_verification(commands.DEVICE_VERIFICATION_MISSING)
 
-			
+
 #part of the verification structure but is called from multiple places
 def request_verification(char):
 	send(chr(commands.VERIFY_DEVICE)+chr(char))
@@ -190,7 +191,7 @@ def update_controller(commandnmbr, arg):
 		else:
 			send(chr(commandnmbr) + chr(commands.CONTROLLER_INTERNET_ACCESS_FALSE) + current_release)
 
-			
+
 	#update the controller through its own network connection
 	elif (level1==commands.UPDATE_CONTROLLER_LOCAL):
 		try:
@@ -212,24 +213,26 @@ def update_controller(commandnmbr, arg):
 
 	#transferred file did not clear the checksum test or file transfer was cancelled
 	elif (level1 == commands.UPDATE_FILE_CORRUPTED):
-		print("file was corrupted")
+		# print("file was corrupted")
 		try:
 			os.remove("/tmp/temporary.zip")
 		except:
-			print("file was not yet created")
+			# print("file was not yet created")
+			pass
 
-			
+
 def install_update():
 	with zipfile.ZipFile("/tmp/temporary.zip", "r") as zip_ref:
 		zip_ref.extractall("/tmp")
 	try:
 		os.remove("/tmp/temporary.zip")
 	except:
-		print("file was not yet created")
+		# print("file was not yet created")
+		pass
 	install_script = glob.glob("/tmp/GOcontroll-GOcontroll*/etc/controller_update/controller_update.sh")
 	subprocess.run(["bash", install_script[0]])
-	
-	
+
+
 
 ###########################################################################################
 
@@ -376,7 +379,7 @@ def ethernet_settings(commandnmbr, arg):
 
 
 ##########################################################################################
- 
+
 #wireless settings
 
 def wireless_settings(commandnmbr, arg):
@@ -405,7 +408,7 @@ def wireless_settings(commandnmbr, arg):
 			ip = "no IP available"
 		send(chr(commands.WIRELESS_SETTINGS) + chr(commands.INIT_WIRELESS_SETTINGS) + status + ":" + connection_status + ":" + ip)
 		return
-	
+
 
 	#get the list of networks available to the controller
 	elif level1 == commands.GET_WIFI_NETWORKS:
@@ -435,13 +438,12 @@ def wireless_settings(commandnmbr, arg):
 			i -=1
 		networks.sort(reverse=True)
 		networks = "\n".join(networks)
-		
+
 		send(chr(commandnmbr) + chr(commands.GET_WIFI_NETWORKS) + networks)
 		return
 
 
 	#show devices connected to the access point
-	#TODO implement
 	elif level1 == commands.GET_CONNECTED_DEVICES:
 		final_device_list = []
 		stdout = subprocess.run(["ip", "n", "show", "dev", "wlan0"], stdout=subprocess.PIPE, text=True)
@@ -657,8 +659,8 @@ def controller_programs(commandnmbr, arg):
 			status = stdout.stdout[:-1]
 			statusses.append(status)
 		send(chr(commandnmbr)+chr(commands.INIT_CONTROLLER_PROGRAMS) + ":".join(statusses))
-	
-	
+
+
 	#apply change to a service
 	elif level1 == commands.SET_CONTROLLER_PROGRAMS:
 		data = arg.split(":")
@@ -675,7 +677,7 @@ def controller_programs(commandnmbr, arg):
 			send(chr(commandnmbr) + chr(commands.SET_CONTROLLER_PROGRAMS) + "1::")
 			return
 		send(chr(commandnmbr) + chr(commands.SET_CONTROLLER_PROGRAMS) + "0:Message received was incorrect.:" + service)
-		
+
 
 ##########################################################################################
 
@@ -728,12 +730,15 @@ def wwan_settings(commandnmbr, arg):
 					for i, info in enumerate(mmcli_info):
 						mmcli_info[i] = info.split(":")[1][1:]
 				except subprocess.CalledProcessError:
-					print("unable to get information from modemmanager")
-			at_result = sim_at_command("AT+CICCID\r", timeout=2)
-			if at_result == "Error":
-				at_result = "Unable to get SIM number"
-			else:
-				sim_number = [at_result.split(" ")[1].split("\r")[0]]
+					# print("unable to get information from modemmanager")
+					pass
+			sim_command_res = subprocess.run(["mmcli", "-i", "0", "-J"], stdout=subprocess.PIPE, text=True).stdout
+			if "error" not in sim_command_res:
+				try:
+					# print(sim_command_res)
+					sim_number = [json.loads(sim_command_res)["sim"]["properties"]["iccid"]]
+				except:
+					pass
 		status_array = net_status+status+mmcli_info+pin+apn+sim_number
 		send(chr(commandnmbr) + chr(commands.INIT_WWAN_SETTINGS) + ":".join(status_array))
 
@@ -741,16 +746,16 @@ def wwan_settings(commandnmbr, arg):
 	elif level1 == commands.SWITCH_WWAN:
 		arg = arg.split(":")
 		if arg[0] == "false":
-			print("stopping go-wwan")
+			# print("stopping go-wwan")
 			subprocess.run(["systemctl", "stop", "go-wwan"])
 			subprocess.run(["systemctl", "disable", "go-wwan"])
 		else:
 			if arg[1] == "false":
-				print("starting go-wwan")
+				# print("starting go-wwan")
 				subprocess.run(["systemctl", "enable", "go-wwan"])
 				subprocess.run(["systemctl", "start", "go-wwan"])
 			else: #service failed so needs to restart instead of start
-				print("restarting go-wwan")
+				# print("restarting go-wwan")
 				subprocess.run(["systemctl", "restart", "go-wwan"])
 		send(chr(commandnmbr) + chr(commands.SWITCH_WWAN))
 
@@ -767,64 +772,6 @@ def wwan_settings(commandnmbr, arg):
 			subprocess.run(["nmcli", "con", "up", "GO-celular"])
 		send(chr(commandnmbr) + chr(commands.SET_WWAN_SETTINGS))
 
-#to read information from the modem a serial connection is used
-#this function sends the command to the modem and starts a listener for the response
-def sim_at_command(command, timeout=1):
-	# print(f"starting the serial read process at {time.time() - message_received_timestamp} seconds after receiving the message.")
-	recv_end, send_end = multiprocessing.Pipe(False)
-	ts = Process(target=read_serial_CICCID, args=(send_end, timeout))
-	ts.start()
-	time.sleep(0.1)
-	ser.write(bytes(command, "utf-8"))
-	ts.join()
-	if ts.is_alive():
-		ts.terminate()
-		return "Error"
-	else:
-		result = recv_end.recv()
-		return result
-	
-#seperate process that listens for the response from the modem
-def read_serial_CICCID(send_end, timeout):
-	# process_start = time.time()
-	# print(f"serial read proces started at {process_start - message_received_timestamp} seconds after receiving the message")
-	global CICCID_watchdog
-	tf = threading.Thread(target=read_serial_CICCID_watchdog, args=(timeout, os.getpid(), send_end))
-	tf.start()
-	while True:
-		CICCID_watchdog = 0
-		try:
-			response = ser.readline().decode("utf-8")
-			if "+ICCID:" in response:
-				# print(f"serial read process ending at {time.time() - message_received_timestamp} seconds after receiving the message.\ntotal time elapsed by the serial read process: {(time.time() - process_start)}")
-				final_response = response
-				send_end.send(final_response)
-				break
-			if "ERR" in response:
-				# print(f"serial read process ending at {time.time() - message_received_timestamp} seconds after receiving the message.\ntotal time elapsed by the serial read process: {(time.time() - process_start)}")
-				send_end.send("Error")
-				break
-		except UnicodeDecodeError:
-			# print(f"serial read process ending at {time.time() - message_received_timestamp} seconds after receiving the message.\ntotal time elapsed by the serial read process: {(time.time() - process_start)}")
-			send_end.send("Error")
-			break
-
-#monitor the read serial process to make sure it doesn't get stuck
-def read_serial_CICCID_watchdog(timeout, pid, send_end):
-	# thread_start = time.time()
-	# print(f"watchdog thread started {thread_start - message_received_timestamp} seconds after receiving the message.")
-	global CICCID_watchdog
-	CICCID_watchdog = 0
-	while CICCID_watchdog < timeout:
-		CICCID_watchdog += 0.2
-		time.sleep(0.2)
-	# print(f"watchdog thread timer ran out, total time elapsed: {(time.time() - thread_start)}")
-	try:
-		send_end.send("Error")
-		os.kill(pid, signal.SIGTERM)
-	except:
-		print("process was already terminated")
-
 ##########################################################################################
 
 #manage can settings
@@ -839,7 +786,7 @@ def can_settings(commandnmbr, arg):
 	#initialize the screen for the user
 	if level1 == commands.INIT_CAN_SETTINGS:
 		read_can_bus_load = False
-		print("Gathering can info")
+		# print("Gathering can info")
 		path = "/etc/network/interfaces"
 		can_ifs_string = ""
 		ip_a_info = subprocess.run(["ip", "-br", "a"], stdout=subprocess.PIPE, text=True)
@@ -859,7 +806,7 @@ def can_settings(commandnmbr, arg):
 		can_ifs_string = can_ifs_string[:-1]
 		send(chr(commandnmbr) + chr(commands.INIT_CAN_SETTINGS)+can_ifs_string)
 
-	
+
 	#change the baudrate of a specified bus
 	elif level1 ==commands.SET_CAN_BAUDRATE:
 		#arg= "interface:baudrate(int):state(up or down)"
@@ -905,12 +852,12 @@ def can_settings(commandnmbr, arg):
 		else:
 			subprocess.run(["ifdown", arg[0]])
 		send(chr(commandnmbr) + chr(commands.SET_CAN_STATE))
-			
+
 #seperate thread to monitor the bus load
 def bus_load_thread(interfaces):
 	if len(interfaces) >1:
 		interfaces = interfaces.split(":")
-	busload = subprocess.Popen(["canbusload"]+interfaces, stdout=subprocess.PIPE, text=True)		
+	busload = subprocess.Popen(["canbusload"]+interfaces, stdout=subprocess.PIPE, text=True)
 	while True:
 		output = busload.stdout.readline()
 		if busload.poll() is not None or read_can_bus_load == False or kill_threads == True:
@@ -949,7 +896,7 @@ def controller_configuration(commandnmbr, arg):
 			with open("/usr/module-firmware/modules.txt", "r") as modules:
 				info = modules.readline()
 		except FileNotFoundError:
-			send(chr(commandnmbr) + chr(level1) + "-\n") 
+			send(chr(commandnmbr) + chr(level1) + "-\n")
 			return
 		modules = info.split("\n")[0].split(":")
 		firmwares = []
@@ -980,14 +927,14 @@ def controller_configuration(commandnmbr, arg):
 		nodered_status = nodered_status.stdout
 		subprocess.run(["systemctl", "stop", "go-simulink"])
 		subprocess.run(["systemctl", "stop", "nodered"])
-		subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])	
+		subprocess.run(["node", "/usr/moduline/nodejs/module-info-gathering.js"])
 		if not "in" in simulink_status:
 			subprocess.run(["systemctl", "start", "go-simulink"])
 		if not "in" in nodered_status:
 			subprocess.run(["systemctl", "start", "nodered"])
 		send(chr(commandnmbr) + chr(level1) + "done")
 
-		
+
 ##########################################################################################
 
 #module settings
@@ -1011,7 +958,7 @@ def module_settings(commandnmbr, arg):
 			available_firmwares[i] = ".".join(firmware)
 		available_firmwares = list(dict.fromkeys(available_firmwares))
 		send(chr(commandnmbr) + chr(level1) + ":".join(available_firmwares) + ":" + current_firmware)
-		
+
 
 	if level1 == commands.SET_NEW_FIRMWARE:
 		simulink_status = subprocess.run(["systemctl", "is-active", "go-simulink"], stdout=subprocess.PIPE, text=True)
@@ -1056,7 +1003,7 @@ def upload_firmware(args):
 	new_firmware = args[1]
 	stdout = subprocess.run(["node", "/usr/moduline/nodejs/upload-new-module-firmware.js", str(slot), new_firmware], stdout=subprocess.PIPE, text=True)
 	return [slot, stdout.stdout]
-		
+
 ##########################################################################################
 
 #request enabled features by the app
@@ -1080,7 +1027,7 @@ def request_enabled_features(commandnmbr, arg):
 		# 	update_controller(commands.UPDATE_CONTROLLER, chr(commands.CHECK_FOR_UPDATE))
 		# elif not trust_device:
 		# 	request_verification(commands.DEVICE_VERIFICATION_MISSING)
-		
+
 ##########################################################################################
 
 #reboot the controller
@@ -1152,7 +1099,7 @@ def command_list(byte, string):
 ##########################################################################################
 #bluetooth rfcomm server setup
 ##########################################################################################
-		
+
 
 #slightly expanded s.send function so not every command has to convert the string to bytes
 def send(string):
@@ -1160,10 +1107,10 @@ def send(string):
 	print("out:")
 	print(bytes(string, 'utf-8'))
 	message_out_timestamp = time.time()
-	try:
-		print(f"message out {message_out_timestamp}, total elapsed time: {message_out_timestamp - message_received_timestamp} seconds")
-	except NameError:
-		print("first message, no timer available")
+	# try:
+	# 	print(f"message out {message_out_timestamp}, total elapsed time: {message_out_timestamp - message_received_timestamp} seconds")
+	# except NameError:
+	# 	print("first message, no timer available")
 	s.send(bytes(string, 'utf-8'))
 
 #function that gets called when the controller receives a message
@@ -1171,7 +1118,7 @@ def data_received(data):
 	try:
 		global message_received_timestamp
 		message_received_timestamp = time.time()
-		print(f"message received {message_received_timestamp}")
+		# print(f"message received {message_received_timestamp}")
 		global trust_device
 		global transfer_mode
 		first_byte = data[0]
@@ -1207,7 +1154,8 @@ def when_client_connects():
 			tf = threading.Thread(target=status_led_gocontroll)
 			tf.start()
 	except:
-		print("unable to send i2c message")
+		# print("unable to send i2c message")
+		pass
 	global trust_device
 	global transfer_mode
 	transfer_mode = "command"
@@ -1230,7 +1178,5 @@ def when_client_disconnects():
 s = BluetoothServer(data_received, True, "hci0", 1, None, False, when_client_connects, when_client_disconnects)
 global address
 address = 20 #address of the led driver on the i2c bus
-if fe.WWAN_SETTINGS:
-	ser = serial.Serial(port='/dev/ttymxc1', baudrate=115200) #serial port for communicating with the modem
 
 pause()

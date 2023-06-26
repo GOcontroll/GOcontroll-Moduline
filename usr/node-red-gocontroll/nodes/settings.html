@@ -13,8 +13,8 @@
             return this.name||"Settings";
         },
 	});
-	
-	
+
+
 </script>
 
 <script type="text/x-red" data-template-name="Settings">
@@ -23,29 +23,35 @@
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name" style="width:350px">
     </div>
-	
+
 <fieldset>
-<legend>Simulink model options</legend> 
+<legend>Simulink model options</legend>
 
 	<div class="form-row">
 		<label for="node-input-simulink"><i class="fa fa-compress"></i> Model</label>
 	<!--	<button onclick="location.href='load-simulink.html','_blank'" type="button" style="width:350px"> -->
-	<button onclick="window.open('load-elf.html')"  type="button" style="width:350px"> 
+	<button onclick="window.open('load-elf.html')"  type="button" style="width:350px">
          Upload Simulink .elf file</button>
-	</div>	 
+	</div>
+
+	<div class="form-row">
+		<label for="node-input-a2l"><i class="fa fa-compress"></i> Memory map</label>
+	<button onclick="window.open('load-a2l.html')"  type="button" style="width:350px">
+         Upload Simulink .a2l file</button>
+	</div>
 
 </fieldset>
 
 
 <fieldset>
-<legend>VPN connection settings</legend> 
+<legend>VPN connection settings</legend>
 
 	<div class="form-row">
 		<label for="node-input-ovpn"><i class="fa fa-compress"></i> VPN</label>
 	<!--	<button onclick="location.href='load-simulink.html','_blank'" type="button" style="width:350px"> -->
-	<button onclick="window.open('load-ovpn.html')"  type="button" style="width:350px"> 
+	<button onclick="window.open('load-ovpn.html')"  type="button" style="width:350px">
          Upload VPN .ovpn file</button>
-	</div>	 
+	</div>
 
 	<div class="form-row">
 		<label for="node-input-ovpnstart"><i class="fa fa-play"></i> Start</label>
@@ -65,7 +71,8 @@
 <p>NOTE: It is recommended to disable the node once all settings are set properly. Otherwise, the node will set all the properties each boot. This will decrease the boottime.</p>
 <p>&nbsp;</p>
 <h2>Simulink model upload:</h2>
-<p>Compiled Simulink models can be uploaded within the Node-RED environment. Simply click the upload button and drag and drop your .elf file into the opload window.&nbsp;</p>
+<p>Compiled Simulink models can be uploaded within the Node-RED environment. Simply click the upload button and drag and drop your .elf file into the upload window.&nbsp;</p>
+<p>To use the read simulink signal and write simulink paramater blocks the matching a2l file also needs to be uploaded, this is done in the same way as uploading the model.&nbsp;</p>
 <p>NOTE: To automate the startup of simulink models, please use the CLI. For example <systemctl enable go-simulink> will enable automatic start when startup</p>
 <p>&nbsp;</p>
 <h2>VPN connection settings:</h2>

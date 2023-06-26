@@ -1,6 +1,14 @@
-V1.12.39
+V1.13.0
 
 ########
+26-6-2023 V1.13.0
+Added libiio.so.0 for future simulink builds
+Reworked go-wwan-guard to go-connectivity-guard
+Reworked the wwan_settings part of the bluetooth server to use mmcli instead of manually working with the serial interface
+Improved the nodered settings block
+Set up dnsmasq.conf for dhcp on ethernet
+go-simulink no longer restarts nodered, the upload server now does
+
 24-6-2023 V1.12.39
 Added 4-20 mA input module to identify script
 Added 4-20 mA input module firmware v0.0.1 to module firmware folder

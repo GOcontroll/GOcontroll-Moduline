@@ -1,11 +1,11 @@
 
 [Unit]
-Description=WWAN guard service
+Description=Connectivity guard service
 After=network.target
 
 
 [Service]
-ExecStart= node /usr/moduline/nodejs/wwan-guard.js &
+ExecStart= node /usr/moduline/nodejs/connectivity-guard.js &
 Type=simple
 RemainAfterExit=yes
 

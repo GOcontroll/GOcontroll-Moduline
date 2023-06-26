@@ -74,17 +74,17 @@ function getFileData(myFile){
 </script>
 
 </head>
-<body>
+  <body>
 
-<img src="GOcontroll.png" >
+    <img src="GOcontroll.png">
 
     <form
       id="uploadForm"
       action=""
       method="POST"
       encType="multipart/form-data">
-        <input id = "file" type="file" name="ovpnFile" onchange="getFileData(this);"/>
-		<p id = "text">Drag and drop your VPN .ovpn file here</p>
+        <input id = "file" type="file" name="a2lFile" onchange="getFileData(this);"/>
+		<p id = "text">Drag and drop your Simulink .a2l file here</p>
         <button type="submit">Upload</button>
     </form>
   </body>
