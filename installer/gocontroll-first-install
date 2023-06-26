@@ -79,6 +79,7 @@ chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
 chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
 chmod 555 /usr/moduline/python/testLeds.py
+chmod 555 /usr/moduline/nodejs/connectivity-guard.js
 
 echo -e "${YELLOW}-Set up aliasses for go-scripts ${NORMAL}"
 if [[ $(tr -d '\0' < ~/.bashrc) != *"go-reset-ap"* ]]; then
