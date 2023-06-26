@@ -1,7 +1,7 @@
 V1.13.0
 
 ########
-26-6-2023 V1.13.0
+26-6-2023 V1.13.0 Release 0.5.0
 Added libiio.so.0 for future simulink builds
 Reworked go-wwan-guard to go-connectivity-guard
 Reworked the wwan_settings part of the bluetooth server to use mmcli instead of manually working with the serial interface
@@ -17,7 +17,7 @@ Added 4-20 mA input module firmware v0.0.1 to module firmware folder
 2-6-2023 V1.11.39
 removed leftover debug print from write_simulink_parameter.js
 CAN busses now reset when they go down for some reason
-starting the go-simulink now also resets node-red to force a reload of the parsed a2l file
+starting go-simulink now also resets node-red to force a reload of the parsed a2l file
 
 25-4-2023 V1.11.38
 added a patch to the interfaces file to clean up the networking daemon error on the mini/screen
