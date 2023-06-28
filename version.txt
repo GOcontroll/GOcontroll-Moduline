@@ -1,6 +1,9 @@
-V1.13.0
+V1.13.1
 
 ########
+28-6-2023 V1.13.1
+Small change to current sense value. Value is now communicated as uA. (higher resolution)
+
 26-6-2023 V1.13.0 Release 0.5.0
 Added libiio.so.0 for future simulink builds
 Reworked go-wwan-guard to go-connectivity-guard
