@@ -1,6 +1,10 @@
 V1.13.1
 
 ########
+28-6-2023 V1.13.2
+Fixed kl15_monitor to use dynamic library aswell
+parse_a2l now also parses the header of the file, this contains the required info to check whether the a2l matches the current model
+
 28-6-2023 V1.13.1
 Small change to current sense value. Value is now communicated as uA. (higher resolution)
 
