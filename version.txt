@@ -1,6 +1,9 @@
-V1.13.1
+V1.14.2
 
 ########
+4-7-2023 V1.14.2
+Added 4-20 mA input module hw v2 firmware v0.0.1 to module firmware folder
+
 28-6-2023 V1.13.2
 Fixed kl15_monitor to use dynamic library aswell
 parse_a2l now also parses the header of the file, this contains the required info to check whether the a2l matches the current model
