@@ -27,6 +27,8 @@ module.exports = function(RED) {
 			
 			}
 		});
+
+		node.status({fill:"yellow",shape:"dot",text:"Waiting for satelite"})
 		
 		GpsModule_SwitchOnModulePower();
 		
@@ -189,27 +191,57 @@ module.exports = function(RED) {
 
 			if(gpsData[0] != null)
 			{
-			latitude = parseInt(gpsData[0].slice(0, 2))
-			latitude +=(parseFloat(gpsData[0].slice(2,(gpsData[0].length)-1)))/60;
+				latitude = parseInt(gpsData[0].slice(0, 2))
+				latitude +=(parseFloat(gpsData[0].slice(2,(gpsData[0].length)-1)))/60;
+				if (isNaN(latitude)) {
+					dataString = "";
+					return;
+				}
+			}
+
+			if(gpsData[1] != null)
+			{
+				if (gpsData[1] == "S") {
+					latitude = -latitude;
+				}
 			}
 
 			if(gpsData[2] != null)
 			{
-			longitude = parseInt(gpsData[2].slice(0, 3))
-			longitude +=(parseFloat(gpsData[2].slice(3, (gpsData[2].length)-1)))/60;
+				longitude = parseInt(gpsData[2].slice(0, 3))
+				longitude +=(parseFloat(gpsData[2].slice(3, (gpsData[2].length)-1)))/60;
+				if (isNaN(longitude)) {
+					dataString = "";
+					return;
+				}
+			}
+
+			if(gpsData[3] != null)
+			{
+				if (gpsData[3] == "W") {
+					longitude = -longitude;
+				}
 			}
 
 			if(gpsData[6] != null)
 			{
-			altitude = parseFloat(gpsData[6]);
+				altitude = parseFloat(gpsData[6]);
+				if (isNaN(altitude)) {
+					dataString = "";
+					return;
+				}
 			}
 
 			if(gpsData[7] != null)
 			{
-			speed = parseFloat(gpsData[7])*1.852;
+				speed = parseFloat(gpsData[7])*1.852;
+				if (isNaN(speed)) {
+					dataString = "";
+					return;
+				}
 			}
 			
-			
+			node.status({fill:"green",shape:"dot",text:"Connected to gps"});
 			
 			msgOut["latitude"] = latitude;
 			msgOut["longitude"] = longitude;
