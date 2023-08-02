@@ -152,16 +152,18 @@ child = exec('systemctl is-active nodered', function(error, stdout, stderr){
         shell.exec('systemctl stop nodered');
         shell.exec('systemctl stop go-simulink');
 
-        SendDummyByte();;
-
-        if(nodered) {
-            shell.exec('systemctl start nodered');
-        }
-        if(simulink) {
-            shell.exec('systemctl start go-simulink');
-        }
+        SendDummyByte();
     })
 })
+
+function RestartServices() {
+    if(nodered) {
+        shell.exec('systemctl start nodered');
+    }
+    if(simulink) {
+        shell.exec('systemctl start go-simulink');
+    }
+}
 
 function SendDummyByte(){
     /*Send dummy message to setup the SPI bus properly */
@@ -240,6 +242,7 @@ function Module_CheckFirmwareVersion(){
             } else if (!ArrayEquals(oldSwVersion, swVersion)) {
                 console.log("firmware update successfull")
                 Module_CancelFirmwareUpload();
+                RestartServices();
             } else {
                 console.log("error: invalid update detected")
                 Module_CancelFirmwareUpload();
