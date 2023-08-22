@@ -1,7 +1,12 @@
-V1.14.2
+V1.15.0
 
 ########
-4-7-2023 V1.14.2
+16-8-2023 V1.15.0 Release 0.6.0
+Added the ability to turn off wifi to rfcommServer and the app
+Fixed the restarting of services in upload-new-module-firmware
+nodered gps node now only returns values when there is a valid connection
+
+4-7-2023 V1.14.0
 Added 4-20 mA input module hw v2 firmware v0.0.1 to module firmware folder
 
 28-6-2023 V1.13.2

@@ -1,3 +1,3 @@
-0.5.0
-repo ver V1.13.0
+0.6.0
+repo ver V1.15.0
 for changelog see version.txt or the github page for the release.
