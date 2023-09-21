@@ -10,6 +10,7 @@
             data: {value:""},
             inputMode: {value:"0"},
             outputMode: {value:"0"},
+            xcpIdCheck: {value:"0"},
         },
         inputs:1,
         outputs:1,
@@ -52,7 +53,7 @@
                     var keyin = $('#node-input-keyIn').typedInput({type:'str', types: ["str"]})
                     keyin.typedInput('value', node.keyIn);
                 })
-                .catch((err) => {console.error('Fetch problem: ' + err.message);
+                .catch((err) => {node.error('Fetch problem: ' + err.message);
                 node.status({fill:"red", shape:"dot", text:"An error occured fetching parameters.json"});
                 });
 
@@ -127,6 +128,10 @@
         <input type="text" id="node-input-keyIn">
     </div>
 
+    <div class="form-row" style="display: flex;justify-content: center;align-content: center;">
+        <label for="node-input-xcpIdCheck" style="width: auto;display: block;"> Validate the XCP ID of the Simulink model</label>
+        <input type="checkbox" id="node-input-xcpIdCheck" name="xcpIdCheck" value="false" style="width: auto;display: block;margin: auto;" autocomplete="off">
+    </div>
 
 <div id="read-simulink-settings"></div>
 </script>

@@ -93,7 +93,7 @@ with open(a2lLoc, "r") as a2l:
                 continue
 
             #get arraysize
-            elif "NUMBER" in line:
+            elif "NUMBER" in line or "ARRAY_SIZE" in line:
                 size = int(line.split(" ")[-1][:-1])
                 continue
 

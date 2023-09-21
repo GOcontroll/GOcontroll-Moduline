@@ -6,6 +6,7 @@
             name: {value:""},
             sampleTime: {value:"1000"},
             signals:{value:""},
+            xcpIdCheck: {value:"0"},
         },
         inputs:0,
         outputs:1,
@@ -39,7 +40,7 @@
 
             })
             .catch((err) => {
-                console.error('Fetch problem: ' + err.message);
+                node.error('Fetch problem: ' + err.message);
                 node.status({fill:"red", shape:"dot", text:"An error occured fetching signals.json"});
             });
         },
@@ -71,6 +72,11 @@
     <div class="form-row">
         <label for="node-input-signals"><i class="icon-tag"></i> Signals</label>
         <input type="text" id="node-input-signals"></select>
+    </div>
+
+    <div class="form-row" style="display: flex;justify-content: center;align-content: center;">
+        <label for="node-input-xcpIdCheck" style="width: auto;display: block;"> Validate the XCP ID of the Simulink model</label>
+        <input type="checkbox" id="node-input-xcpIdCheck" name="xcpIdCheck" value="false" style="width: auto;display: block;margin: auto;" autocomplete="off">
     </div>
 </script>
 

@@ -123,9 +123,6 @@ echo -e "${YELLOW}-Deploy kernel modules ${NORMAL}"
 depmod
 modprobe brcmfmac
 
-echo -e "${YELLOW}-Set up UIO interrupts if available ${NORMAL}"
-modprobe uio_pdrv_genirq of_id="go-interrupt,generic-uio,ui_pdrv"
-
 echo -e "${YELLOW}-Activate Services for wifi ${NORMAL}"
 service dnsmasq start
 

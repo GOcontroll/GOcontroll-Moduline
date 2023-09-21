@@ -1,6 +1,16 @@
-V1.15.0
+V1.15.1
 
 ########
+21-9-2023 V1.15.1
+Removed UIO module init from install
+Fixed the go-reset-ap script so it keeps its old ssid
+Significantly improved the speed of the upload-new-module-firmware.js script
+Identify no longer runs go-scan-modules but uses the stored information
+Fixed a bit of array parsing in parse_a2l.py
+Fixed the write_memory.js node to fs.writeFileSync
+Added an opt in option to check the xcp station id in the read_simulink_signal.js and write_simulink_parameter.js nodes
+this check only works in blockset version 2.25.0+
+
 16-8-2023 V1.15.0 Release 0.6.0
 Added the ability to turn off wifi to rfcommServer and the app
 Fixed the restarting of services in upload-new-module-firmware
@@ -27,7 +37,6 @@ go-simulink no longer restarts nodered, the upload server now does
 24-6-2023 V1.12.39
 Added 4-20 mA input module to identify script
 Added 4-20 mA input module firmware v0.0.1 to module firmware folder
-
 
 2-6-2023 V1.11.39
 removed leftover debug print from write_simulink_parameter.js

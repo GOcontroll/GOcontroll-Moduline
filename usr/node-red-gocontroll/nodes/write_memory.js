@@ -53,7 +53,7 @@ module.exports = function(RED) {
 			
 			for(var prop in msg) {
 				if (msg.hasOwnProperty(prop)) {							
-					fs.writeFile(path+prop, String(parseFloat(msg[prop]).toFixed(decimal)), (err) => {
+					fs.writeFileSync(path+prop, String(parseFloat(msg[prop]).toFixed(decimal)), (err) => {
 						if (err) throw err;
 
 						});
@@ -64,14 +64,14 @@ module.exports = function(RED) {
 		/* If key is provided, use the specific key to send data */
 		else if(msg[key] != NaN && inputType === "object")
 		{
-			fs.writeFile(path+key, String(parseFloat(msg[key]).toFixed(decimal)), (err) => {
+			fs.writeFileSync(path+key, String(parseFloat(msg[key]).toFixed(decimal)), (err) => {
 			if (err) throw err;
 			//console.log('The file has been saved!');
 			});
 		}
 		else if (msg.payload != NaN)
 		{
-			fs.writeFile(path+key, String(parseFloat(msg.payload).toFixed(decimal)), (err) => {
+			fs.writeFileSync(path+key, String(parseFloat(msg.payload).toFixed(decimal)), (err) => {
 			if (err) throw err;
 			//console.log('The file has been saved!');
 			});

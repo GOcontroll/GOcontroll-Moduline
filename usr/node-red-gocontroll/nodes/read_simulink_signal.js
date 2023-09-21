@@ -1,3 +1,5 @@
+const { asap_element } = require("uiojs");
+
 module.exports = function(RED) {
 "use strict"
 
@@ -12,24 +14,24 @@ function GOcontrollReadSimulink(config) {
     import("uiojs").then(uiojs=>{
 
     let simulink = false;
-    let res, Signal, SignalFile;
+    let header;
     var asap_signals = [];
     var intervalRead,intervalCheck = null;
     const sampleTime = config.sampleTime;
-    const Signals = config.signals.split(",")
+    const Signals = config.signals.split(",");
+    const xcpIdCheck = config.xcpIdCheck;   //true == validate xcp station id, false == dont
     var msgOut={};
     var payload={};
     let pid = "";
     if (!Signals) {
-        node.warn("No signals were selected, exiting")
+        node.status({fill:"red",shape:"dot",text:"No signals were selected, exiting"})
         return
     }
     node.status({fill:"yellow",shape:"dot",text:"Initializing node..."})
 
-    var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
-    if (!parseResult.stdout.includes("succesfully")){
+    if (!parseA2L()) {
         node.status({fill:"red", shape:"dot", text:"An error occured parsing GOcontroll_Linux.a2l"});
-        return;
+        return
     }
 
     intervalCheck = setInterval(check_model,2000);
@@ -40,26 +42,34 @@ function GOcontrollReadSimulink(config) {
         var pidof = shell.exec("pidof -s GOcontroll_Linux.elf");
         pid = pidof.stdout.split("\n")[0];
         if (!pidof.code){
-            try{
-                //check if the address or size of the signal has changed due to a recompilation of the model
-                SignalFile = fs.readFileSync("/usr/simulink/signals.json");
-            } catch(err) {
-                node.warn("Error reading signals.json");
-                node.status({fill:"red", shape:"dot", text:"Unable to read from signals.json"});
+            pid = parseInt(pid);
+            if (xcpIdCheck){
+                header = getHeader();
+                if (header) {
+                    if (!checkXCPidentifierMatch(pid, header)){
+                        node.status({fill:"red", shape:"dot", text:"The XCP ID in the parsed a2l file does not match that of the running model!"})
+                        return;
+                    }
+                }
+            }
+
+            var localSignals = getSignals();
+            if (!localSignals){
+                clearInterval(intervalCheck);
                 return;
             }
-            var localSignals = JSON.parse(SignalFile);
+
             for (const sig in Signals) {
                 //get the desired signal from the list of signals
-                Signal = findValueByPrefix(localSignals, Signals[sig]);
-                if (Signal){
-                    asap_signals.push(new uiojs.asap_element(Signal.address, Signal.type, Signal.size));
+                var signal = findValueByPrefix(localSignals, Signals[sig]);
+                if (signal){
+                    asap_signals.push(new uiojs.asap_element(signal.address, signal.type, signal.size));
                 } else {
-                    node.status({fill:"red", shape:"dot", text:"The selected signal could not be found in signals.json"});
+                    node.status({fill:"red", shape:"dot", text:Signals[sig] + " could not be found the list of available signals."});
+                    node.error(Signals[sig] + " could not be found the list of available signals.")
                     return;
                 }
             }
-            pid = parseInt(pid);
             simulink = true;
             intervalRead = setInterval(readSignal, parseInt(sampleTime));
             clearInterval(intervalCheck);
@@ -75,7 +85,7 @@ function GOcontrollReadSimulink(config) {
         if (simulink == true){
             try{
                 for (const asap_signal in asap_signals){
-                    res = uiojs.process_read(pid, asap_signals[asap_signal]);
+                    var res = uiojs.process_read(pid, asap_signals[asap_signal]);
                     payload[Signals[asap_signal]] = res;
                 }
                 payload["TimeStamp"] = Date.now()
@@ -101,6 +111,55 @@ function GOcontrollReadSimulink(config) {
             }
         }
         return false;
+    }
+
+    function getHeader() {
+        try{
+            //check if the address or size of the signal has changed due to a recompilation of the model
+            var headerFile = fs.readFileSync("/usr/simulink/header.json");
+            return JSON.parse(headerFile)
+        } catch(err) {
+            node.error("Error reading header.json.\nUpgrade your blockset to gain access to this new safety feature");
+            return false
+        }
+    }
+
+    function getSignals() {
+        try{
+            //check if the address or size of the signal has changed due to a recompilation of the model
+            var signalFile = fs.readFileSync("/usr/simulink/signals.json");
+        } catch(err) {
+            if (parseA2L()){
+                return getParams();
+            } else {
+                node.status({fill:"red", shape:"dot", text:"An error occured parsing GOcontroll_Linux.a2l"});
+                return false;
+            }
+        }
+        return JSON.parse(signalFile);
+    }
+
+    function checkXCPidentifierMatch (pid, header) {
+        try {
+            var xcpIdentifier = String.fromCharCode.apply(null, uiojs.process_read(pid, new uiojs.asap_element(header.address, header.type, header.size)))
+        } catch (err) {
+            node.error(err);
+            return false
+        }
+        if (xcpIdentifier!=header.value){
+            node.error("cached xcp identifier did not match the proces's xcp identifier, trying to reparse the a2l file\nProcess: " + xcpIdentifier + "\nCache: " + header.value);
+            shell.exec("python3 /usr/moduline/python/parse_a2l.py");
+            return false
+        }
+        return true;
+    }
+
+    function parseA2L() {
+        var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
+        if (!parseResult.stdout.includes("succesfully")){
+            return false;
+        }
+        return true;
     }
 
     node.on('close', function(done) {

@@ -1,3 +1,5 @@
+const { asap_element } = require("uiojs");
+
 module.exports = function(RED) {
     "use strict"
 
@@ -18,8 +20,8 @@ module.exports = function(RED) {
         import("uiojs").then(uiojs=>{
 
         let simulink = false;
-        let res, parameter, ParameterFile, asap_parameter;
-        var asap_parameters = {};
+        let res, asap_parameter;
+        var header;
         var intervalRead,intervalCheck = null;
         var localParameters;
         const sampleTime = config.sampleTime;
@@ -27,14 +29,14 @@ module.exports = function(RED) {
         const parameterName = config.parameter;
         const inputMode = config.inputMode;     //true == predetermined key, false == use key(s) from input
         const outputMode = config.outputMode;   //0 == never output, 1 == output once on input, 2 == output on interval
+        const xcpIdCheck = config.xcpIdCheck;   //true == validate xcp station id, false == dont
         var msgOut={};
         let pid = "";
         node.status({fill:"yellow",shape:"dot",text:"Initializing node..."})
 
-        var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
-        if (!parseResult.stdout.includes("succesfully")){
+        if (!parseA2L()) {
             node.status({fill:"red", shape:"dot", text:"An error occured parsing GOcontroll_Linux.a2l"});
-            return;
+            return
         }
 
         intervalCheck = setInterval(check_model,2000);
@@ -44,15 +46,22 @@ module.exports = function(RED) {
             var pidof = shell.exec("pidof -s GOcontroll_Linux.elf");
             pid = pidof.stdout.split("\n")[0];
             if (!pidof.code){
-                try{
-                    //check if the address or size of the signal has changed due to a recompilation of the model
-                    ParameterFile = fs.readFileSync("/usr/simulink/parameters.json");
-                } catch(err) {
-                    node.warn("Error reading parameters.json");
-                    node.status({fill:"red", shape:"dot", text:"Unable to read from parameters.json"});
+                pid = parseInt(pid);
+                if (xcpIdCheck){
+                    header = getHeader();
+                    if (header) {
+                        if (!checkXCPidentifierMatch(pid, header)){
+                            node.status({fill:"red", shape:"dot", text:"The XCP ID in the parsed a2l file does not match that of the running model!"})
+                            return;
+                        }
+                    }
+                }
+
+                localParameters = getParams();
+                if (!localParameters){
+                    clearInterval(intervalCheck);
                     return;
                 }
-                localParameters = JSON.parse(ParameterFile);
 
                 for (const localParameter in localParameters) {
                     localParameters[localParameter]["asap_parameter"] = new uiojs.asap_element(localParameters[localParameter]["address"], localParameters[localParameter]["type"], localParameters[localParameter]["size"]);
@@ -67,9 +76,8 @@ module.exports = function(RED) {
                         return;
                     }
                 }
-
-                pid = parseInt(pid);
                 simulink = true;
+                console.log("simulink model started")
                 if (outputMode == OUTPUTMODEINTERVAL) {
                     intervalRead = setInterval(readSignal, parseInt(sampleTime));
                     clearInterval(intervalCheck);
@@ -77,8 +85,10 @@ module.exports = function(RED) {
                 // console.log("simulink model started")
                 if (inputMode == true){
                     node.status({fill:"green",shape:"dot",text:"Writing/reading " + parameterName});
+                    clearInterval(intervalCheck);
                 } else {
                     node.status({fill:"green",shape:"dot",text:"Active model found, node ready."});
+                    clearInterval(intervalCheck);
                 }
             } else {
                 simulink = false;
@@ -112,30 +122,37 @@ module.exports = function(RED) {
 
         node.on("input", function(msg){
             var payload = {};
+            if (header) {
+                if (!checkXCPidentifierMatch(pid, header)) {
+                    simulink = false
+                }
+            }
             if (simulink) {
                 //list based input
                 if (inputMode == INPUTMODELIST){
-                    if (msg[config.keyIn]===undefined) {
-                        node.error("wrong key received on input, check your configurations.");
+                    if (msg[inputKey]===undefined) {
+                        node.error("wrong key received on input, check your configurations.\nReceived: " + JSON.stringify(msg) + "\nExpected key: " + inputKey);
                         return;
                     }
                     try{
-                        uiojs.process_write(pid, asap_parameter, msg[config.keyIn]);
+                        uiojs.process_write(pid, asap_parameter, msg[inputKey]);
                     if (outputMode == OUTPUTMODEONCE){
                             var newVal = uiojs.process_read(pid, asap_parameter);
                             payload[parameterName]=newVal;
+                            msgOut["payload"] = payload;
+                            node.send(msgOut);
                         }
+
                     } catch(err) {
                         simulink=false;
                         node.error("failed to write simulink parameter." + err)
                         return;
                     }
-                    msgOut["payload"] = payload;
-                    node.send(msgOut);
+
 
                 //message based input
                 } else {
-                    console.log("message based input on key " + inputKey);
+                    // console.log("message based input on key " + inputKey);
                     //for all keys in the incoming message
                     for (const inputParameter in msg[inputKey]) {
                         try {
@@ -146,8 +163,8 @@ module.exports = function(RED) {
                                 payload[inputParameter] = uiojs.process_read(pid, localParameters[inputParameter]["asap_parameter"]);
                             }
                         } catch (err) {
-                            simulink=false;
-                            node.error("failed to write simulink parameter." + err)
+                            // simulink=false;
+                            node.error("failed to write simulink parameter.\nPossibly the key" + inputParameter + " is not in the list of available parameters.\n" + err)
                             return;
                         }
                     }
@@ -156,8 +173,59 @@ module.exports = function(RED) {
                 }
             } else {
                 node.error("No simulink model running right now, unable to write the parameter(s).")
+                intervalCheck = setInterval(check_model,2000);
             }
         });
+
+        function getHeader() {
+            try{
+                //check if the address or size of the signal has changed due to a recompilation of the model
+                var headerFile = fs.readFileSync("/usr/simulink/header.json");
+                return JSON.parse(headerFile)
+            } catch(err) {
+                node.error("Error reading header.json.\nUpgrade your blockset to gain access to this new safety feature");
+                return false
+            }
+        }
+
+        function getParams() {
+            try{
+                //check if the address or size of the signal has changed due to a recompilation of the model
+                var parameterFile = fs.readFileSync("/usr/simulink/parameters.json");
+            } catch(err) {
+                if (parseA2L()){
+                    return getParams();
+                } else {
+                    node.status({fill:"red", shape:"dot", text:"An error occured parsing GOcontroll_Linux.a2l"});
+                    return false;
+                }
+            }
+            return JSON.parse(parameterFile);
+        }
+
+        function checkXCPidentifierMatch (pid, header) {
+            try {
+                var xcpIdentifier = String.fromCharCode.apply(null, uiojs.process_read(pid, new uiojs.asap_element(header.address, header.type, header.size)))
+            } catch (err) {
+                node.error(err);
+                return false
+            }
+            if (xcpIdentifier!=header.value){
+                node.error("cached xcp identifier did not match the proces's xcp identifier, trying to reparse the a2l file\nProcess: " + xcpIdentifier + "\nCache: " + header.value);
+                shell.exec("python3 /usr/moduline/python/parse_a2l.py");
+                return false
+            }
+            return true;
+        }
+
+        function parseA2L() {
+            var parseResult = shell.exec("python3 /usr/moduline/python/parse_a2l.py")
+            if (!parseResult.stdout.includes("succesfully")){
+                return false;
+            }
+            return true;
+        }
+
         }).catch(err=>{
             node.status({fill:"red",shape:"dot",text:"could not load uiojs, module missing"});
             return;
