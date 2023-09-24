@@ -4,7 +4,7 @@
         color: '#f76d11',
         defaults: {
             name: {value:""},
-			moduleLocation: {value:"0"},
+			moduleSlot: {value:"0"},
 			channel: {value:""},
         },
         inputs:1,
@@ -16,11 +16,11 @@
 			{
             return this.name;
 			}
-			if(this.moduleLocation == "0" || this.channel == "")
+			if(this.moduleSlot == "0" || this.channel == "")
 			{
             return "Choose module location and channel";
 			}
-		return "Reset module " + this.moduleLocation + " channel " + this.channel;
+		return "Reset module " + this.moduleSlot + " channel " + this.channel;
         }
     });
 </script>
@@ -32,8 +32,8 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-moduleLocation"><i class="fa fa-microchip"></i> Module</label>
-        <select id="node-input-moduleLocation" style="width:300px">
+        <label for="node-input-moduleSlot"><i class="fa fa-microchip"></i> Module</label>
+        <select id="node-input-moduleSlot" style="width:300px">
             <option value=1>Module on slot 1</option>
             <option value=2>Module on slot 2</option>
             <option value=3>Module on slot 3</option>

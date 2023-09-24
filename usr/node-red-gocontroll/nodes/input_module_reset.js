@@ -9,26 +9,25 @@ module.exports = function(RED) {
 	function GOcontrollInputModuleReset(config) { 	 
 	   RED.nodes.createNode(this,config);
 	   
-		this.moduleLocation = config.moduleLocation;
-	
-		this.channel = config.channel;
-
-        var node = this;
+	   /* Get information from the Node configuration */
+		const moduleSlot 	= parseInt(config.moduleSlot);
+		const channel 		= config.channel;
+        var node 			= this;
 		
 		var sL, sB;
 		
 		/*Execute initialisation steps */
 		/*Define the SPI port according the chosen module */
-		switch(this.moduleLocation)
+		switch(moduleSlot)
 		{
-			case "1": sL = 1; sB = 0;    break;
-			case "2": sL = 1; sB = 1;    break;
-			case "3": sL = 2; sB = 0;    break;
-			case "4": sL = 2; sB = 1;    break;
-			case "5": sL = 2; sB = 2;    break;
-			case "6": sL = 2; sB = 3;    break;
-			case "7": sL = 0; sB = 0;    break;
-			case "8": sL = 0; sB = 1;    break;
+			case 1: sL = 1; sB = 0;    break;
+			case 2: sL = 1; sB = 1;    break;
+			case 3: sL = 2; sB = 0;    break;
+			case 4: sL = 2; sB = 1;    break;
+			case 5: sL = 2; sB = 2;    break;
+			case 6: sL = 2; sB = 3;    break;
+			case 7: sL = 0; sB = 0;    break;
+			case 8: sL = 0; sB = 1;    break;
 		}
 		
 			/***execution initiated by event *******/
@@ -37,17 +36,20 @@ module.exports = function(RED) {
 			var sendBuffer = Buffer.alloc(MESSAGELENGTH+5); 
 			var	receiveBuffer = Buffer.alloc(MESSAGELENGTH+5);
 		
-			sendBuffer[0] = 1;
+			sendBuffer[0] = moduleSlot;
 			sendBuffer[1] = MESSAGELENGTH-1;
-			sendBuffer[2] = 3;
+			sendBuffer[2] = 1;
+			sendBuffer[3] = 11;
+			sendBuffer[4] = 3;
+			sendBuffer[5] = 2;
 			
 			if(msg["pulscounterValue"] >= -2147483640 && msg["pulscounterValue"] <= 2147483640)
 			{
-			sendBuffer[6] = node.channel;
+			sendBuffer[6] = channel;
 			sendBuffer.writeInt32LE(msg["pulscounterValue"], 7);	
 			}
 			else{
-				node.warn("Reset counter value of module "+ node.moduleLocation+ "channel "+node.channel+" is outside range."); 
+				node.warn("Reset counter value of module "+ String(moduleSlot) + "channel "+ String(channel) +" is outside range."); 
 				return;
 			}
 			

@@ -21,7 +21,7 @@ module.exports = function(RED) {
 		var firmware;
 		
 		
-		const moduleSlot = config.moduleSlot;
+		const moduleSlot = parseInt(config.moduleSlot);
 		const moduleType = config.moduleType; 
 		const sampleTime = config.sampleTime;
 	
@@ -147,14 +147,14 @@ module.exports = function(RED) {
 		/*Define the SPI port according the chosen module */
 		switch(moduleSlot)
 		{
-			case "1": sL = 1; sB = 0;    break;
-			case "2": sL = 1; sB = 1;    break;
-			case "3": sL = 2; sB = 0;    break;
-			case "4": sL = 2; sB = 1;    break;
-			case "5": sL = 2; sB = 2;    break;
-			case "6": sL = 2; sB = 3;    break;
-			case "7": sL = 0; sB = 0;    break;
-			case "8": sL = 0; sB = 1;    break;
+			case 1: sL = 1; sB = 0;    break;
+			case 2: sL = 1; sB = 1;    break;
+			case 3: sL = 2; sB = 0;    break;
+			case 4: sL = 2; sB = 1;    break;
+			case 5: sL = 2; sB = 2;    break;
+			case 6: sL = 2; sB = 3;    break;
+			case 7: sL = 0; sB = 0;    break;
+			case 8: sL = 0; sB = 1;    break;
 		}
 
 		/* Send dummy byte once so the master SPI is initialized properly */
@@ -276,15 +276,15 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		function OutputModule_Initialize(){
 
-		sendBuffer[0] = 1;
+		sendBuffer[0] = moduleSlot;
 		sendBuffer[1] = MESSAGELENGTH-1;
 		
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
-		sendBuffer[2] = 101;
-		sendBuffer[3] = 0;
-		sendBuffer[4] = 0;
-		sendBuffer[5] = 0;
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 22;
+		sendBuffer[4] = 2;
+		sendBuffer[5] = 1;
 			for(var s =0; s <6; s++)
 			{
 			sendBuffer[6+s] = (outputFreq[s]&15)|((outputType[s]&15)<<4);
@@ -334,15 +334,15 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		function OutputModule_Initialize_Second(){
 
-		sendBuffer[0] = 1;
+		sendBuffer[0] = moduleSlot;
 		sendBuffer[1] = MESSAGELENGTH-1;
 		var values
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
-		sendBuffer[2] = 111;
-		sendBuffer[3] = 0;
-		sendBuffer[4] = 0;
-		sendBuffer[5] = 0;
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 22;
+		sendBuffer[4] = 2;
+		sendBuffer[5] = 2;
 		values = 6;
 		/* In case 10 channel output module is selected */
 		}else{
@@ -382,14 +382,14 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		function OutputModule_clearBuffer(){	
 		
-		sendBuffer[0] = 1;
+		sendBuffer[0] = moduleSlot;
 		sendBuffer[1] = MESSAGELENGTH-1;
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
-		sendBuffer[2] = 102;
-		sendBuffer[3] = 0;
-		sendBuffer[4] = 0;
-		sendBuffer[5] = 0;
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 22;
+		sendBuffer[4] = 3;
+		sendBuffer[5] = 1;
 		/* In case 10 channel output module is selected */
 		}else{
 		sendBuffer[2] = 1;
@@ -431,8 +431,11 @@ module.exports = function(RED) {
 					{
 
 						/*In case dat is received that holds module information */
-						if(receiveBuffer.readInt32LE(2) === 103)
-						{
+						if(		receiveBuffer.readUInt8(2) === 2 	&& 
+								receiveBuffer.readUInt8(3) === 22 	&&
+								receiveBuffer.readUInt8(4) === 4 	&&
+								receiveBuffer.readUInt8(5) === 1){
+										
 							msgOut["moduleTemperature"] = receiveBuffer.readInt16LE(6),
 							msgOut["moduleGroundShift"] = receiveBuffer.readUInt16LE(8),
 							msgOut["moduleStatus"] = receiveBuffer.readUInt32LE(22),
@@ -473,15 +476,15 @@ module.exports = function(RED) {
 		****************************************************************************************/
 		node.on('input', function(msg) {
 			
-			sendBuffer[0] = 1;
+			sendBuffer[0] = moduleSlot;
 			sendBuffer[1] = MESSAGELENGTH-1;
 
 			/* In case 6 channel output module is selected */
 			if(moduleType == 1){
-			sendBuffer[2] = 102;
-			sendBuffer[3] = 0;
-			sendBuffer[4] = 0;
-			sendBuffer[5] = 0;
+			sendBuffer[2] = 1;
+			sendBuffer[3] = 22;
+			sendBuffer[4] = 3;
+			sendBuffer[5] = 1;
 			/* In case 10 channel output module is selected */
 			}else{
 			sendBuffer[2] = 1;

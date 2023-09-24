@@ -21,7 +21,7 @@ function GOcontrollInputModule(config) {
 	var firmware;
 	
 	/* Get information from the Node configuration */
-	const moduleSlot 		= config.moduleSlot;
+	const moduleSlot 		= parseInt(config.moduleSlot);
 	const moduleType		= config.moduleType; 
 	const sampleTime 		= config.sampleTime;
 	
@@ -162,14 +162,14 @@ function GOcontrollInputModule(config) {
 	/*Define the SPI port according the chosen module */
 	switch(moduleSlot)
 	{
-	case "1": sL = 1; sB = 0;    break;
-	case "2": sL = 1; sB = 1;    break;
-	case "3": sL = 2; sB = 0;    break;
-	case "4": sL = 2; sB = 1;    break;
-	case "5": sL = 2; sB = 2;    break;
-	case "6": sL = 2; sB = 3;    break;
-	case "7": sL = 0; sB = 0;    break;
-	case "8": sL = 0; sB = 1;    break;
+	case 1: sL = 1; sB = 0;    break;
+	case 2: sL = 1; sB = 1;    break;
+	case 3: sL = 2; sB = 0;    break;
+	case 4: sL = 2; sB = 1;    break;
+	case 5: sL = 2; sB = 2;    break;
+	case 6: sL = 2; sB = 3;    break;
+	case 7: sL = 0; sB = 0;    break;
+	case 8: sL = 0; sB = 1;    break;
 	}
 
 	/* Send dummy byte once so the master SPI is initialized properly */
@@ -320,15 +320,15 @@ function GOcontrollInputModule(config) {
 	function InputModule_Initialize (){
 
 
-		sendBuffer[0] = 1;
+		sendBuffer[0] = moduleSlot;
 		sendBuffer[1] = MESSAGELENGTH-1;
 		
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
 			sendBuffer[2] = 1;
-			sendBuffer[3] = 0;
-			sendBuffer[4] = 0;
-			sendBuffer[5] = 0;
+			sendBuffer[3] = 11;
+			sendBuffer[4] = 2;
+			sendBuffer[5] = 1;
 		
 			for(var messagePointer = 0; messagePointer < 6; messagePointer ++)
 			{
@@ -380,15 +380,15 @@ function GOcontrollInputModule(config) {
 		return;
 		}
 
-	sendBuffer[0] = 1;
+	sendBuffer[0] = moduleSlot;
 	sendBuffer[1] = MESSAGELENGTH-1;
 	
 		/* In case 6 channel output module is selected */
 		if(moduleType == 1){
-		sendBuffer[2] = 2;
-		sendBuffer[3] = 0;
-		sendBuffer[4] = 0;
-		sendBuffer[5] = 0;
+		sendBuffer[2] = 1;
+		sendBuffer[3] = 11;
+		sendBuffer[4] = 3;
+		sendBuffer[5] = 1;
 
 		sendBuffer[MESSAGELENGTH-1] = InputModule_ChecksumCalculator(sendBuffer, MESSAGELENGTH-1);
 
@@ -396,8 +396,11 @@ function GOcontrollInputModule(config) {
 				if(receiveBuffer[MESSAGELENGTH-1] == InputModule_ChecksumCalculator(receiveBuffer, MESSAGELENGTH-1))
 				{
 					/*In case dat is received that holds module information */
-					if(receiveBuffer.readInt32LE(2) == 2)
-					{
+					if(	receiveBuffer.readUInt8(2) === 2 	&& 
+						receiveBuffer.readUInt8(3) === 11 	&&
+						receiveBuffer.readUInt8(4) === 3 	&&
+						receiveBuffer.readUInt8(5) === 1){
+							
 						for(var messagePointer = 0; messagePointer < 6; messagePointer ++)
 						{
 						msgOut[key[messagePointer]] = receiveBuffer.readInt32LE((messagePointer*8)+6)
@@ -408,7 +411,7 @@ function GOcontrollInputModule(config) {
 			});	
 		}
 		else{
-		sendBuffer[2] = 2;
+		sendBuffer[2] = 1;
 		sendBuffer[3] = 12;
 		sendBuffer[4] = 3;
 		sendBuffer[5] = 1;
