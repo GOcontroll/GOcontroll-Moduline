@@ -5,7 +5,9 @@
         defaults: {
             name: {value:""},
 			moduleSlot: {value:"0"},
-			channel: {value:""},
+			moduleType:{value:1},
+			channel6: {value:""},
+			channel10: {value:""},
         },
         inputs:1,
         outputs:0,
@@ -20,8 +22,31 @@
 			{
             return "Choose module location and channel";
 			}
-		return "Reset module " + this.moduleSlot + " channel " + this.channel;
-        }
+			
+			var id = $("#node-input-moduleType").val();
+			if(id == 1){
+			return "Reset module " + this.moduleSlot + " channel " + this.channel6;
+			}else{
+			return "Reset module " + this.moduleSlot + " channel " + this.channel10;
+			}
+			
+		
+        },
+		oneditprepare: function() {
+		$(this.moduleType).trigger("change");
+		
+		$("#node-input-moduleType").on("change", function() {
+			var id = $("#node-input-moduleType").val();
+			if(id == 1){
+			$("#10-channel").hide();
+			$("#6-channel").show();
+			}else{
+			$("#6-channel").hide();
+			$("#10-channel").show();
+			}
+			
+          });
+		}
     });
 </script>
 
@@ -31,6 +56,14 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
 
+    <div class="form-row">
+        <label for="node-input-moduleType"><i class="fa fa-microchip"></i> Module type</label>
+        <select id="node-input-moduleType" style="width:300px" title="Select the slot on which the module is plugged into">
+            <option value=1>6 channel input module</option>
+            <option value=2>10 channel input module</option>
+        </select>
+    </div>
+	
     <div class="form-row">
         <label for="node-input-moduleSlot"><i class="fa fa-microchip"></i> Module</label>
         <select id="node-input-moduleSlot" style="width:300px">
@@ -45,14 +78,26 @@
         </select>
     </div>
 	
-	<div class="form-row">
-        <label for="node-input-channel"><i class="fa fa-bolt"></i> Reset channel</label>
-        <select id="node-input-channel" style="width:300px">
+	<div class="form-row" id="6-channel">
+        <label for="node-input-channel6"><i class="fa fa-bolt"></i> Reset channel</label>
+        <select id="node-input-channel6" style="width:300px">
 		    <option value=1>Pulsecounter on channel 1 in combination with channel 2</option>
             <option value=3>Pulsecounter on channel 3 in combination with channel 4</option>
             <option value=5>Pulsecounter on channel 5 in combination with channel 6</option>
         </select>
     </div>
+	
+		<div class="form-row" id="10-channel">
+        <label for="node-input-channel10"><i class="fa fa-bolt"></i> Reset channel</label>
+        <select id="node-input-channel10" style="width:300px">
+		    <option value=1>Pulsecounter on channel 1 in combination with channel 2</option>
+            <option value=3>Pulsecounter on channel 3 in combination with channel 4</option>
+            <option value=5>Pulsecounter on channel 5 in combination with channel 6</option>
+			<option value=7>Pulsecounter on channel 7 in combination with channel 8</option>
+			<option value=9>Pulsecounter on channel 9 in combination with channel 10</option>
+        </select>
+    </div>
+	
 </script>
 
 <script type="text/x-red" data-help-name="Input-Module-Reset">
