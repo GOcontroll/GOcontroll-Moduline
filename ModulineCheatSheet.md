@@ -81,10 +81,12 @@ nmcli dev wifi      -- Show available Wi-Fi networks
 
 nmcli dev wifi connect "net name" password "password" -- Connect to a wifi network with the given name and password
 
-### modem manager
-mmcli --list-modems --Show the list of modems to get the modem number
+nmcli con mod "con" ipv4.route-metric # -- used to set network priority lowest number is highest priority, needs to be higher than 0 when using
 
-mmcli -K --modem="modemnumber"  --Show the details of this modem
+### modem manager
+mmcli --list-modems -- Show the list of modems to get the modem number
+
+mmcli -K --modem="modemnumber"  -- Show the details of this modem
 
 ### display strings as qr codes in the terminal
 qrencode -t ansiutf8 "string" or qrencode -t ansiutf8 < /path/to/file
