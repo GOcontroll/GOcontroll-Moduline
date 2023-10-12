@@ -1,6 +1,13 @@
-V1.15.1
+V1.16.0
 
 ########
+28-9-2023 V1.16.0
+Updated software from 6 channel input module with new SPI identifiers
+Updated software from 6 channel output module with new SPI identifiers
+Updated Node-RED input and output nodes to work with new SPI identifiers
+Added pulscounter reset mechanism for Node-RED pulscounter reset node
+New 10 channel input module software with tested frequency inputs
+
 21-9-2023 V1.15.1
 Removed UIO module init from install
 Fixed the go-reset-ap script so it keeps its old ssid
