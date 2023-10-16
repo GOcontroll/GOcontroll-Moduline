@@ -223,11 +223,13 @@ function Module_CheckFirmwareVersion(){
 			if(receiveBuffer[BOOTMESSAGELENGTH-1] != ChecksumCalculator(receiveBuffer, BOOTMESSAGELENGTH-1)){
 				console.log("error: Checksum from bootloader not correct");
 				Module_CancelFirmwareUpload();
+				RestartServices();
 				return;
 			}
 			else if(	receiveBuffer[0] != 9 || receiveBuffer[2] != 9){
 				console.log("error: Wrong response from bootloader");
 				Module_CancelFirmwareUpload();
+				RestartServices();
 				return;
 			}
 
@@ -256,6 +258,7 @@ function Module_CheckFirmwareVersion(){
 			} else {
 				console.log("error: invalid update detected")
 				Module_CancelFirmwareUpload();
+				RestartServices();
 			}
 		});
 	});
@@ -328,7 +331,8 @@ function Module_FirmwareUpload(){
 			//node.warn("Error opening firmware file");
 			//node.status({fill:"red",shape:"dot",text:"Error opening firmware file"});
 			console.log("error: unable to open firmware file")
-			throw err;
+			RestartServices();
+			return;
 		}
 
 		var str = code.toString();
@@ -339,7 +343,8 @@ function Module_FirmwareUpload(){
 			//node.warn("Firmware file corrupt");
 			//node.status({fill:"red",shape:"dot",text:"Firmware file corrupt"});
 			//initializeTimeout = setTimeout(InputModule_Initialize, 600);
-			console.log("error: Firmware file corrupt")
+			console.log("error: Firmware file corrupt");
+			RestartServices();
 			return;
 		}
 
@@ -441,7 +446,7 @@ function Module_FirmwareUpload(){
 									if(firmwareErrorCounter > 5)
 									{
 										//node.warn("Firmware checksum for input module on slot: "+moduleSlot+", error on line : "+lineNumber+" , 5 times! Stop firmware update!" );
-										console.log("error: checksum repeatedly didn't match during firmware upload")
+										console.log("error: checksum repeatedly didn't match during firmware upload\ncurrent firmware on the module might be corrupt!");
 										firmwareErrorCounter = 0;
 										return;
 									}
