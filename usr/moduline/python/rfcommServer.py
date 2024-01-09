@@ -731,7 +731,7 @@ def wwan_settings(commandnmbr, arg):
 		apn=["-"]
 		stdout = subprocess.run(["systemctl", "is-active", "go-wwan"], stdout=subprocess.PIPE, text=True)
 		status = [stdout.stdout[:-1]]
-		path = "/etc/NetworkManager/system-connections/GO-celular.nmconnection"
+		path = "/etc/NetworkManager/system-connections/GO-cellular.nmconnection"
 		if status[0] == "active":
 			try:
 				pin_line = get_line(path, "pin=")
@@ -741,7 +741,7 @@ def wwan_settings(commandnmbr, arg):
 					pin = [file[pin_line].split("=")[1][:-1]]
 					apn = [file[apn_line].split("=")[1][:-1]]
 			except FileNotFoundError:
-				subprocess.run(["nmcli", "con", "add", "type", "gsm", "ifname", "cdc-wdm0", "con-name", "GO-celular", "apn", "super", "connection.autoconnect", "yes", "gsm.pin", "0000"])
+				subprocess.run(["nmcli", "con", "add", "type", "gsm", "ifname", "cdc-wdm0", "con-name", "GO-cellular", "apn", "super", "connection.autoconnect", "yes", "gsm.pin", "0000"])
 				try:
 					pin_line = get_line(path, "pin=")
 					apn_line = get_line(path, "apn=")
@@ -798,12 +798,11 @@ def wwan_settings(commandnmbr, arg):
 	elif level1 == commands.SET_WWAN_SETTINGS:
 		arg = arg.split(":")
 		#arg = [pin,apn]
-		subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.apn", arg[1], "gsm.pin", arg[0]])
-		# subprocess.run(["nmcli", "con", "mod", "GO-celular", "gsm.pin", arg[0]])
-		reload = subprocess.run(["nmcli", "con", "down", "GO-celular"], stdout=subprocess.PIPE, text=True)
+		subprocess.run(["nmcli", "con", "mod", "GO-cellular", "gsm.apn", arg[1], "gsm.pin", arg[0]])
+		reload = subprocess.run(["nmcli", "con", "down", "GO-cellular"], stdout=subprocess.PIPE, text=True)
 		reload = reload.stdout
 		if "succesfully" in reload:
-			subprocess.run(["nmcli", "con", "up", "GO-celular"])
+			subprocess.run(["nmcli", "con", "up", "GO-cellular"])
 		send(chr(commandnmbr) + chr(commands.SET_WWAN_SETTINGS))
 
 ##########################################################################################

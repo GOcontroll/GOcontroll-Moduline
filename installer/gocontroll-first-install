@@ -160,9 +160,9 @@ nmcli con delete GOcontroll-AP
 nmcli con add type wifi con-name "GOcontroll-AP" ifname wlan0 ssid GOcontroll-AP-$mod ipv4.addresses 192.168.19.85/16 ipv4.method manual connection.autoconnect yes 802-11-wireless.mode ap 802-11-wireless.band bg wifi-sec.psk Moduline 802-11-wireless-security.key-mgmt wpa-psk > /dev/null
 
 
-if [ ! -f "/etc/NetworkManager/system-connections/GO-celular.nmconnection" ]
+if [ ! -f "/etc/NetworkManager/system-connections/GO-cellular.nmconnection" ]
 then
-	nmcli con add type gsm ifname 'cdc-wdm0' con-name 'GO-celular' apn 'super' connection.autoconnect yes gsm.pin 0000 connection.autoconnect-retries 0
+	nmcli con add type gsm ifname 'cdc-wdm0' con-name 'GO-cellular' apn 'super' connection.autoconnect yes gsm.pin 0000 connection.autoconnect-retries 0
 fi
 
 echo -e "${YELLOW}-Gathering module configuration and updating outdated modules ${NORMAL}"
@@ -194,7 +194,7 @@ case $hw in
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen $mod" > /etc/machine-info
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py
-		nmcli con delete GO-celular
+		nmcli con delete GO-cellular
 		patch /etc/network/interfaces ~/GOcontroll/GOcontroll*/patch/interfaces.patch > /dev/null
 esac
 

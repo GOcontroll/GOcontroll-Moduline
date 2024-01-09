@@ -204,7 +204,7 @@ module.exports = function(RED) {
 					}
 				}
 			} catch (err) {
-				node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
+				node.warn("No module has been registered in slot " + moduleSlot + ", the module(s) configured for this slot will not work. If a module has been recently inserted in this slot, run go-scan-modules to register it.");
 			}
 		}
 		

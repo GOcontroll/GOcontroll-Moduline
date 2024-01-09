@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Delete connection descriptor
-# nmcli connection delete GO-celular
+# nmcli connection delete GO-cellular
 
 # Switch off LDO regulator
 if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Mini"* ]]; then

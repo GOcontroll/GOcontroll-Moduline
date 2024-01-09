@@ -46,7 +46,6 @@ print(f"rootfs/dtb version: {rootfs_version}\n")
 print("Module configuration: ")
 with open("/usr/module-firmware/modules.txt", "r") as modulesfile:
     layout = modulesfile.readline()[:-1]
-
     manufacturers = modulesfile.readline()[:-1]
     moduleQRsfront = modulesfile.readline()[:-1]
     moduleQRsback = modulesfile.readline() 

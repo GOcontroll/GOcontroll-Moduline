@@ -1,8 +1,14 @@
-V1.16.1
+V1.16.2
 
 ########
+9-1-2024 V1.16.2
+Fixed typo in the GO-cellular connection
+Added boolean type to go-parse-a2l utility (requires pyuio update)
+Updated 6ch output module firmware
+Added 4-20mA input module firmware
+
 12-10-2023 V1.16.1
-Reverted upload-new-firmware.js as it proved to be unstable, it is now slow again.
+Reverted upload-new-firmware.js as it proved to be unstable, it is now slow again :(.
 
 28-9-2023 V1.16.0
 Updated software from 6 channel input module with new SPI identifiers
@@ -68,7 +74,7 @@ first-install and controller_update now make sure WWAN_SETTINGS=False in rfcommS
 24-3-2023 V1.11.35
 removed exit() calls from read and write simulink nodes
 write parameter now no longer writes undefined to memory if an incorrect key is received, in the list input mode.
-rfcommServer.py: initialising the serial bus that is normally the celular modem breaks the bluetooth server on the moduline screen because ttymxc1 is the bluetooth adapter on this controller.
+rfcommServer.py: initialising the serial bus that is normally the cellular modem breaks the bluetooth server on the moduline screen because ttymxc1 is the bluetooth adapter on this controller.
 testLeds.py: added chip initialisation sequence and added it to rootfs.
 controller_update.sh: no longer overwrites go-bluetooth-start.sh and rfcommServerConfig.py, now can do controller specific actions.
 manual_update.py: no longer goes down the complete list to end up only updating one version.

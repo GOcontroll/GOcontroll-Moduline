@@ -11,7 +11,7 @@
         "shelljs": "^0.8.4",
         "socketcan": "^3.0.0",
         "spi-device": "^3.1.2",
-        "uiojs": "1.0.5"
+        "uiojs": "1.1.0"
     },
     "repository": {
         "type": "",

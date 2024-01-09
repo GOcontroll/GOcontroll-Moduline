@@ -189,36 +189,36 @@ function GOcontrollInputModule(config) {
 
 	async function readFile() {
 		try {
-		const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
-		modulesArr = data.split(":");
-		var moduleArr = modulesArr[moduleSlot-1].split("-");
-		if (moduleArr[2].length==1) {
-			moduleArr[2] = "0" + moduleArr[2];
-		}
-		if (moduleArr[3].length==1) {
-			moduleArr[3] = "0" + moduleArr[3];
-		}
-		firmware = "HW:V"+moduleArr[0]+moduleArr[1]+moduleArr[2]+moduleArr[3] + "  SW:V"+moduleArr[4]+"."+moduleArr[5]+"."+moduleArr[6];
-		/*check if the selected module is okay for this slot*/
-		/*6 channel input*/
-		if(moduleType == 1){
-			if (firmware.includes("201001")) {
-				node.status({fill:"green",shape:"dot",text:firmware})
-				InputModule_SendDummyByte(); 
-			} else {
-				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+			const data = await fsp.readFile('/usr/module-firmware/modules.txt', 'utf8');
+			modulesArr = data.split(":");
+			var moduleArr = modulesArr[moduleSlot-1].split("-");
+			if (moduleArr[2].length==1) {
+				moduleArr[2] = "0" + moduleArr[2];
 			}
-		/* In case 10 channel input module is selected */
-		}else{
-			if (firmware.includes("201002")) {
-				node.status({fill:"green",shape:"dot",text:firmware})
-				InputModule_SendDummyByte(); 
-			} else {
-				node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+			if (moduleArr[3].length==1) {
+				moduleArr[3] = "0" + moduleArr[3];
 			}
-		}
+			firmware = "HW:V"+moduleArr[0]+moduleArr[1]+moduleArr[2]+moduleArr[3] + "  SW:V"+moduleArr[4]+"."+moduleArr[5]+"."+moduleArr[6];
+			/*check if the selected module is okay for this slot*/
+			/*6 channel input*/
+			if(moduleType == 1){
+				if (firmware.includes("201001")) {
+					node.status({fill:"green",shape:"dot",text:firmware})
+					InputModule_SendDummyByte(); 
+				} else {
+					node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+				}
+			/* In case 10 channel input module is selected */
+			}else{
+				if (firmware.includes("201002")) {
+					node.status({fill:"green",shape:"dot",text:firmware})
+					InputModule_SendDummyByte(); 
+				} else {
+					node.status({fill:"red",shape:"dot",text:"Selected module does not match the firmware registered in this slot."})
+				}
+			}
 		} catch (err) {
-			node.warn(err + "You might need to run /usr/moduline/nodejs/module-info-gathering.js")
+			node.warn("No module has been registered in slot " + moduleSlot + ", the module(s) configured for this slot will not work. If a module has been recently inserted in this slot, run go-scan-modules to register it.");
 		}
 	}
 

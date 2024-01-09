@@ -168,9 +168,9 @@ module.exports = function(RED) {
                             return;
                         }
                     }
-                    msgOut["payload"] = payload;
-                    node.send(msgOut);
                 }
+			msgOut["payload"] = payload;
+			node.send(msgOut);
             } else {
                 node.error("No simulink model running right now, unable to write the parameter(s).")
                 intervalCheck = setInterval(check_model,2000);
