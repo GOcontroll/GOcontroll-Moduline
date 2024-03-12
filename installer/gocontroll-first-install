@@ -39,7 +39,7 @@ function check_serial_number {
 
 if check_serial_number $2
 then
-	serial_number = "$2"
+	serial_number="$2"
 else
 	while :
 	do
@@ -108,6 +108,8 @@ cp -avr /root/GOcontroll/GOcontroll*/etc / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/usr / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/version.txt / > /dev/null
+
+source .bashrc
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 555 /usr/moduline/bash/go-simulink.sh
@@ -186,7 +188,7 @@ fi
 
 echo -e "${YELLOW}-Gathering module configuration and updating outdated modules ${NORMAL}"
 
-python3 /usr/moduline/python/installModuleFirmware.py
+go-modules update all
 
 echo -e "${YELLOW}-Setting the bluetooth name and patching the go-auto-shutdown service${NORMAL}"
 
