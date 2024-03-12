@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # command for development installation
-# wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/master/installer/gocontroll-first-install | bash -s master
+# wget -O /tmp/install https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/master/installer/gocontroll-first-install | bash /tmp/install master
 
 # command for latest stable release:
-# release=$(curl -s https://api.github.com/repos/GOcontroll/GOcontroll-Moduline/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")') bash -c 'wget -O - https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/$release/installer/gocontroll-first-install | bash -s $release'
+# release=$(curl -s https://api.github.com/repos/GOcontroll/GOcontroll-Moduline/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")') bash -c 'wget -O /tmp/install https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/$release/installer/gocontroll-first-install | bash /tmp/install $release'
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
