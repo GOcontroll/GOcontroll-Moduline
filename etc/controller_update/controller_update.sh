@@ -59,35 +59,6 @@ chmod 555 /usr/moduline/python/testLeds.py
 
 cd
 
-echo -e "${YELLOW}-Set up aliasses for go-scripts ${NORMAL}"
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-reset-ap"* ]]; then
-	echo "alias go-reset-ap=\"/usr/moduline/bash/reset-ap.sh\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-update-modules"* ]]; then
-	echo "alias go-update-modules=\"python3 /usr/moduline/python/installModuleFirmware.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-scan-modules"* ]]; then
-	echo "alias go-scan-modules=\"node /usr/moduline/nodejs/module-info-gathering.js\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-overwrite-module"* ]]; then
-	echo "alias go-overwrite-module=\"node /usr/moduline/nodejs/upload-new-module-firmware.js\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-manual-update"* ]]; then
-	echo "alias go-manual-update=\"python3 /etc/controller_update/manual_update.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-can"* ]]; then
-	echo "alias go-test-can=\"node /usr/moduline/nodejs/testcan.js\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-parse-a2l"* ]]; then
-	echo "alias go-parse-a2l=\"python3 /usr/moduline/python/parse_a2l.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-leds"* ]]; then
-	echo "alias go-test-leds=\"python3 /usr/moduline/python/testLeds.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-update-rollback"* ]]; then
-	echo "alias go-update-rollback=\"python3 /etc/controller_update/controller_update_rollback.py\"" >> ~/.bashrc
-fi
-
 if [ ! -f "/etc/NetworkManager/system-connections/GO-cellular.nmconnection" ]
 then
 	nmcli con delete GO-celular

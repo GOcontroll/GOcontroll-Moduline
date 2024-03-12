@@ -11,6 +11,47 @@ NORMAL='\033[0m'
 
 cd
 
+function check_serial_number {
+	if [[ ${#1} != 19 ]]
+	then
+		echo "Invalid serial number entered, it should be 19 characters long xxxx-xxxx-xxxx-xxxx"
+		false
+	else
+		IFS='-' read -r -a serial_segments <<< "$1"
+
+		if [[ ${#serial_segments[@]} != 4 ]]
+		then
+			echo "Invalid serial number entered, it should have 4 segments seperated by dashes xxxx-xxxx-xxxx-xxxx"
+			false
+		else
+			for segment in "${serial_segments[@]}"
+			do
+				if [[ ${#segment} != 4 ]]
+				then
+					echo "Invalid serial number entered, each segment should be 4 characters xxxx-xxxx-xxxx-xxxx"
+					false
+				fi
+			done
+			true
+		fi
+	fi
+}
+
+if check_serial_number $2
+then
+	serial_number = "$2"
+else
+	while :
+	do
+		read -p 'Serial number: ' serial_number
+
+		if check_serial_number $serial_number
+		then
+			break
+		fi
+	done	
+fi
+
 if [ -d GOcontroll ]
 then
 echo -e "${YELLOW}-Delete existing GOcontroll folder ${NORMAL}"
@@ -74,41 +115,15 @@ chmod 555 /usr/moduline/bash/go-wwan-start.sh
 chmod 555 /usr/moduline/bash/go-wwan-stop.sh
 chmod 555 /usr/moduline/bash/reset-ap.sh
 chmod 555 /usr/moduline/python/identify.py
-chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
-chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
 chmod 555 /usr/moduline/python/testLeds.py
 chmod 555 /usr/moduline/nodejs/connectivity-guard.js
+chmod 555 /usr/moduline/bin/go-modules
+chmod 555 /usr/moduline/bin/go-upload-server
+chmod 555 /usr/moduline/bin/go-sn
 
-echo -e "${YELLOW}-Set up aliasses for go-scripts ${NORMAL}"
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-reset-ap"* ]]; then
-	echo "alias go-reset-ap=\"/usr/moduline/bash/reset-ap.sh\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-update-modules"* ]]; then
-	echo "alias go-update-modules=\"python3 /usr/moduline/python/installModuleFirmware.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-scan-modules"* ]]; then
-	echo "alias go-scan-modules=\"node /usr/moduline/nodejs/module-info-gathering.js\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-overwrite-module"* ]]; then
-	echo "alias go-overwrite-module=\"node /usr/moduline/nodejs/upload-new-module-firmware.js\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-manual-update"* ]]; then
-	echo "alias go-manual-update=\"python3 /etc/controller_update/manual_update.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-update-rollback"* ]]; then
-	echo "alias go-update-rollback=\"python3 /etc/controller_update/controller_update_rollback.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-can"* ]]; then
-	echo "alias go-test-can=\"node /usr/moduline/nodejs/testcan.js\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-parse-a2l"* ]]; then
-	echo "alias go-parse-a2l=\"python3 /usr/moduline/python/parse_a2l.py\"" >> ~/.bashrc
-fi
-if [[ $(tr -d '\0' < ~/.bashrc) != *"go-test-leds"* ]]; then
-	echo "alias go-test-leds=\"python3 /usr/moduline/python/testLeds.py\"" >> ~/.bashrc
-fi
+go-sn w $serial_number
 
 echo -e "${YELLOW}-Update debian sources ${NORMAL}"
 apt update -y > /dev/null
@@ -142,7 +157,11 @@ timedatectl set-timezone Europe/Luxembourg
 
 echo -e "${YELLOW}-Generating a bluetooth verification code ${NORMAL}"
 
-mod=$(python3 /usr/moduline/python/btKeyGen.py)
+IFS='-' read -r -a serial_segments <<< "$serial_number"
+
+mod="${serial_segments[1]}"
+
+python3 /usr/moduline/python/btKeyGen.py > /dev/null
 
 echo -e "${YELLOW}-Fix network manager connections ${NORMAL}"
 

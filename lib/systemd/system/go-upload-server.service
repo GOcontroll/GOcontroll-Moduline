@@ -5,9 +5,9 @@ After=network.target
 
 
 [Service]
-ExecStart= node /usr/moduline/nodejs/upload-server.js &
+ExecStart=/usr/moduline/bin/go-upload-server
 Type=simple
-RemainAfterExit=yes
+RemainAfterExit=no
 
 [Install]
 WantedBy=sysinit.target
