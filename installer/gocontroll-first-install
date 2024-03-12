@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # command for development installation
-# wget -O /tmp/install https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/master/installer/gocontroll-first-install | bash /tmp/install master
+# wget -O /tmp/install https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/master/installer/gocontroll-first-install; bash /tmp/install master
 
 # command for latest stable release:
-# release=$(curl -s https://api.github.com/repos/GOcontroll/GOcontroll-Moduline/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")') bash -c 'wget -O /tmp/install https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/$release/installer/gocontroll-first-install | bash /tmp/install $release'
+# release=$(curl -s https://api.github.com/repos/GOcontroll/GOcontroll-Moduline/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")') bash -c 'wget -O /tmp/install https://raw.githubusercontent.com/GOcontroll/GOcontroll-Moduline/$release/installer/gocontroll-first-install; bash /tmp/install $release'
 
 YELLOW='\033[33m'
 NORMAL='\033[0m'
 
-cd
+cd /root
 
 function check_serial_number {
 	if [[ ${#1} != 19 ]]
@@ -109,7 +109,7 @@ cp -avr /root/GOcontroll/GOcontroll*/usr / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/version.txt / > /dev/null
 
-source .bashrc
+source /root/.bashrc
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 555 /usr/moduline/bash/go-simulink.sh
