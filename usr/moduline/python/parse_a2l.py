@@ -55,17 +55,17 @@ with open(a2lLoc, "r") as a2l:
 			#get name
 			if "Name" in line:
 				if reading_parameter:
-					name = line.split(" ")[-3]
+					name = line.strip().split(" ")[-1]
 				else:
-					name = line.split(" ")[-1][:-1]
+					name = line.strip().split(" ")[-1]
 				continue
 
 			#get address
 			elif "ECU" in line:
 				if reading_parameter:
-					address = int(line.split(" ")[-2],16)
+					address = int(line.strip().split(" ")[-1],16)
 				else:
-					address = int(line.split(" ")[-1][:-1],16)
+					address = int(line.strip().split(" ")[-1],16)
 				continue
 
 			#get datatype
@@ -96,7 +96,7 @@ with open(a2lLoc, "r") as a2l:
 
 			#get arraysize
 			elif "NUMBER" in line or "ARRAY_SIZE" in line:
-				size = int(line.split(" ")[-1][:-1])
+				size = int(line.strip().split(" ")[-1])
 				continue
 
 			#save information
