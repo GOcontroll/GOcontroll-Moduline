@@ -1,14 +1,18 @@
-V1.17.0
+V1.17.1
 
 ########
-12-3-2024 V 1.17.0
+25-3-2024 V1.17.1
+Fixed the go-modules application for the Moduline Display
+
+12-3-2024 V1.17.0
 Added the go-sn utility for storing the serial number in the controller
 Wifi access point now uses the serial number in the ssid
 Removed bashrc appends from install as it is silly, bashrc now gets uploaded
 Shipping the first release of the new go-modules firmware utility
 Shipping the new upload server
 Shipping a new kl15_monitor binary v1.1.0
-removed python and javascript scripts that these previously mentioned files replace
+Removed python and javascript scripts that these previously mentioned files replace
+Shipping the 20-20-2-6-2-1-0 firmware
 
 9-1-2024 V1.16.2
 Fixed typo in the GO-cellular connection
