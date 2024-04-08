@@ -40,7 +40,7 @@ case $hw in
 		patch /usr/node-red-gocontroll/nodes/can_receive.html /patch/can_receive_html.patch > /dev/null
 		patch /usr/node-red-gocontroll/nodes/can_send.html /patch/can_send_html.patch > /dev/null
 		;;
-	*Screen*)
+	*Display*)
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py
 esac

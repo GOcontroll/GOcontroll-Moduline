@@ -1,7 +1,10 @@
-V1.17.1
+V1.17.2
 
 ########
-25-3-2024 V1.17.1
+8-4-2024 V1.17.2 Release 0.7.2
+Fixed some scripts for the Moduline Display
+
+25-3-2024 V1.17.1 Release 0.7.1
 Fixed the go-modules application for the Moduline Display
 
 12-3-2024 V1.17.0

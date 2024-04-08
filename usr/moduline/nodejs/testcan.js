@@ -3,7 +3,7 @@ const fs = require('fs');
 const i2c = require('i2c-bus');
 
 //check what type of controller?
-var controllerType, hardwareFile;
+var hardwareFile;
 var canBusCount = 0;
 var thread_can0, thread_can2;
 var thread_can0_count, thread_can2_count;
@@ -40,7 +40,6 @@ try {
 console.error(err);
 }
 if (hardwareFile.includes("Moduline IV")) {
-    controllerType = "IV"
     canBusCount = 4;
     set_led(0, "blue");
     set_led(1, "blue");
@@ -48,12 +47,10 @@ if (hardwareFile.includes("Moduline IV")) {
     set_led(3, "blue");
 
 } else if (hardwareFile.includes("Moduline Mini")) {
-    controllerType = "mini"
     canBusCount = 2;
     set_led(0, "blue");
     set_led(1, "blue");
-} else if (hardwareFile.includes("Moduline Screen")) {
-    controllerType = "screen"
+} else if (hardwareFile.includes("Moduline Display")) {
     canBusCount = 2;
     error_log =  "error log:\n";
 }

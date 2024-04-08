@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Screen"* ]]; then
+if [[ $(tr -d '\0' < /sys/firmware/devicetree/base/hardware) == "Moduline Display"* ]]; then
 
-echo -e "${YELLOW}-Setting up bluetooth for the Moduline screen ${NORMAL}"
+echo -e "${YELLOW}-Setting up bluetooth for the Moduline Display ${NORMAL}"
 
 hciattach /dev/ttymxc1 bcm43xx 921600 flow nosleep macplaceholder
 

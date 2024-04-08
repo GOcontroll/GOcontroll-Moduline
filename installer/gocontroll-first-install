@@ -211,8 +211,8 @@ case $hw in
 		patch /usr/node-red-gocontroll/nodes/can_send.html ~/GOcontroll/GOcontroll*/patch/can_send_html.patch > /dev/null
 		patch /etc/network/interfaces ~/GOcontroll/GOcontroll*/patch/interfaces.patch > /dev/null
 		;;
-	*Screen*)
-		echo PRETTY_HOSTNAME="GOcontroll-Moduline Screen $mod" > /etc/machine-info
+	*Display*)
+		echo PRETTY_HOSTNAME="GOcontroll-Moduline Display $mod" > /etc/machine-info
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py
 		nmcli con delete GO-cellular
