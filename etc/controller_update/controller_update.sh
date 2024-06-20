@@ -53,7 +53,6 @@ chmod 555 /usr/moduline/bash/go-wwan-stop.sh
 chmod 555 /usr/moduline/python/identify.py
 chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
-chmod 555 /usr/moduline/nodejs/upload-server.js
 chmod 555 /usr/moduline/nodejs/flash-led.js
 chmod 555 /usr/moduline/python/testLeds.py
 
@@ -67,8 +66,15 @@ fi
 
 nmcli con mod GO-cellular connection.autoconnect-retries 0
 
-cd /usr/node-red-gocontroll/
-npm install
+if [ -f "/usr/node-red-gocontroll/package.json" ]
+then
+	cd /root/.node-red
+	npm install @gocontroll-nl/node-red-gocontroll
+	npm uninstall node-red-gocontroll
+	npm audit fix
+	rm -rf /usr/node-red-gocontroll/
+	cd
+fi
 
 cd
 

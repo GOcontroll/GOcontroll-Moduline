@@ -107,7 +107,7 @@ cp -avr /root/GOcontroll/GOcontroll*/lib / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/etc / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/usr / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
-cp -avr /root/GOcontroll/GOcontroll*/version.txt / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll*/version.txt /root > /dev/null
 
 source /root/.bashrc
 
@@ -196,13 +196,14 @@ hw=$(tr -d '\0' </sys/firmware/devicetree/base/hardware)
 case $hw in
 
 	*IV*)
+		echo -e "${YELLOW}-Applying IV specific actions ${NORMAL}"
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline IV $mod" > /etc/machine-info
 		sed -i "s/controllerType/0/g" /lib/systemd/system/go-auto-shutdown.service
 		;;
 	*Mini*)
+		echo -e "${YELLOW}-Applying Mini specific actions ${NORMAL}"
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline Mini $mod" > /etc/machine-info
 		sed -i "s/controllerType/1/g" /lib/systemd/system/go-auto-shutdown.service
-		echo -e "${YELLOW}-Apply patches for Moduline Mini ${NORMAL}"
 		patch /usr/node-red-gocontroll/nodes/bridge_module.html ~/GOcontroll/GOcontroll*/patch/bridge_module_html.patch > /dev/null
 		patch /usr/node-red-gocontroll/nodes/output_module.html ~/GOcontroll/GOcontroll*/patch/output_module_html.patch > /dev/null
 		patch /usr/node-red-gocontroll/nodes/input_module_reset.html ~/GOcontroll/GOcontroll*/patch/input_module_reset_html.patch > /dev/null
@@ -212,6 +213,7 @@ case $hw in
 		patch /etc/network/interfaces ~/GOcontroll/GOcontroll*/patch/interfaces.patch > /dev/null
 		;;
 	*Display*)
+		echo -e "${YELLOW}-Applying Display specific actions ${NORMAL}"
 		echo PRETTY_HOSTNAME="GOcontroll-Moduline Display $mod" > /etc/machine-info
 		sed -i "s/controllerType/2/g" /lib/systemd/system/go-auto-shutdown.service
 		sed -i "s/WWAN_SETTINGS=True/WWAN_SETTINGS=False/g" /usr/moduline/python/rfcommServerConfig.py

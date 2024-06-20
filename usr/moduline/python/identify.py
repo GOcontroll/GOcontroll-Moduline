@@ -17,12 +17,14 @@ subprocess.run(["uname", "-r"])
 subprocess.run(["lsb_release", "-a"])
 print("\nGOcontroll:\n")
 subprocess.run(["cat", "/sys/firmware/devicetree/base/hardware"])
+print("Serial Number:")
+subprocess.run(["go-sn", "r"])
 try:
-    with open("/version.txt", "r") as file:
+    with open("/root/version.txt", "r") as file:
         software_version = file.readline()
 except:
     try:
-        with open("/root/version.txt", "r") as file:
+        with open("/version.txt", "r") as file:
             software_version = file.readline()
     except:
         software_version = "repo is not yet installed\n"

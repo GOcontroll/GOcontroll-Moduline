@@ -1,6 +1,11 @@
-V1.17.2
+V1.17.3
 
 ########
+V1.17.3
+Updated go-modules to 1.1.0
+Identify now lists the serial number
+Removed /usr/node-red-gocontroll, node red package is now installed through npm
+
 8-4-2024 V1.17.2 Release 0.7.2
 Fixed some scripts for the Moduline Display
 
