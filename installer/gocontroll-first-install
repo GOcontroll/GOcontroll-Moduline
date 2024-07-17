@@ -64,7 +64,6 @@ mkdir GOcontroll
 cd GOcontroll
 
 echo -e "${YELLOW}-Download files for GOcontroll Moduline ${NORMAL}"
-# git clone https://github.com/Rick-GO/GOcontroll-Moduline.git --branch $1 > /dev/null
 curl -L -k -s https://github.com/GOcontroll/GOcontroll-Moduline/tarball/$1 -o repo.tgz
 tar -xf repo.tgz
 rm repo.tgz
@@ -233,7 +232,9 @@ sync
 
 rm -r /root/GOcontroll
 
+chown GOcontroll:GOcontroll -R /home/GOcontroll
+
 echo -e "${YELLOW}-Controller ready ${NORMAL}"
 echo -e "${YELLOW}-A quick reboot is advised ${NORMAL}"
 
-qrencode -t ansiutf8 < /sys/class/net/eth0/address
+head -c -1 /sys/class/net/eth0/address | qrencode -t ansiutf8

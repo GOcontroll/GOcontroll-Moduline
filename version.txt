@@ -1,6 +1,10 @@
-V1.17.4
+V1.17.5
 
 ########
+17-7-2024 V1.17.5
+Fixed the generated qr code of the mac address to not contain junk at the end
+Fixed some rights for the new GOcontroll user
+
 17-7-2024 V1.17.4
 Updated go-upload-server to 1.0.1
 Small fix in the update script to chmod +x new binaries
