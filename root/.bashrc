@@ -1,5 +1,7 @@
 export PATH=/usr/moduline/bin:$PATH
+export PATH=/sbin:$PATH
 
+alias sudo="sudo "
 alias identify="/usr/moduline/python/identify.py"
 alias go-test-leds="python3 /usr/moduline/python/testLeds.py"
 alias go-test-can="node /usr/moduline/nodejs/testcan.js"

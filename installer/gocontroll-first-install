@@ -107,6 +107,7 @@ cp -avr /root/GOcontroll/GOcontroll*/lib / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/etc / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/usr / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
+cp -avr /root/GOcontroll/GOcontroll*/home / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/version.txt /root > /dev/null
 
 source /root/.bashrc
@@ -128,7 +129,7 @@ chmod 555 /usr/moduline/bin/go-sn
 go-sn w $serial_number
 
 echo -e "${YELLOW}-Update debian sources ${NORMAL}"
-apt update -y > /dev/null
+apt-get update -y > /dev/null
 
 echo -e "${YELLOW}-Make resolv.conf immutable ${NORMAL}"
 chattr +i /etc/resolv.conf

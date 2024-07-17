@@ -55,6 +55,7 @@ chmod 555 /usr/local/bin/qmi-network-raw
 chmod 555 /usr/moduline/bash/go-bluetooth-start.sh
 chmod 555 /usr/moduline/nodejs/flash-led.js
 chmod 555 /usr/moduline/python/testLeds.py
+chmod +x /usr/moduline/bin/*
 
 cd
 
