@@ -75,6 +75,8 @@ then
 			fi
 		done	
 	fi
+else
+	echo -e "A valid serial number was already found on the controller: $serial_number, if a new one must be set, do so manually"
 fi
 
 echo -e "${YELLOW}-remove old GOcontroll stuff ${NORMAL}"
