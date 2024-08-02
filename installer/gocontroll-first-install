@@ -37,21 +37,6 @@ function check_serial_number {
 	fi
 }
 
-if check_serial_number $2
-then
-	serial_number="$2"
-else
-	while :
-	do
-		read -p 'Serial number: ' serial_number
-
-		if check_serial_number $serial_number
-		then
-			break
-		fi
-	done	
-fi
-
 if [ -d GOcontroll ]
 then
 echo -e "${YELLOW}-Delete existing GOcontroll folder ${NORMAL}"
@@ -68,6 +53,29 @@ curl -L -k -s https://github.com/GOcontroll/GOcontroll-Moduline/tarball/$1 -o re
 tar -xf repo.tgz
 rm repo.tgz
 
+# check if controller already has a valid serial number or if a new one is forced in as an argument
+
+chmod 555 /root/GOcontroll/GOcontroll*/usr/moduline/bin/go-sn
+
+serial_number=$(/root/GOcontroll/GOcontroll*/usr/moduline/bin/go-sn r)
+
+if ! [ $? -eq 0 ] || [ "$2" ]
+then
+	if check_serial_number $2
+	then
+		serial_number="$2"
+	else
+		while :
+		do
+			read -p 'Serial number: ' serial_number
+
+			if check_serial_number $serial_number
+			then
+				break
+			fi
+		done	
+	fi
+fi
 
 echo -e "${YELLOW}-remove old GOcontroll stuff ${NORMAL}"
 

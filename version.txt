@@ -1,6 +1,10 @@
-V1.17.5
+V1.17.6
 
 ########
+2-8-2024 V1.17.6
+Updated go-sn to V1.02
+Install will now skip the serial number step if none is provided and valid one is already written in memory
+
 17-7-2024 V1.17.5
 Fixed the generated qr code of the mac address to not contain junk at the end
 Fixed some rights for the new GOcontroll user
