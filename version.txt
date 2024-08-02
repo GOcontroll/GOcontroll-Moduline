@@ -1,9 +1,14 @@
 V1.17.6
 
 ########
+version
+Moved the /home/GOcontroll/.bashrc and /root/.bashrc files into /etc/bash.bashrc
+Add a little warning message when the serial number step is skipped
+
 2-8-2024 V1.17.6
 Updated go-sn to V1.02
 Install will now skip the serial number step if none is provided and valid one is already written in memory
+Updated 10 channel input module firmware to V0.0.5
 
 17-7-2024 V1.17.5
 Fixed the generated qr code of the mac address to not contain junk at the end
@@ -33,12 +38,14 @@ Shipping the first release of the new go-modules firmware utility
 Shipping the new upload server
 Shipping a new kl15_monitor binary v1.1.0
 Removed python and javascript scripts that these previously mentioned files replace
-Shipping the 20-20-2-6-2-1-0 firmware
+Updated 6ch output module firmware to V2.1.0
+Updated 4-20mA input module firmware to V1.0.0
 
 9-1-2024 V1.16.2
 Fixed typo in the GO-cellular connection
 Added boolean type to go-parse-a2l utility (requires pyuio update)
-Updated 6ch output module firmware
+Updated 6ch output module firmware to V2.0.1
+Updated 6ch input module firmware to V2.0.1
 Added 4-20mA input module firmware
 
 12-10-2023 V1.16.1
