@@ -1,9 +1,11 @@
-V1.17.6
+V1.18.0
 
 ########
-version
+4-10-2024 V1.18.0 Release 0.8.0
 Moved the /home/GOcontroll/.bashrc and /root/.bashrc files into /etc/bash.bashrc
 Add a little warning message when the serial number step is skipped
+Added firmware for new 6 channel in/output modules V2.0.2/V2.1.0
+Fix line in sources.list
 
 2-8-2024 V1.17.6
 Updated go-sn to V1.02
