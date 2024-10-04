@@ -119,7 +119,7 @@ cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/home / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/version.txt /root > /dev/null
 
-source /root/.bashrc
+source /etc/bash.bashrc
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 555 /usr/moduline/bash/go-simulink.sh

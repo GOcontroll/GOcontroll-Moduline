@@ -17,7 +17,7 @@ subprocess.run(["uname", "-r"])
 subprocess.run(["lsb_release", "-a"])
 print("\nGOcontroll:\n")
 subprocess.run(["cat", "/sys/firmware/devicetree/base/hardware"])
-print("Serial Number:")
+print("\nSerial Number:")
 subprocess.run(["go-sn", "r"])
 try:
     with open("/root/version.txt", "r") as file:

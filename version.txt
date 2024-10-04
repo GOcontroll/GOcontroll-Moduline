@@ -1,6 +1,10 @@
 V1.18.0
 
 ########
+4-10-2024 V1.18.1 Release 0.8.1
+Fix the source of bashrc in the install script
+Fix newline in identify
+
 4-10-2024 V1.18.0 Release 0.8.0
 Moved the /home/GOcontroll/.bashrc and /root/.bashrc files into /etc/bash.bashrc
 Add a little warning message when the serial number step is skipped
