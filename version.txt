@@ -1,6 +1,10 @@
-V1.18.0
+V1.18.2
 
 ########
+8-10-2024 V1.18.2 Release 0.8.2
+Fix first install calls to go-sn and go-modules
+Remove useless cp from install that caused a warning
+
 4-10-2024 V1.18.1 Release 0.8.1
 Fix the source of bashrc in the install script
 Fix newline in identify

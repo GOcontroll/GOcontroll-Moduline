@@ -116,10 +116,7 @@ cp -avr /root/GOcontroll/GOcontroll*/lib / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/etc / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/usr / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/root / > /dev/null
-cp -avr /root/GOcontroll/GOcontroll*/home / > /dev/null
 cp -avr /root/GOcontroll/GOcontroll*/version.txt /root > /dev/null
-
-source /etc/bash.bashrc
 
 echo -e "${YELLOW}-Assign correct execution rights to files ${NORMAL}"
 chmod 555 /usr/moduline/bash/go-simulink.sh
@@ -135,7 +132,7 @@ chmod 555 /usr/moduline/bin/go-modules
 chmod 555 /usr/moduline/bin/go-upload-server
 chmod 555 /usr/moduline/bin/go-sn
 
-go-sn w $serial_number
+/usr/moduline/bin/go-sn w $serial_number
 
 echo -e "${YELLOW}-Update debian sources ${NORMAL}"
 apt-get update -y > /dev/null
@@ -198,7 +195,7 @@ fi
 
 echo -e "${YELLOW}-Gathering module configuration and updating outdated modules ${NORMAL}"
 
-go-modules update all
+/usr/moduline/bin/go-modules update all
 
 echo -e "${YELLOW}-Setting the bluetooth name and patching the go-auto-shutdown service${NORMAL}"
 
