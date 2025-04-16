@@ -1,5 +1,6 @@
 var shell = require('shelljs');
 var exec = require('child_process').exec;
+var fs = require('fs');
 
 const ETH = 0;
 const WLAN = 1;
@@ -8,8 +9,6 @@ const WWAN = 2;
 var failureCounter = 0;
 var connectiontype = WWAN;
 var interval;
-
-let dns = require('dns')
 
 //delay the interface check from startup
 setTimeout(() => {
@@ -49,8 +48,7 @@ setTimeout(() => {
 
 function isInternetOnline()
 {
-	var exec = require('child_process').exec, child;
-	child = exec('ping -c 1 8.8.8.8', function(error, stdout, stderr)
+	exec('ping -c 1 8.8.8.8', function(error, stdout, stderr)
 	{
 		if(error !== null)
 		{
@@ -62,7 +60,7 @@ function isInternetOnline()
 			{
 				fs.open("/etc/netlog.txt", "a", 666, function( e, id )
 				{
-					fs.write( id, "rebooted at " +stdout, null, "utf8", function()
+					fs.write( id, "rebooted at " + stdout, null, "utf8", function()
 					{
 						fs.close(id, function()
 						{
@@ -83,7 +81,7 @@ function isInternetOnline()
 						shell.exec('ip link set eth0 up');
 					}
 				} else if (connectiontype == WWAN && failureCounter & 0x01) {
-					console.log("Restart the modem and connection");
+					console.log("Restart the modem");
 					shell.exec('systemctl restart go-wwan');
 				} else if (connectiontype == WLAN) {
 					if ( failureCounter & 0x01){
