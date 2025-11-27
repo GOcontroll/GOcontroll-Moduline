@@ -143,5 +143,6 @@ run(["cp", "/usr/simulink/signals.json", "/usr/node-red-static/signals.json"])
 json_header = dump_json(dict(sorted(header.items())), indent=4)
 with open("/usr/simulink/header.json", "w") as headerFile:
 	headerFile.write(json_header)
+run(["cp", "/usr/simulink/header.json", "/usr/node-red-static/header.json"])
 
 print("a2l file parsed succesfully!")
