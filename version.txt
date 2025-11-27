@@ -1,6 +1,13 @@
-V1.18.2
+V1.19.0
 
 ########
+8-10-2024 V1.19.0 Release 0.9.0
+Added firmware for the 10 channel output module
+Connectivity guard fix
+Added firmware for the 10 channel input module hw 6
+Update groundshift measurement for 6 channel output module hw 7
+Fix copying header.json in parse-a2l
+
 8-10-2024 V1.18.2 Release 0.8.2
 Fix first install calls to go-sn and go-modules
 Remove useless cp from install that caused a warning
